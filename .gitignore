@@ -1,0 +1,23 @@
+# User-specific or local configuration
+config.json
+specs.md
+
+# PyInstaller build artifacts
+*.spec
+*.exe
+build/
+dist/
+
+# Python bytecode and cache
+__pycache__/
+*.pyc
+*.pyo
+*.log
+
+# IDE and editor settings
+.vscode/
+.idea/
+
+# OS-generated files
+.DS_Store
+Thumbs.db
