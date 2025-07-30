@@ -16,6 +16,7 @@ import sys
 from datetime import datetime
 import traceback
 import shutil
+from threading import Thread
 from logic.parser import ExcelParser
 
 # Cấu hình logging
@@ -33,6 +34,7 @@ class ExcelDataMapper:
         self.root.geometry("900x700")
         
         # Icon handling for PyInstaller
+        self.icon_path = None
         try:
             if getattr(sys, 'frozen', False):
                 # PyInstaller bundle
@@ -44,6 +46,7 @@ class ExcelDataMapper:
             icon_path = os.path.join(base_path, "icon.ico")
             if os.path.exists(icon_path):
                 self.root.iconbitmap(icon_path)
+                self.icon_path = icon_path
         except:
             pass  # Ignore icon errors
         
@@ -68,37 +71,53 @@ class ExcelDataMapper:
         self.config_dir = Path("configs")
         self.config_dir.mkdir(exist_ok=True)
         
-        self.setup_gui()
         self.setup_menu()
+        self.setup_gui()
         
         # Load last configuration if exists
         self.load_last_config()
         
     def setup_menu(self):
-        menubar = tk.Menu(self.root)
-        self.root.config(menu=menubar)
+        # Tạo một Frame để hoạt động như thanh menu
+        menubar_frame = ttk_boot.Frame(self.root)
+        menubar_frame.pack(fill=X, side=TOP, padx=5, pady=(2, 0))
+
+        # --- File Menu ---
+        # Sử dụng Button với bootstyle="link" cho giao diện
+        # và tk.Menu cho chức năng dropdown.
+        file_button = ttk_boot.Button(menubar_frame, text="File", bootstyle="link")
+        file_button.pack(side=LEFT, padx=(5, 10))
         
-        # File menu
-        file_menu = tk.Menu(menubar, tearoff=0)
-        menubar.add_cascade(label="File", menu=file_menu)
+        file_menu = tk.Menu(file_button, tearoff=0)
         file_menu.add_command(label="Open Destination Folder", command=self.open_dest_folder)
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.root.quit)
-        
-        # Settings menu
-        settings_menu = tk.Menu(menubar, tearoff=0)
-        menubar.add_cascade(label="Settings", menu=settings_menu)
+
+        # Liên kết command của Button để hiển thị Menu
+        file_button.config(command=lambda: file_menu.post(file_button.winfo_rootx(), file_button.winfo_rooty() + file_button.winfo_height()))
+
+        # --- Settings Menu ---
+        settings_button = ttk_boot.Button(menubar_frame, text="Settings", bootstyle="link")
+        settings_button.pack(side=LEFT, padx=10)
+
+        settings_menu = tk.Menu(settings_button, tearoff=0)
         settings_menu.add_command(label="Switch Theme", command=self.toggle_theme)
         
-        # About menu
-        about_menu = tk.Menu(menubar, tearoff=0)
-        menubar.add_cascade(label="About", menu=about_menu)
+        settings_button.config(command=lambda: settings_menu.post(settings_button.winfo_rootx(), settings_button.winfo_rooty() + settings_button.winfo_height()))
+
+        # --- About Menu ---
+        about_button = ttk_boot.Button(menubar_frame, text="About", bootstyle="link")
+        about_button.pack(side=LEFT, padx=10)
+        
+        about_menu = tk.Menu(about_button, tearoff=0)
         about_menu.add_command(label="Info", command=self.show_about)
+
+        about_button.config(command=lambda: about_menu.post(about_button.winfo_rootx(), about_button.winfo_rooty() + about_button.winfo_height()))
         
     def setup_gui(self):
         # Main container
         main_frame = ttk_boot.Frame(self.root, padding=10)
-        main_frame.pack(fill=BOTH, expand=True)
+        main_frame.pack(fill=BOTH, expand=True, side=TOP)
         
         # File selection section
         file_frame = ttk_boot.LabelFrame(main_frame, text="File Selection", padding=10)
@@ -106,13 +125,13 @@ class ExcelDataMapper:
         
         # Source file
         ttk_boot.Label(file_frame, text="Source File:").grid(row=0, column=0, sticky=W, pady=2)
-        ttk_boot.Entry(file_frame, textvariable=self.source_file, width=50).grid(row=0, column=1, padx=5, sticky=EW)
-        ttk_boot.Button(file_frame, text="Browse", command=self.browse_source_file).grid(row=0, column=2, padx=5)
+        ttk_boot.Entry(file_frame, textvariable=self.source_file, width=50).grid(row=0, column=1, padx=5, pady=5, sticky=EW)
+        ttk_boot.Button(file_frame, bootstyle="outline", text="Browse", command=self.browse_source_file).grid(row=0, column=2, padx=5, pady=5)
         
         # Destination file
         ttk_boot.Label(file_frame, text="Destination File:").grid(row=1, column=0, sticky=W, pady=2)
-        ttk_boot.Entry(file_frame, textvariable=self.dest_file, width=50).grid(row=1, column=1, padx=5, sticky=EW)
-        ttk_boot.Button(file_frame, text="Browse", command=self.browse_dest_file).grid(row=1, column=2, padx=5)
+        ttk_boot.Entry(file_frame, textvariable=self.dest_file, width=50).grid(row=1, column=1, padx=5, pady=2, sticky=EW)
+        ttk_boot.Button(file_frame, bootstyle="outline", text="Browse", command=self.browse_dest_file).grid(row=1, column=2, padx=5, pady=2)
         
         file_frame.columnconfigure(1, weight=1)
         
@@ -132,7 +151,8 @@ class ExcelDataMapper:
         ttk_boot.Label(header_frame, text="To:").grid(row=0, column=8, sticky=W)
         ttk_boot.Spinbox(header_frame, from_=1, to=50, textvariable=self.dest_header_end_row, width=5).grid(row=0, column=9, padx=5)
         
-        ttk_boot.Button(header_frame, text="Load Columns", command=self.load_columns, bootstyle=INFO).grid(row=0, column=10, padx=20)
+        self.load_cols_button = ttk_boot.Button(header_frame, text="Load Columns", command=self.load_columns, bootstyle=INFO)
+        self.load_cols_button.grid(row=0, column=10, padx=20)
         
         # Column mapping section
         self.mapping_frame = ttk_boot.LabelFrame(main_frame, text="Column Mapping", padding=10)
@@ -153,9 +173,14 @@ class ExcelDataMapper:
         action_frame = ttk_boot.Frame(main_frame)
         action_frame.pack(fill=X, pady=(0, 10))
         
-        ttk_boot.Button(action_frame, text="Save Configuration", command=self.save_config, bootstyle=SUCCESS).pack(side=LEFT, padx=5)
-        ttk_boot.Button(action_frame, text="Load Configuration", command=self.load_config, bootstyle=INFO).pack(side=LEFT, padx=5)
-        ttk_boot.Button(action_frame, text="Execute Transfer", command=self.execute_transfer, bootstyle=PRIMARY).pack(side=RIGHT, padx=5)
+        self.save_button = ttk_boot.Button(action_frame, text="Save Configuration", command=self.save_config, bootstyle=SUCCESS)
+        self.save_button.pack(side=LEFT, padx=5)
+        
+        self.load_button = ttk_boot.Button(action_frame, text="Load Configuration", command=self.load_config, bootstyle=INFO)
+        self.load_button.pack(side=LEFT, padx=5)
+        
+        self.execute_button = ttk_boot.Button(action_frame, text="Execute Transfer", command=self.execute_transfer, bootstyle=PRIMARY)
+        self.execute_button.pack(side=RIGHT, padx=5)
         
         # Status bar
         self.status_frame = ttk_boot.Frame(main_frame)
@@ -515,65 +540,87 @@ class ExcelDataMapper:
             self.log_error(f"Error loading last config: {str(e)}")
     
     def execute_transfer(self):
-        """Execute the data transfer operation"""
+        """Starts the data transfer operation in a separate thread to keep the GUI responsive."""
+        # --- Validation ---
+        if not self.source_file.get() or not self.dest_file.get():
+            messagebox.showwarning("Warning", "Please select both source and destination files.")
+            return
+        
+        if not hasattr(self, 'mapping_combos') or not self.mapping_combos:
+            messagebox.showwarning("Warning", "Please load columns first.")
+            return
+        
+        mappings = {source_col: combo.get() for source_col, combo in self.mapping_combos.items() if combo.get()}
+        
+        if not mappings:
+            messagebox.showwarning("Warning", "Please configure at least one column mapping.")
+            return
+        
+        duplicate_destinations = []
+        dest_values = list(mappings.values())
+        for dest_col in set(dest_values):
+            if dest_values.count(dest_col) > 1:
+                duplicate_destinations.append(dest_col)
+        
+        if duplicate_destinations:
+            messagebox.showerror("Error", f"Duplicate destination columns detected: {', '.join(duplicate_destinations)}")
+            return
+        
+        if len(self.source_file.get()) > 255 or len(self.dest_file.get()) > 255:
+            messagebox.showwarning("Warning", "File paths are very long (>255 characters). This might cause issues.")
+
+        # --- Disable Widgets & Start Thread ---
+        self.disable_controls()
+        self.update_status("Starting data transfer...")
+        self.progress['value'] = 0
+        self.root.update()
+
+        # Run the actual transfer in a separate thread
+        transfer_thread = Thread(target=self._execute_transfer_thread, args=(mappings,))
+        transfer_thread.daemon = True
+        transfer_thread.start()
+
+    def _execute_transfer_thread(self, mappings):
+        """The actual data transfer logic that runs in the background."""
         try:
-            # Validation
-            if not self.source_file.get() or not self.dest_file.get():
-                messagebox.showwarning("Warning", "Please select both source and destination files.")
-                return
-            
-            if not hasattr(self, 'mapping_combos') or not self.mapping_combos:
-                messagebox.showwarning("Warning", "Please load columns first.")
-                return
-            
-            # Get mappings
-            mappings = {}
-            for source_col, combo in self.mapping_combos.items():
-                dest_col = combo.get()
-                if dest_col:
-                    mappings[source_col] = dest_col
-            
-            if not mappings:
-                messagebox.showwarning("Warning", "Please configure at least one column mapping.")
-                return
-            
-            # Validate mappings
-            duplicate_destinations = []
-            dest_values = list(mappings.values())
-            for dest_col in set(dest_values):
-                if dest_values.count(dest_col) > 1:
-                    duplicate_destinations.append(dest_col)
-            
-            if duplicate_destinations:
-                messagebox.showerror("Error", f"Duplicate destination columns detected: {', '.join(duplicate_destinations)}")
-                return
-            
-            # Check file paths length
-            if len(self.source_file.get()) > 255 or len(self.dest_file.get()) > 255:
-                messagebox.showwarning("Warning", "File paths are very long (>255 characters). This might cause issues.")
-            
-            self.update_status("Starting data transfer...")
-            self.progress['value'] = 0
-            self.root.update()
-            
-            # Perform transfer
             self.perform_data_transfer(mappings)
             
-            self.progress['value'] = 100
-            self.update_status("Transfer completed successfully")
-            
-            messagebox.showinfo("Success", "Data transfer completed successfully!")
-            
-            # Open destination folder
-            if messagebox.askyesno("Open Folder", "Would you like to open the destination folder?"):
-                self.open_dest_folder()
+            self.root.after(0, self.on_transfer_success)
             
         except Exception as e:
-            self.log_error(f"Error in execute_transfer: {str(e)}")
-            self.log_error(traceback.format_exc())
-            messagebox.showerror("Error", f"Transfer failed: {str(e)}")
-            self.update_status("Transfer failed")
-            self.progress['value'] = 0
+            self.root.after(0, self.on_transfer_error, e)
+    
+    def on_transfer_success(self):
+        """Handles successful completion of the transfer in the main thread."""
+        self.progress['value'] = 100
+        self.update_status("Transfer completed successfully")
+        self.enable_controls()
+        messagebox.showinfo("Success", "Data transfer completed successfully!")
+        if messagebox.askyesno("Open Folder", "Would you like to open the destination folder?"):
+            self.open_dest_folder()
+
+    def on_transfer_error(self, error):
+        """Handles errors from the transfer in the main thread."""
+        self.log_error(f"Error in execute_transfer: {str(error)}")
+        self.log_error(traceback.format_exc())
+        self.update_status("Transfer failed")
+        self.progress['value'] = 0
+        self.enable_controls()
+        messagebox.showerror("Error", f"Transfer failed: {str(error)}")
+
+    def disable_controls(self):
+        """Disables key controls during processing."""
+        self.execute_button.config(state=DISABLED)
+        self.load_button.config(state=DISABLED)
+        self.save_button.config(state=DISABLED)
+        self.load_cols_button.config(state=DISABLED)
+
+    def enable_controls(self):
+        """Enables key controls after processing."""
+        self.execute_button.config(state=NORMAL)
+        self.load_button.config(state=NORMAL)
+        self.save_button.config(state=NORMAL)
+        self.load_cols_button.config(state=NORMAL)
     
     def perform_data_transfer(self, mappings):
         """Perform the actual data transfer"""
@@ -739,7 +786,6 @@ class ExcelDataMapper:
             self.log_error(traceback.format_exc())
             raise
 
-    
     def toggle_theme(self):
         """Toggle between light and dark themes"""
         try:
@@ -784,10 +830,28 @@ class ExcelDataMapper:
             messagebox.showerror("Error", f"Failed to open folder: {str(e)}")
     
     def show_about(self):
-        """Show about dialog"""
+        """Show a custom about dialog with the application icon."""
+        about_dialog = tk.Toplevel(self.root)
+        about_dialog.title("About Excel Data Mapper")
+        about_dialog.geometry("400x300") # Increased height slightly for button
+        about_dialog.resizable(False, False)
+        
+        # Set the icon if available
+        if self.icon_path:
+            try:
+                about_dialog.iconbitmap(self.icon_path)
+            except:
+                pass # Ignore icon errors on the dialog
+
+        # Center the dialog over the main window
+        x = self.root.winfo_x() + (self.root.winfo_width() // 2) - 200
+        y = self.root.winfo_y() + (self.root.winfo_height() // 2) - 150 # Adjusted for new height
+        about_dialog.geometry(f"+{x}+{y}")
+
         about_text = """Excel Data Mapper v1.0
 
-A powerful tool for mapping and transferring data between Excel files while preserving formatting.
+A powerful tool for mapping and transferring data 
+between Excel files while preserving formatting.
 
 Features:
 • Flexible column mapping
@@ -797,9 +861,26 @@ Features:
 • Theme switching
 • Comprehensive error handling
 
-Developed with Python + ttkbootstrap
+Developed by Do Huy Hoang
+https://github.com/dohuyhoang93
 """
-        messagebox.showinfo("About Excel Data Mapper", about_text)
+        
+        # Create a frame for the button to ensure it's not overridden
+        button_frame = ttk_boot.Frame(about_dialog)
+        button_frame.pack(side=BOTTOM, fill=X, pady=10)
+
+        # Use a Label for the text content, packed to fill remaining space
+        label = ttk_boot.Label(about_dialog, text=about_text, justify=LEFT, padding=(10, 10))
+        label.pack(side=TOP, expand=True, fill=BOTH)
+
+        # OK button to close the dialog, packed inside its frame
+        ok_button = ttk_boot.Button(button_frame, text="OK", command=about_dialog.destroy, bootstyle=PRIMARY)
+        ok_button.pack() # No need for pady here as the frame has it
+
+        # Make the dialog modal
+        about_dialog.transient(self.root)
+        about_dialog.grab_set()
+        self.root.wait_window(about_dialog)
     
     def update_status(self, message):
         """Update status bar message"""
