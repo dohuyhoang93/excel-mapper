@@ -1,14 +1,15 @@
 """
-Excel file parsing logic with support for merged cells and complex headers
+Excel file parsing logic with enhanced resource management and support for merged cells and complex headers
 """
 import openpyxl
 from openpyxl.utils import get_column_letter
 from typing import List, Dict, Any, Optional, Tuple
 import logging
 from pathlib import Path
+import gc
 
 class ExcelParser:
-    """Handles parsing of Excel files with complex structures"""
+    """Handles parsing of Excel files with complex structures and proper resource management"""
     
     def __init__(self, file_path: str):
         self.file_path = Path(file_path)
@@ -17,14 +18,34 @@ class ExcelParser:
         
     def __enter__(self):
         """Context manager entry"""
-        self.workbook = openpyxl.load_workbook(self.file_path, data_only=True)
-        self.worksheet = self.workbook.active
-        return self
+        try:
+            # Force garbage collection before opening
+            gc.collect()
+            
+            self.workbook = openpyxl.load_workbook(self.file_path, data_only=True)
+            self.worksheet = self.workbook.active
+            return self
+        except Exception as e:
+            # Ensure cleanup on initialization failure
+            self._cleanup()
+            raise e
         
     def __exit__(self, exc_type, exc_val, exc_tb):
-        """Context manager exit"""
-        if self.workbook:
-            self.workbook.close()
+        """Context manager exit with guaranteed cleanup"""
+        self._cleanup()
+        
+    def _cleanup(self):
+        """Guaranteed cleanup method"""
+        try:
+            if self.workbook:
+                self.workbook.close()
+        except Exception as e:
+            logging.warning(f"Error closing workbook for {self.file_path}: {e}")
+        finally:
+            self.workbook = None
+            self.worksheet = None
+            # Force garbage collection after cleanup
+            gc.collect()
     
     def get_headers(self, start_row: int, end_row: int, max_columns: Optional[int] = None) -> Dict[str, int]:
         """
@@ -45,7 +66,7 @@ class ExcelParser:
             raise ValueError(f"Header start row ({start_row}) cannot be after end row ({end_row}).")
 
         max_col = max_columns or self.worksheet.max_column
-        merged_ranges = self.worksheet.merged_cells.ranges
+        merged_ranges = list(self.worksheet.merged_cells.ranges)  # Convert to list to avoid iteration issues
         raw_headers = []
 
         for col in range(1, max_col + 1):
@@ -77,22 +98,26 @@ class ExcelParser:
     
     def _get_cell_value_with_merges(self, row: int, col: int, merged_ranges) -> str:
         """Get cell value, handling merged cells"""
-        cell = self.worksheet.cell(row=row, column=col)
-        cell_value = cell.value
-        
-        if cell_value is not None:
-            return str(cell_value).strip()
-        
-        # Check if cell is part of a merged range
-        cell_coordinate = cell.coordinate
-        for merged_range in merged_ranges:
-            if cell_coordinate in merged_range:
-                # Get the top-left cell of the merged range
-                top_left = self.worksheet.cell(merged_range.min_row, merged_range.min_col)
-                if top_left.value is not None:
-                    return str(top_left.value).strip()
-        
-        return ""
+        try:
+            cell = self.worksheet.cell(row=row, column=col)
+            cell_value = cell.value
+            
+            if cell_value is not None:
+                return str(cell_value).strip()
+            
+            # Check if cell is part of a merged range
+            cell_coordinate = cell.coordinate
+            for merged_range in merged_ranges:
+                if cell_coordinate in merged_range:
+                    # Get the top-left cell of the merged range
+                    top_left = self.worksheet.cell(merged_range.min_row, merged_range.min_col)
+                    if top_left.value is not None:
+                        return str(top_left.value).strip()
+            
+            return ""
+        except Exception as e:
+            logging.warning(f"Error reading cell ({row}, {col}) from {self.file_path}: {e}")
+            return ""
     
     def get_data_rows(self, header_row: int, headers: List[str]) -> List[Dict[str, Any]]:
         """
@@ -220,9 +245,11 @@ class ExcelParser:
             if not self.file_path.suffix.lower() in ['.xlsx', '.xls']:
                 issues.append("File is not a supported Excel format (.xlsx or .xls)")
             
-            # Try to open the file
-            with openpyxl.load_workbook(self.file_path, data_only=True) as wb:
-                ws = wb.active
+            # Try to open the file temporarily for validation
+            temp_workbook = None
+            try:
+                temp_workbook = openpyxl.load_workbook(self.file_path, data_only=True)
+                ws = temp_workbook.active
                 
                 if ws.max_row == 1:
                     issues.append("File appears to be empty or contains only one row")
@@ -231,7 +258,7 @@ class ExcelParser:
                     issues.append("File contains only one column")
                 
                 # Check for password protection
-                if wb.security and wb.security.workbookPassword:
+                if temp_workbook.security and temp_workbook.security.workbookPassword:
                     issues.append("File is password protected")
                 
                 # Check for very large files
@@ -240,6 +267,12 @@ class ExcelParser:
                 
                 if ws.max_column > 50:
                     issues.append("File has many columns (>50) - processing may be slow")
+                    
+            finally:
+                if temp_workbook:
+                    temp_workbook.close()
+                # Force garbage collection after validation
+                gc.collect()
         
         except Exception as e:
             issues.append(f"Error reading file: {str(e)}")
@@ -259,7 +292,7 @@ class ExcelParser:
         if not self.worksheet:
             raise ValueError("Worksheet not loaded")
         
-        headers = self.get_headers(header_row)
+        headers = self.get_headers(header_row, header_row)
         column_types = {}
         
         # Sample first 100 data rows
@@ -289,21 +322,69 @@ class ExcelParser:
         
         return column_types
 
-# Utility functions for external use
+# Utility functions for external use with enhanced resource management
 def quick_validate_excel(file_path: str) -> bool:
-    """Quick validation of Excel file"""
+    """Quick validation of Excel file with proper cleanup"""
+    parser = None
     try:
-        with ExcelParser(file_path) as parser:
-            is_valid, _ = parser.validate_file()
+        parser = ExcelParser(file_path)
+        with parser as p:
+            is_valid, _ = p.validate_file()
             return is_valid
     except Exception:
         return False
+    finally:
+        if parser:
+            parser._cleanup()
+        # Force garbage collection
+        gc.collect()
 
-def get_excel_headers(file_path: str, header_row: int) -> List[str]:
-    """Quick function to get headers from Excel file"""
+def get_excel_headers_safe(file_path: str, start_row: int, end_row: int) -> Dict[str, int]:
+    """Safe function to get headers from Excel file with guaranteed cleanup"""
+    parser = None
     try:
-        with ExcelParser(file_path) as parser:
-            return parser.get_headers(header_row)
+        parser = ExcelParser(file_path)
+        with parser as p:
+            return p.get_headers(start_row, end_row)
     except Exception as e:
         logging.error(f"Error getting headers from {file_path}: {str(e)}")
-        return []
+        return {}
+    finally:
+        if parser:
+            parser._cleanup()
+        # Force garbage collection
+        gc.collect()
+
+def get_excel_data_safe(file_path: str, header_row: int) -> Tuple[Dict[str, int], List[Dict[str, Any]]]:
+    """Safe function to get headers and data from Excel file with guaranteed cleanup"""
+    parser = None
+    try:
+        parser = ExcelParser(file_path)
+        with parser as p:
+            headers = p.get_headers(header_row, header_row)
+            data = p.get_data_rows(header_row, list(headers.keys()))
+            return headers, data
+    except Exception as e:
+        logging.error(f"Error getting data from {file_path}: {str(e)}")
+        return {}, []
+    finally:
+        if parser:
+            parser._cleanup()
+        # Force garbage collection
+        gc.collect()
+
+def validate_excel_file_safe(file_path: str) -> Tuple[bool, List[str]]:
+    """Safe function to validate Excel file with guaranteed cleanup"""
+    parser = None
+    try:
+        parser = ExcelParser(file_path)
+        with parser as p:
+            return p.validate_file()
+    except Exception as e:
+        logging.error(f"Error validating {file_path}: {str(e)}")
+        return False, [f"Validation error: {str(e)}"]
+    finally:
+        if parser:
+            parser._cleanup()
+        # Force garbage collection
+        gc.collect()

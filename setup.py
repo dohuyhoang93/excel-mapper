@@ -14,6 +14,7 @@ def build_executable():
         'pyinstaller',
         '--onefile',                    # Single executable file
         '--windowed',                   # No console window
+        '--paths=.',                    # Find py file in this folder
         '--name=ExcelDataMapper',       # Executable name
         '--add-data=icon.ico;.',        # Include icon file
         '--icon=icon.ico',              # Set icon for executable

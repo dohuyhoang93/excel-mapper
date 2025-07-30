@@ -102,7 +102,7 @@ class MappingWidget(ttk_boot.Frame):
             # Destination column combobox
             dest_var = tk.StringVar()
             dest_combo = ttk_boot.Combobox(row_frame, textvariable=dest_var, 
-                                          values=[""] + self.dest_columns, width=25)
+                                          values=[""] + self.dest_columns, width=35)
             dest_combo.pack(side=LEFT, padx=5)
             
             # Auto-suggest

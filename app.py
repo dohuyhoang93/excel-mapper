@@ -17,6 +17,9 @@ from datetime import datetime
 import traceback
 import shutil
 from threading import Thread
+import gc
+import time
+import psutil
 from logic.parser import ExcelParser
 
 # Cấu hình logging
@@ -26,6 +29,64 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s',
     encoding='utf-8'
 )
+
+class FileHandleManager:
+    """Manages file handles to prevent Excel file locking issues"""
+    
+    @staticmethod
+    def force_release_handles():
+        """Force garbage collection and release file handles"""
+        # Multiple rounds of garbage collection
+        for _ in range(3):
+            gc.collect()
+            time.sleep(0.05)  # Small delay between collections
+    
+    @staticmethod
+    def is_file_locked(file_path: str) -> bool:
+        """Check if a file is currently locked by another process"""
+        try:
+            # Try to open the file in exclusive mode
+            with open(file_path, 'r+b'):
+                return False
+        except (IOError, OSError):
+            return True
+    
+    @staticmethod
+    def wait_for_file_release(file_path: str, max_wait_seconds: int = 5) -> bool:
+        """Wait for a file to be released by other processes"""
+        start_time = time.time()
+        
+        while time.time() - start_time < max_wait_seconds:
+            if not FileHandleManager.is_file_locked(file_path):
+                return True
+            
+            # Force garbage collection while waiting
+            FileHandleManager.force_release_handles()
+            time.sleep(0.2)
+        
+        return False
+    
+    @staticmethod
+    def get_processes_using_file(file_path: str) -> list:
+        """Get list of processes that are using the specified file"""
+        processes = []
+        try:
+            for proc in psutil.process_iter(['pid', 'name', 'open_files']):
+                try:
+                    if proc.info['open_files']:
+                        for file_info in proc.info['open_files']:
+                            if os.path.samefile(file_info.path, file_path):
+                                processes.append({
+                                    'pid': proc.info['pid'],
+                                    'name': proc.info['name']
+                                })
+                                break
+                except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess, OSError):
+                    continue
+        except Exception as e:
+            logging.warning(f"Error checking file usage: {e}")
+        
+        return processes
 
 class ExcelDataMapper:
     def __init__(self):
@@ -83,17 +144,15 @@ class ExcelDataMapper:
         menubar_frame.pack(fill=X, side=TOP, padx=5, pady=(2, 0))
 
         # --- File Menu ---
-        # Sử dụng Button với bootstyle="link" cho giao diện
-        # và tk.Menu cho chức năng dropdown.
         file_button = ttk_boot.Button(menubar_frame, text="File", bootstyle="link")
         file_button.pack(side=LEFT, padx=(5, 10))
         
         file_menu = tk.Menu(file_button, tearoff=0)
         file_menu.add_command(label="Open Destination Folder", command=self.open_dest_folder)
+        file_menu.add_command(label="Force Release File Handles", command=self.force_release_excel_handles)
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.root.quit)
 
-        # Liên kết command của Button để hiển thị Menu
         file_button.config(command=lambda: file_menu.post(file_button.winfo_rootx(), file_button.winfo_rooty() + file_button.winfo_height()))
 
         # --- Settings Menu ---
@@ -151,7 +210,7 @@ class ExcelDataMapper:
         ttk_boot.Label(header_frame, text="To:").grid(row=0, column=8, sticky=W)
         ttk_boot.Spinbox(header_frame, from_=1, to=50, textvariable=self.dest_header_end_row, width=5).grid(row=0, column=9, padx=5)
         
-        self.load_cols_button = ttk_boot.Button(header_frame, text="Load Columns", command=self.load_columns, bootstyle=INFO)
+        self.load_cols_button = ttk_boot.Button(header_frame, text="Load Columns", command=self.safe_load_columns, bootstyle=INFO)
         self.load_cols_button.grid(row=0, column=10, padx=20)
         
         # Column mapping section
@@ -166,7 +225,7 @@ class ExcelDataMapper:
         sort_frame.pack(fill=X, pady=(0, 10))
         
         ttk_boot.Label(sort_frame, text="Sort by Column (optional):").grid(row=0, column=0, sticky=W, pady=2)
-        self.sort_combo = ttk_boot.Combobox(sort_frame, textvariable=self.sort_column, width=30)
+        self.sort_combo = ttk_boot.Combobox(sort_frame, textvariable=self.sort_column, width=50)
         self.sort_combo.grid(row=0, column=1, padx=5, sticky=W)
         
         # Action buttons
@@ -232,29 +291,150 @@ class ExcelDataMapper:
             self.dest_file.set(filename)
             self.log_info(f"Destination file selected: {filename}")
     
-    def load_columns(self, saved_sort_col: Optional[str] = None, apply_suggestions: bool = True):
-        """Load column headers from both files and optionally set the sort column."""
+    def force_release_excel_handles(self):
+        """Force release of all Excel file handles"""
+        try:
+            # Clear references to data
+            if hasattr(self, 'source_columns'):
+                self.source_columns = {}
+            if hasattr(self, 'dest_columns'):
+                self.dest_columns = {}
+            
+            # Force garbage collection
+            FileHandleManager.force_release_handles()
+            
+            self.update_status("File handles released")
+            self.log_info("Forced release of Excel file handles")
+            messagebox.showinfo("Info", "Excel file handles have been released.")
+            
+        except Exception as e:
+            self.log_error(f"Error forcing handle release: {str(e)}")
+            messagebox.showerror("Error", f"Error releasing handles: {str(e)}")
+    
+    def check_file_accessibility(self, file_path: str) -> bool:
+        """Check if file is accessible for reading/writing"""
+        try:
+            if not os.path.exists(file_path):
+                return False
+            
+            # Wait for file to be released if locked
+            if FileHandleManager.is_file_locked(file_path):
+                self.update_status(f"Waiting for file to be released: {os.path.basename(file_path)}")
+                
+                if not FileHandleManager.wait_for_file_release(file_path, max_wait_seconds=10):
+                    # Show which processes are using the file
+                    processes = FileHandleManager.get_processes_using_file(file_path)
+                    if processes:
+                        process_names = [p['name'] for p in processes]
+                        self.log_error(f"File locked by processes: {', '.join(process_names)}")
+                        messagebox.showwarning(
+                            "File Locked", 
+                            f"File is locked by: {', '.join(process_names)}\n"
+                            f"Please close these applications and try again."
+                        )
+                    return False
+            
+            return True
+            
+        except Exception as e:
+            self.log_error(f"Error checking file accessibility: {str(e)}")
+            return False
+    
+    def get_excel_columns(self, file_path, start_row, end_row):
+        """Extracts headers using the centralized ExcelParser with guaranteed cleanup."""
+        parser = None
+        try:
+            # Force garbage collection before opening
+            FileHandleManager.force_release_handles()
+            
+            parser = ExcelParser(file_path)
+            with parser as p:
+                headers = p.get_headers(start_row, end_row)
+                
+                # Filter out headers that are None, empty, or whitespace-only
+                filtered_headers = {
+                    name: index for name, index in headers.items()
+                    if name and str(name).strip()
+                }
+                
+                # Make a copy to ensure no references to the parser remain
+                result = dict(filtered_headers)
+                
+            # Explicit cleanup
+            if parser:
+                parser._cleanup()
+                
+            # Force garbage collection after closing
+            FileHandleManager.force_release_handles()
+            
+            return result
+            
+        except Exception as e:
+            self.log_error(f"Error reading Excel columns with parser: {str(e)}")
+            raise
+        finally:
+            # Ensure cleanup even if exception occurs
+            if parser:
+                try:
+                    parser._cleanup()
+                except:
+                    pass
+            # Final cleanup
+            FileHandleManager.force_release_handles()
+
+    def safe_load_columns(self, saved_sort_col: Optional[str] = None, apply_suggestions: bool = True):
+        """Load columns with enhanced file handle management"""
         try:
             if not self.source_file.get() or not self.dest_file.get():
                 messagebox.showwarning("Warning", "Please select both source and destination files first.")
                 return
             
-            # Kiểm tra file tồn tại
-            if not os.path.exists(self.source_file.get()):
-                messagebox.showerror("Error", f"Source file does not exist: {self.source_file.get()}")
+            # Check file accessibility first
+            if not self.check_file_accessibility(self.source_file.get()):
+                messagebox.showerror("Error", f"Cannot access source file: {self.source_file.get()}")
                 return
                 
-            if not os.path.exists(self.dest_file.get()):
-                messagebox.showerror("Error", f"Destination file does not exist: {self.dest_file.get()}")
+            if not self.check_file_accessibility(self.dest_file.get()):
+                messagebox.showerror("Error", f"Cannot access destination file: {self.dest_file.get()}")
                 return
+            
+            # Force release any existing handles
+            self.force_release_excel_handles()
             
             self.update_status("Loading columns...")
             
             # Load source columns
-            self.source_columns = self.get_excel_columns(self.source_file.get(), self.source_header_start_row.get(), self.source_header_end_row.get())
+            try:
+                self.source_columns = self.get_excel_columns(
+                    self.source_file.get(), 
+                    self.source_header_start_row.get(), 
+                    self.source_header_end_row.get()
+                )
+                # Force release after loading
+                FileHandleManager.force_release_handles()
+                
+            except Exception as e:
+                self.log_error(f"Error loading source columns: {str(e)}")
+                messagebox.showerror("Error", f"Failed to load source columns: {str(e)}")
+                return
             
-            # Load destination columns  
-            self.dest_columns = self.get_excel_columns(self.dest_file.get(), self.dest_header_start_row.get(), self.dest_header_end_row.get())
+            # Small delay between file operations
+            time.sleep(0.2)
+            
+            # Load destination columns
+            try:
+                self.dest_columns = self.get_excel_columns(
+                    self.dest_file.get(), 
+                    self.dest_header_start_row.get(), 
+                    self.dest_header_end_row.get()
+                )
+                # Force release after loading
+                FileHandleManager.force_release_handles()
+                
+            except Exception as e:
+                self.log_error(f"Error loading destination columns: {str(e)}")
+                messagebox.showerror("Error", f"Failed to load destination columns: {str(e)}")
+                return
             
             if not self.source_columns or not self.dest_columns:
                 messagebox.showerror("Error", "Could not load columns. Please check file paths and header row numbers.")
@@ -263,9 +443,9 @@ class ExcelDataMapper:
             # Update sort combo
             source_keys = list(self.source_columns.keys())
             self.sort_combo['values'] = source_keys
-            self.root.update_idletasks() # Force GUI update
+            self.root.update_idletasks()
 
-            # Now, safely set the saved sort column value
+            # Set the saved sort column value
             if saved_sort_col and saved_sort_col in source_keys:
                 self.sort_column.set(saved_sort_col)
             
@@ -279,33 +459,14 @@ class ExcelDataMapper:
             self.log_error(f"Error loading columns: {str(e)}")
             messagebox.showerror("Error", f"Failed to load columns: {str(e)}")
             self.update_status("Error loading columns")
+        finally:
+            # Always force release handles at the end
+            FileHandleManager.force_release_handles()
     
-    def _get_value_from_merged_cell(self, worksheet, row, col):
-        """Helper to get value from a cell, resolving merged cells."""
-        cell = worksheet.cell(row=row, column=col)
-        if isinstance(cell, MergedCell):
-            # It's a merged cell, find the top-left parent
-            for merged_range in worksheet.merged_cells.ranges:
-                if cell.coordinate in merged_range:
-                    # Return the value of the top-left cell in the range
-                    return worksheet.cell(row=merged_range.min_row, column=merged_range.min_col).value
-        return cell.value
-
-    def get_excel_columns(self, file_path, start_row, end_row):
-        """Extracts headers using the centralized ExcelParser, filtering out empty or whitespace-only column names."""
-        try:
-            with ExcelParser(file_path) as parser:
-                headers = parser.get_headers(start_row, end_row)
-                
-                # Filter out headers that are None, empty, or whitespace-only
-                filtered_headers = {
-                    name: index for name, index in headers.items()
-                    if name and str(name).strip()
-                }
-                return filtered_headers
-        except Exception as e:
-            self.log_error(f"Error reading Excel columns with parser: {str(e)}")
-            raise
+    # Keep original load_columns for backward compatibility but redirect to safe version
+    def load_columns(self, saved_sort_col: Optional[str] = None, apply_suggestions: bool = True):
+        """Backward compatibility wrapper for safe_load_columns"""
+        return self.safe_load_columns(saved_sort_col, apply_suggestions)
     
     def create_mapping_widgets(self, apply_suggestions: bool = True):
         """Create dropdown widgets for column mapping using a grid layout for perfect alignment."""
@@ -327,7 +488,7 @@ class ExcelDataMapper:
         
         for i, source_col_name in enumerate(self.source_columns.keys(), start=1):
             # Source column label
-            source_label = ttk_boot.Label(self.scrollable_frame, text=source_col_name, anchor=W)
+            source_label = ttk_boot.Label(self.scrollable_frame, text=source_col_name, anchor=W, width=50)
             source_label.grid(row=i, column=0, sticky=EW, padx=5, pady=2)
             
             # Arrow
@@ -335,7 +496,7 @@ class ExcelDataMapper:
             arrow_label.grid(row=i, column=1, sticky=W, padx=5)
             
             # Destination column combobox
-            dest_combo = ttk_boot.Combobox(self.scrollable_frame, values=[""] + list(self.dest_columns.keys()))
+            dest_combo = ttk_boot.Combobox(self.scrollable_frame, values=[""] + list(self.dest_columns.keys()), width=50)
             dest_combo.grid(row=i, column=2, sticky=EW, padx=5, pady=2)
             
             # Auto-suggest mapping only if enabled
@@ -489,11 +650,11 @@ class ExcelDataMapper:
                 self.root.style.theme_use(new_theme)
                 self.current_theme = new_theme
 
-            # Stage 3: Load columns and pass the saved sort column to be set internally
+                            # Stage 3: Load columns and pass the saved sort column to be set internally
             if self.source_file.get() and self.dest_file.get():
                 saved_sort_col = config.get("sort_column", "")
                 # Load columns WITHOUT applying suggestions, as they will be loaded from config
-                self.load_columns(saved_sort_col=saved_sort_col, apply_suggestions=False)
+                self.safe_load_columns(saved_sort_col=saved_sort_col, apply_suggestions=False)
 
                 # Stage 4: Apply the detailed column mappings
                 mappings = config.get("mapping", {})
@@ -569,6 +730,15 @@ class ExcelDataMapper:
         if len(self.source_file.get()) > 255 or len(self.dest_file.get()) > 255:
             messagebox.showwarning("Warning", "File paths are very long (>255 characters). This might cause issues.")
 
+        # Check file accessibility before starting transfer
+        if not self.check_file_accessibility(self.source_file.get()):
+            messagebox.showerror("Error", f"Cannot access source file: {self.source_file.get()}")
+            return
+            
+        if not self.check_file_accessibility(self.dest_file.get()):
+            messagebox.showerror("Error", f"Cannot access destination file: {self.dest_file.get()}")
+            return
+
         # --- Disable Widgets & Start Thread ---
         self.disable_controls()
         self.update_status("Starting data transfer...")
@@ -623,7 +793,7 @@ class ExcelDataMapper:
         self.load_cols_button.config(state=NORMAL)
     
     def perform_data_transfer(self, mappings):
-        """Perform the actual data transfer"""
+        """Perform the actual data transfer with enhanced file handle management"""
         # Create backup of destination file
         dest_path = Path(self.dest_file.get())
         backup_path = dest_path.with_suffix('.backup' + dest_path.suffix)
@@ -685,8 +855,12 @@ class ExcelDataMapper:
             raise e
     
     def read_source_data(self):
-        """Reads data from the source file based on the pre-parsed logical headers."""
+        """Reads data from the source file with proper resource management."""
+        workbook = None
         try:
+            # Force garbage collection before opening
+            FileHandleManager.force_release_handles()
+            
             workbook = openpyxl.load_workbook(self.source_file.get(), data_only=True)
             worksheet = workbook.active
             
@@ -711,16 +885,32 @@ class ExcelDataMapper:
                 if has_data:
                     data.append(row_data)
             
-            workbook.close()
-            return data
+            # Make a copy to ensure no references to workbook remain
+            result = list(data)
+            
+            return result
             
         except Exception as e:
             self.log_error(f"Error reading source data: {str(e)}")
             raise
+        finally:
+            # Guaranteed cleanup
+            if workbook:
+                try:
+                    workbook.close()
+                except Exception as e:
+                    self.log_error(f"Error closing source workbook: {str(e)}")
+            
+            # Force garbage collection
+            FileHandleManager.force_release_handles()
     
     def write_to_destination(self, source_data, mappings):
-        """Write data to destination Excel file, handling merged cells correctly and robustly."""
+        """Write data to destination Excel file with proper resource management."""
+        workbook = None
         try:
+            # Force garbage collection before opening
+            FileHandleManager.force_release_handles()
+            
             workbook = openpyxl.load_workbook(self.dest_file.get())
             worksheet = workbook.active
 
@@ -738,7 +928,7 @@ class ExcelDataMapper:
                         merged_range.min_col <= col_idx <= merged_range.max_col):
                         return worksheet.cell(row=merged_range.min_row, column=merged_range.min_col)
                 
-                return cell # Fallback
+                return cell
 
             # --- 1. Clear existing data ---
             max_data_row = worksheet.max_row
@@ -778,13 +968,23 @@ class ExcelDataMapper:
 
                         cell_to_write.value = source_value
 
+            # Save and close immediately
             workbook.save(self.dest_file.get())
-            workbook.close()
 
         except Exception as e:
             self.log_error(f"Error writing to destination: {str(e)}")
             self.log_error(traceback.format_exc())
             raise
+        finally:
+            # Guaranteed cleanup
+            if workbook:
+                try:
+                    workbook.close()
+                except Exception as e:
+                    self.log_error(f"Error closing destination workbook: {str(e)}")
+            
+            # Force garbage collection
+            FileHandleManager.force_release_handles()
 
     def toggle_theme(self):
         """Toggle between light and dark themes"""
@@ -833,7 +1033,7 @@ class ExcelDataMapper:
         """Show a custom about dialog with the application icon."""
         about_dialog = tk.Toplevel(self.root)
         about_dialog.title("About Excel Data Mapper")
-        about_dialog.geometry("400x300") # Increased height slightly for button
+        about_dialog.geometry("400x350")
         about_dialog.resizable(False, False)
         
         # Set the icon if available
@@ -845,10 +1045,10 @@ class ExcelDataMapper:
 
         # Center the dialog over the main window
         x = self.root.winfo_x() + (self.root.winfo_width() // 2) - 200
-        y = self.root.winfo_y() + (self.root.winfo_height() // 2) - 150 # Adjusted for new height
+        y = self.root.winfo_y() + (self.root.winfo_height() // 2) - 150
         about_dialog.geometry(f"+{x}+{y}")
 
-        about_text = """Excel Data Mapper v1.0
+        about_text = """Excel Data Mapper v1.1
 
 A powerful tool for mapping and transferring data 
 between Excel files while preserving formatting.
@@ -860,6 +1060,7 @@ Features:
 • Configuration save/load
 • Theme switching
 • Comprehensive error handling
+• Enhanced file handle management
 
 Developed by Do Huy Hoang
 https://github.com/dohuyhoang93
@@ -875,7 +1076,7 @@ https://github.com/dohuyhoang93
 
         # OK button to close the dialog, packed inside its frame
         ok_button = ttk_boot.Button(button_frame, text="OK", command=about_dialog.destroy, bootstyle=PRIMARY)
-        ok_button.pack() # No need for pady here as the frame has it
+        ok_button.pack()
 
         # Make the dialog modal
         about_dialog.transient(self.root)
