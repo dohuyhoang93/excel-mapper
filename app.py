@@ -92,7 +92,7 @@ class ExcelDataMapper:
     def __init__(self):
         self.root = ttk_boot.Window(themename="flatly")
         self.root.title("Excel Data Mapper")
-        self.root.geometry("900x700")
+        self.root.geometry("1000x800")
         
         # Icon handling for PyInstaller
         self.icon_path = None
@@ -119,7 +119,15 @@ class ExcelDataMapper:
         self.dest_header_start_row = tk.IntVar(value=9)
         self.dest_header_end_row = tk.IntVar(value=9)
         self.sort_column = tk.StringVar()
+        self.dest_stop_row = tk.IntVar(value=0)  # 0 means no limit - DEPRECATED by write_end_row
         self.current_theme = "flatly"
+
+        # Write zone settings
+        self.dest_write_start_row = tk.IntVar(value=11)
+        self.dest_write_end_row = tk.IntVar(value=0) # 0 for no limit
+        self.dest_skip_rows = tk.StringVar(value="") # e.g., "15, 20-25"
+        self.respect_cell_protection = tk.BooleanVar(value=True)
+        self.respect_formulas = tk.BooleanVar(value=True)
         
         # Data storage
         self.source_columns = {} # {name: index}
@@ -213,6 +221,24 @@ class ExcelDataMapper:
         self.load_cols_button = ttk_boot.Button(header_frame, text="Load Columns", command=self.safe_load_columns, bootstyle=INFO)
         self.load_cols_button.grid(row=0, column=10, padx=20)
         
+        # Write zone configuration
+        write_zone_frame = ttk_boot.LabelFrame(main_frame, text="Setting write zone", padding=10)
+        write_zone_frame.pack(fill=X, pady=(0, 10))
+
+        ttk_boot.Label(write_zone_frame, text="Start Write Row:").grid(row=0, column=0, sticky=W, pady=2)
+        ttk_boot.Spinbox(write_zone_frame, from_=1, to=99999, textvariable=self.dest_write_start_row, width=7).grid(row=0, column=1, padx=5)
+
+        ttk_boot.Label(write_zone_frame, text="End Write Row (0=unlimited):").grid(row=0, column=2, sticky=W, padx=(20, 0), pady=2)
+        ttk_boot.Spinbox(write_zone_frame, from_=0, to=99999, textvariable=self.dest_write_end_row, width=7).grid(row=0, column=3, padx=5)
+
+        ttk_boot.Label(write_zone_frame, text="Skip Rows (e.g., 15, 20-25):").grid(row=0, column=4, sticky=W, padx=(20, 0), pady=2)
+        ttk_boot.Entry(write_zone_frame, textvariable=self.dest_skip_rows, width=30).grid(row=0, column=5, padx=5, sticky=EW)
+        
+        ttk_boot.Checkbutton(write_zone_frame, text="Respect cell protection", variable=self.respect_cell_protection).grid(row=0, column=6, padx=(20, 5))
+        ttk_boot.Checkbutton(write_zone_frame, text="Respect formulas", variable=self.respect_formulas).grid(row=0, column=7, padx=5)
+
+        write_zone_frame.columnconfigure(5, weight=1)
+
         # Column mapping section
         self.mapping_frame = ttk_boot.LabelFrame(main_frame, text="Column Mapping", padding=10)
         self.mapping_frame.pack(fill=BOTH, expand=True, pady=(0, 10))
@@ -604,6 +630,11 @@ class ExcelDataMapper:
                 "source_header_end_row": self.source_header_end_row.get(),
                 "dest_header_start_row": self.dest_header_start_row.get(),
                 "dest_header_end_row": self.dest_header_end_row.get(),
+                "dest_write_start_row": self.dest_write_start_row.get(),
+                "dest_write_end_row": self.dest_write_end_row.get(),
+                "dest_skip_rows": self.dest_skip_rows.get(),
+                "respect_cell_protection": self.respect_cell_protection.get(),
+                "respect_formulas": self.respect_formulas.get(),
                 "sort_column": self.sort_column.get(),
                 "theme": self.current_theme,
                 "mapping": mappings,
@@ -643,6 +674,13 @@ class ExcelDataMapper:
             self.source_header_end_row.set(config.get("source_header_end_row", 1))
             self.dest_header_start_row.set(config.get("dest_header_start_row", 9))
             self.dest_header_end_row.set(config.get("dest_header_end_row", 9))
+            
+            # Load write zone settings
+            self.dest_write_start_row.set(config.get("dest_write_start_row", self.dest_header_end_row.get() + 1))
+            self.dest_write_end_row.set(config.get("dest_write_end_row", 0))
+            self.dest_skip_rows.set(config.get("dest_skip_rows", ""))
+            self.respect_cell_protection.set(config.get("respect_cell_protection", True))
+            self.respect_formulas.set(config.get("respect_formulas", True))
 
             # Stage 2: Load and apply the theme
             new_theme = config.get("theme", "flatly")
@@ -690,6 +728,11 @@ class ExcelDataMapper:
                 self.source_header_end_row.set(config.get("source_header_end_row", 1))
                 self.dest_header_start_row.set(config.get("dest_header_start_row", 9))
                 self.dest_header_end_row.set(config.get("dest_header_end_row", 9))
+
+                # Load write zone settings from last config
+                self.dest_write_start_row.set(config.get("dest_write_start_row", self.dest_header_end_row.get() + 1))
+                self.dest_write_end_row.set(config.get("dest_write_end_row", 0))
+                self.dest_skip_rows.set(config.get("dest_skip_rows", ""))
 
                 # Load and apply theme from last config
                 new_theme = config.get("theme", "flatly")
@@ -904,71 +947,153 @@ class ExcelDataMapper:
             # Force garbage collection
             FileHandleManager.force_release_handles()
     
+    def _parse_skip_rows(self, skip_rows_str: str) -> set:
+        """Parses a string like '15, 20-25, 30' into a set of integers."""
+        skipped_rows = set()
+        if not skip_rows_str:
+            return skipped_rows
+        
+        parts = skip_rows_str.split(',')
+        for part in parts:
+            part = part.strip()
+            if not part:
+                continue
+            if '-' in part:
+                try:
+                    start, end = map(int, part.split('-'))
+                    if start <= end:
+                        skipped_rows.update(range(start, end + 1))
+                except ValueError:
+                    self.log_warning(f"Could not parse range in skip_rows: {part}")
+            else:
+                try:
+                    skipped_rows.add(int(part))
+                except ValueError:
+                    self.log_warning(f"Could not parse number in skip_rows: {part}")
+        return skipped_rows
+
     def write_to_destination(self, source_data, mappings):
-        """Write data to destination Excel file with proper resource management."""
+        """Write data to destination Excel file with protection-aware advanced write zone logic."""
         workbook = None
         try:
-            # Force garbage collection before opening
             FileHandleManager.force_release_handles()
-            
             workbook = openpyxl.load_workbook(self.dest_file.get())
             worksheet = workbook.active
 
             dest_headers_map = self.dest_columns
-            start_row = self.dest_header_end_row.get() + 1
+            
+            # Get write zone and protection settings
+            start_write_row = self.dest_write_start_row.get()
+            end_write_row = self.dest_write_end_row.get()
+            skip_rows_str = self.dest_skip_rows.get()
+            skipped_rows = self._parse_skip_rows(skip_rows_str)
+            respect_protection = self.respect_cell_protection.get()
+            respect_formulas = self.respect_formulas.get()
+            sheet_is_protected = worksheet.protection.sheet
+
+            if start_write_row <= self.dest_header_end_row.get():
+                raise ValueError("Start Write Row must be after the destination header rows.")
 
             def get_writable_cell(row_idx, col_idx):
-                """Resolves merged cells to find the top-left anchor cell which is writable."""
                 cell = worksheet.cell(row=row_idx, column=col_idx)
                 if not isinstance(cell, MergedCell):
                     return cell
-
                 for merged_range in worksheet.merged_cells.ranges:
                     if (merged_range.min_row <= row_idx <= merged_range.max_row and
                         merged_range.min_col <= col_idx <= merged_range.max_col):
                         return worksheet.cell(row=merged_range.min_row, column=merged_range.min_col)
-                
                 return cell
 
-            # --- 1. Clear existing data ---
-            max_data_row = worksheet.max_row
-            if max_data_row >= start_row:
-                cleared_anchors = set()
-                for row_to_clear in range(start_row, max_data_row + 50):
+            # --- 1. Clear existing data, respecting protection and skip rules ---
+            clear_until_row = end_write_row if end_write_row > 0 else worksheet.max_row + 50
+            
+            cleared_anchors = set()
+            for row_to_clear in range(start_write_row, clear_until_row + 1):
+                if row_to_clear in skipped_rows:
+                    continue
+
+                # Check for protection before clearing
+                if respect_protection and sheet_is_protected:
+                    is_row_locked = False
                     for dest_col_num in dest_headers_map.values():
-                        anchor_cell = get_writable_cell(row_to_clear, dest_col_num)
-                        if anchor_cell.row >= start_row and anchor_cell.coordinate not in cleared_anchors:
-                            if anchor_cell.data_type != 'f':
-                                anchor_cell.value = None
-                            cleared_anchors.add(anchor_cell.coordinate)
+                        cell = get_writable_cell(row_to_clear, dest_col_num)
+                        if cell.protection and cell.protection.locked:
+                            is_row_locked = True
+                            break
+                    if is_row_locked:
+                        continue
 
-            # --- 2. Write new data ---
+                for dest_col_num in dest_headers_map.values():
+                    anchor_cell = get_writable_cell(row_to_clear, dest_col_num)
+                    if (anchor_cell.row >= start_write_row and 
+                        anchor_cell.coordinate not in cleared_anchors and
+                        anchor_cell.row not in skipped_rows):
+                        
+                        if respect_formulas and anchor_cell.data_type == 'f':
+                            continue
+                        
+                        anchor_cell.value = None
+                        cleared_anchors.add(anchor_cell.coordinate)
+
+            # --- 2. Write new data with protection-aware skipping logic ---
+            current_write_row = start_write_row
+            stop_writing = False
+
             for i, row_data in enumerate(source_data):
-                current_row = start_row + i
+                # Find the next valid (not skipped, not protected) row to write to
+                while True:
+                    # Check if we've gone past the end limit
+                    if end_write_row > 0 and current_write_row > end_write_row:
+                        self.log_warning(f"Reached end of write zone (row {end_write_row}). Stopping data transfer. {len(source_data) - i} source rows were not written.")
+                        stop_writing = True
+                        break
+                    
+                    # Condition 1: Is the row explicitly skipped by the user?
+                    is_invalid = current_write_row in skipped_rows
+                    
+                    # Condition 2: If not skipped, is it protected? (only check if enabled)
+                    if not is_invalid and respect_protection and sheet_is_protected:
+                        for dest_col_num in dest_headers_map.values():
+                            cell = get_writable_cell(current_write_row, dest_col_num)
+                            if cell.protection and cell.protection.locked:
+                                is_invalid = True
+                                break # Found a locked cell, row is invalid
+                    
+                    if not is_invalid:
+                        break # Found a valid row, exit the 'while' loop
+                    
+                    current_write_row += 1 # Row is invalid, move to the next one
 
+                if stop_writing:
+                    break # Exit the main 'for' loop
+
+                # Update progress bar
                 if i > 0 and i % 10 == 0:
                     progress = 50 + (i / len(source_data)) * 45
                     self.progress['value'] = progress
                     self.root.update()
 
+                # Write data to the found valid row
                 for source_col_name, dest_col_name in mappings.items():
                     if dest_col_name in dest_headers_map:
                         dest_col_num = dest_headers_map[dest_col_name]
                         source_value = row_data.get(source_col_name, "")
 
-                        cell_to_write = get_writable_cell(current_row, dest_col_num)
+                        cell_to_write = get_writable_cell(current_write_row, dest_col_num)
                         
-                        # CRITICAL FIX: If the anchor cell is above the intended row (due to a downward merge
-                        # from the header), skip writing to prevent corrupting the header.
-                        if cell_to_write.row < current_row:
+                        if cell_to_write.row < current_write_row:
                             continue
-
-                        if cell_to_write.data_type == 'f':
+                        
+                        if respect_formulas and cell_to_write.data_type == 'f':
                             continue
 
                         cell_to_write.value = source_value
+                
+                current_write_row += 1 # Move pointer for the next source record
 
-            # Save and close immediately
+            if stop_writing:
+                messagebox.showwarning("Write Limit Reached", f"Data transfer stopped at row {end_write_row} as configured. Not all source data may have been transferred.")
+
             workbook.save(self.dest_file.get())
 
         except Exception as e:
@@ -976,14 +1101,11 @@ class ExcelDataMapper:
             self.log_error(traceback.format_exc())
             raise
         finally:
-            # Guaranteed cleanup
             if workbook:
                 try:
                     workbook.close()
                 except Exception as e:
                     self.log_error(f"Error closing destination workbook: {str(e)}")
-            
-            # Force garbage collection
             FileHandleManager.force_release_handles()
 
     def toggle_theme(self):
@@ -1092,6 +1214,10 @@ https://github.com/dohuyhoang93
         """Log info message"""
         logging.info(message)
     
+    def log_warning(self, message):
+        """Log warning message"""
+        logging.warning(message)
+
     def log_error(self, message):
         """Log error message"""
         logging.error(message)

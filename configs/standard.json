@@ -1,10 +1,14 @@
 {
   "source_file": "C:/Users/dohoang/Downloads/Documents/Source.xlsx",
-  "dest_file": "C:/Users/dohoang/Downloads/Documents/Destination_backup_20250728_173141.xlsx",
+  "dest_file": "C:/Users/dohoang/Downloads/Documents/Destination.xlsx",
   "source_header_start_row": 3,
   "source_header_end_row": 4,
   "dest_header_start_row": 9,
   "dest_header_end_row": 10,
+  "dest_write_start_row": 11,
+  "dest_write_end_row": 23,
+  "dest_skip_rows": "12-15",
+  "respect_cell_protection": true,
   "sort_column": "Contents",
   "theme": "flatly",
   "mapping": {
@@ -18,5 +22,5 @@
     "Amount": "VND or US$　or JPY - Amount",
     "Official invoice number": "Official invoice number"
   },
-  "created_date": "2025-07-30T15:10:58.455833"
+  "created_date": "2025-07-31T15:04:42.020647"
 }
