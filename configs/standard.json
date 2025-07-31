@@ -9,8 +9,9 @@
   "dest_write_end_row": 23,
   "dest_skip_rows": "12-15",
   "respect_cell_protection": true,
-  "sort_column": "Contents",
-  "theme": "flatly",
+  "respect_formulas": true,
+  "sort_column": "",
+  "theme": "superhero",
   "mapping": {
     "Trading   date\nNgày lập cover": "Trading   date",
     "Applicant - Division": "Cost burden - Division CD",
@@ -22,5 +23,5 @@
     "Amount": "VND or US$　or JPY - Amount",
     "Official invoice number": "Official invoice number"
   },
-  "created_date": "2025-07-31T15:04:42.020647"
+  "created_date": "2025-07-31T15:51:22.947438"
 }
