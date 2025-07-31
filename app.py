@@ -128,6 +128,7 @@ class ExcelDataMapper:
         self.dest_skip_rows = tk.StringVar(value="") # e.g., "15, 20-25"
         self.respect_cell_protection = tk.BooleanVar(value=True)
         self.respect_formulas = tk.BooleanVar(value=True)
+        self.detection_keywords = tk.StringVar(value="total,sum,cộng,tổng,thành tiền")
         
         # Data storage
         self.source_columns = {} # {name: index}
@@ -169,6 +170,7 @@ class ExcelDataMapper:
 
         settings_menu = tk.Menu(settings_button, tearoff=0)
         settings_menu.add_command(label="Switch Theme", command=self.toggle_theme)
+        settings_menu.add_command(label="Configure Detection...", command=self.open_detection_config_dialog)
         
         settings_button.config(command=lambda: settings_menu.post(settings_button.winfo_rootx(), settings_button.winfo_rooty() + settings_button.winfo_height()))
 
@@ -225,19 +227,28 @@ class ExcelDataMapper:
         write_zone_frame = ttk_boot.LabelFrame(main_frame, text="Setting write zone", padding=10)
         write_zone_frame.pack(fill=X, pady=(0, 10))
 
-        ttk_boot.Label(write_zone_frame, text="Start Write Row:").grid(row=0, column=0, sticky=W, pady=2)
-        ttk_boot.Spinbox(write_zone_frame, from_=1, to=99999, textvariable=self.dest_write_start_row, width=7).grid(row=0, column=1, padx=5)
-
-        ttk_boot.Label(write_zone_frame, text="End Write Row (0=unlimited):").grid(row=0, column=2, sticky=W, padx=(20, 0), pady=2)
-        ttk_boot.Spinbox(write_zone_frame, from_=0, to=99999, textvariable=self.dest_write_end_row, width=7).grid(row=0, column=3, padx=5)
-
-        ttk_boot.Label(write_zone_frame, text="Skip Rows (e.g., 15, 20-25):").grid(row=0, column=4, sticky=W, padx=(20, 0), pady=2)
-        ttk_boot.Entry(write_zone_frame, textvariable=self.dest_skip_rows, width=30).grid(row=0, column=5, padx=5, sticky=EW)
+        # --- Row 0: Boundaries ---
+        ttk_boot.Label(write_zone_frame, text="Start Write Row:").grid(row=0, column=0, sticky=W, padx=5, pady=5)
+        ttk_boot.Spinbox(write_zone_frame, from_=1, to=99999, textvariable=self.dest_write_start_row, width=8).grid(row=0, column=1, sticky=W, padx=5)
         
-        ttk_boot.Checkbutton(write_zone_frame, text="Respect cell protection", variable=self.respect_cell_protection).grid(row=0, column=6, padx=(20, 5))
-        ttk_boot.Checkbutton(write_zone_frame, text="Respect formulas", variable=self.respect_formulas).grid(row=0, column=7, padx=5)
+        ttk_boot.Label(write_zone_frame, text="End Write Row:").grid(row=0, column=2, sticky=W, padx=(20, 5), pady=5)
+        ttk_boot.Spinbox(write_zone_frame, from_=0, to=99999, textvariable=self.dest_write_end_row, width=8).grid(row=0, column=3, sticky=W, padx=5)
+        
+        self.detect_button = ttk_boot.Button(write_zone_frame, text="Detect Zone", command=self.detect_write_zone, bootstyle="outline-info")
+        self.detect_button.grid(row=0, column=4, padx=(10, 5), pady=5, sticky=E)
 
-        write_zone_frame.columnconfigure(5, weight=1)
+        # --- Row 1: Skip Rules ---
+        ttk_boot.Label(write_zone_frame, text="Skip Rows (e.g., 15, 20-25):").grid(row=1, column=0, sticky=W, padx=5, pady=5)
+        ttk_boot.Entry(write_zone_frame, textvariable=self.dest_skip_rows).grid(row=1, column=1, columnspan=4, padx=5, sticky=EW)
+
+        # --- Row 2: Protection Rules ---
+        ttk_boot.Checkbutton(write_zone_frame, text="Respect cell protection", variable=self.respect_cell_protection).grid(row=2, column=0, columnspan=2, sticky=W, padx=5, pady=5)
+        ttk_boot.Checkbutton(write_zone_frame, text="Respect formulas", variable=self.respect_formulas).grid(row=2, column=2, columnspan=3, sticky=W, padx=(20, 5), pady=5)
+
+        # Configure column weights for responsive resizing
+        write_zone_frame.columnconfigure(1, weight=1)
+        write_zone_frame.columnconfigure(3, weight=1)
+        write_zone_frame.columnconfigure(4, weight=2)
 
         # Column mapping section
         self.mapping_frame = ttk_boot.LabelFrame(main_frame, text="Column Mapping", padding=10)
@@ -266,6 +277,9 @@ class ExcelDataMapper:
         
         self.execute_button = ttk_boot.Button(action_frame, text="Execute Transfer", command=self.execute_transfer, bootstyle=PRIMARY)
         self.execute_button.pack(side=RIGHT, padx=5)
+        
+        self.preview_button = ttk_boot.Button(action_frame, text="Preview Transfer", command=self.preview_transfer, bootstyle="outline-secondary")
+        self.preview_button.pack(side=RIGHT, padx=5)
         
         # Status bar
         self.status_frame = ttk_boot.Frame(main_frame)
@@ -635,6 +649,7 @@ class ExcelDataMapper:
                 "dest_skip_rows": self.dest_skip_rows.get(),
                 "respect_cell_protection": self.respect_cell_protection.get(),
                 "respect_formulas": self.respect_formulas.get(),
+                "detection_keywords": self.detection_keywords.get(),
                 "sort_column": self.sort_column.get(),
                 "theme": self.current_theme,
                 "mapping": mappings,
@@ -681,6 +696,7 @@ class ExcelDataMapper:
             self.dest_skip_rows.set(config.get("dest_skip_rows", ""))
             self.respect_cell_protection.set(config.get("respect_cell_protection", True))
             self.respect_formulas.set(config.get("respect_formulas", True))
+            self.detection_keywords.set(config.get("detection_keywords", "total,sum,cộng,tổng,thành tiền"))
 
             # Stage 2: Load and apply the theme
             new_theme = config.get("theme", "flatly")
@@ -1222,6 +1238,201 @@ https://github.com/dohuyhoang93
         """Log error message"""
         logging.error(message)
 
+    def open_detection_config_dialog(self):
+        """Opens a dialog to configure detection keywords."""
+        DetectionConfigDialog(self)
+
+    def detect_write_zone(self):
+        """Detects start/end rows, correctly handling merged cells and scanning all columns."""
+        if not self.dest_file.get() or not os.path.exists(self.dest_file.get()):
+            messagebox.showwarning("Warning", "Please select a valid destination file first.")
+            return
+
+        try:
+            self.update_status("Detecting write zone...")
+            
+            predicted_start_row = self.dest_header_end_row.get() + 1
+            self.dest_write_start_row.set(predicted_start_row)
+            
+            predicted_end_row = 0
+            reason = "No limit found (scanned to end of file)."
+            parser = None
+            try:
+                parser = ExcelParser(self.dest_file.get())
+                with parser as p:
+                    ws = p.worksheet
+                    merged_cell_ranges = list(ws.merged_cells.ranges)
+
+                    def get_value_from_merged_cell(row, col):
+                        """Gets a cell's value, resolving merges."""
+                        cell = ws.cell(row=row, column=col)
+                        if not isinstance(cell, MergedCell):
+                            return cell.value
+                        for cell_range in merged_cell_ranges:
+                            if cell.coordinate in cell_range:
+                                return ws.cell(row=cell_range.min_row, column=cell_range.min_col).value
+                        return None
+
+                    keywords_str = self.detection_keywords.get().lower()
+                    total_keywords = [k.strip() for k in keywords_str.split(',') if k.strip()]
+                    
+                    # Priority 1: Find a "total" row, scanning ALL columns
+                    for row in range(predicted_start_row, ws.max_row + 1):
+                        for col in range(1, ws.max_column + 1): # Scan all columns
+                            cell_val = get_value_from_merged_cell(row, col)
+                            if isinstance(cell_val, str) and total_keywords:
+                                if any(keyword in cell_val.lower() for keyword in total_keywords):
+                                    predicted_end_row = row - 1
+                                    reason = f"Detected keyword '{cell_val.strip()}' on row {row}."
+                                    break
+                        if predicted_end_row > 0:
+                            break
+                    
+                    # Priority 2: Find the first blank row
+                    if predicted_end_row == 0:
+                        for row in range(predicted_start_row, ws.max_row + 1):
+                            is_row_blank = True
+                            for col in range(1, ws.max_column + 1):
+                                if get_value_from_merged_cell(row, col) is not None:
+                                    is_row_blank = False
+                                    break
+                            if is_row_blank:
+                                predicted_end_row = row - 1
+                                reason = f"Detected first blank row at {row}."
+                                break
+                
+                if predicted_end_row >= predicted_start_row:
+                    self.dest_write_end_row.set(predicted_end_row)
+                    self.update_status(f"Detection complete. Start: {predicted_start_row}, End: {predicted_end_row}. Reason: {reason}")
+                else:
+                    self.dest_write_end_row.set(0)
+                    self.update_status(f"Detection complete. Start: {predicted_start_row}, End: Unlimited.")
+
+            finally:
+                if parser:
+                    parser._cleanup()
+                FileHandleManager.force_release_handles()
+
+        except Exception as e:
+            self.log_error(f"Error detecting write zone: {str(e)}")
+            messagebox.showerror("Error", f"Failed to detect write zone: {str(e)}")
+            self.update_status("Detection failed")
+
+    def preview_transfer(self):
+        """Runs a detailed simulation and shows a comprehensive preview report."""
+        # --- Validation ---
+        if not self.source_file.get() or not os.path.exists(self.source_file.get()):
+            messagebox.showerror("Error", "Please select a valid source file.")
+            return
+        if not self.dest_file.get() or not os.path.exists(self.dest_file.get()):
+            messagebox.showerror("Error", "Please select a valid destination file.")
+            return
+        if not hasattr(self, 'mapping_combos') or not self.mapping_combos:
+            messagebox.showwarning("Warning", "Please load columns first.")
+            return
+        
+        self.update_status("Generating simulation report...")
+        
+        try:
+            # --- Data Collection for Simulation ---
+            report_data = {}
+            
+            # 1. Get source data count
+            source_data = self.read_source_data()
+            report_data['source_row_count'] = len(source_data)
+            
+            # 2. Analyze destination write zone
+            parser = None
+            try:
+                parser = ExcelParser(self.dest_file.get())
+                with parser as p:
+                    ws = p.worksheet
+                    start_row = self.dest_write_start_row.get()
+                    end_row = self.dest_write_end_row.get()
+                    
+                    if start_row <= self.dest_header_end_row.get():
+                        PreviewDialog(self, {"error": "Start Write Row must be after the destination header."})
+                        return
+
+                    end_limit = end_row if end_row > 0 else ws.max_row
+                    if end_row > 0 and start_row > end_row:
+                        PreviewDialog(self, {"error": "Start Write Row cannot be after End Write Row."})
+                        return
+
+                    report_data['start_row'] = start_row
+                    report_data['end_row'] = end_row or "Unlimited"
+                    report_data['total_zone_rows'] = (end_limit - start_row + 1) if end_row > 0 else "Unlimited"
+
+                    skipped_rows_set = self._parse_skip_rows(self.dest_skip_rows.get())
+                    respect_protection = self.respect_cell_protection.get()
+                    respect_formulas = self.respect_formulas.get()
+                    sheet_is_protected = ws.protection.sheet
+                    
+                    user_skipped_count = 0
+                    protected_skipped_count = 0
+                    
+                    # Calculate skippable rows within the defined zone
+                    for r in range(start_row, end_limit + 1):
+                        is_user_skipped = r in skipped_rows_set
+                        is_auto_skipped = False
+
+                        if is_user_skipped:
+                            user_skipped_count += 1
+                            continue # No need to check further if user already skipped it
+
+                        if respect_protection and sheet_is_protected:
+                            for c in self.dest_columns.values():
+                                if ws.cell(r, c).protection and ws.cell(r, c).protection.locked:
+                                    is_auto_skipped = True
+                                    break
+                        
+                        if not is_auto_skipped and respect_formulas:
+                             for c in self.dest_columns.values():
+                                if ws.cell(r, c).data_type == 'f':
+                                    is_auto_skipped = True
+                                    break
+                        
+                        if is_auto_skipped:
+                            protected_skipped_count += 1
+                    
+                    report_data['user_skipped_count'] = user_skipped_count
+                    report_data['protected_skipped_count'] = protected_skipped_count
+                    
+                    if end_row > 0:
+                        available_slots = report_data['total_zone_rows'] - user_skipped_count - protected_skipped_count
+                        report_data['available_slots'] = max(0, available_slots)
+                    else:
+                        report_data['available_slots'] = "Unlimited"
+
+            finally:
+                if parser:
+                    parser._cleanup()
+                FileHandleManager.force_release_handles()
+
+            # 3. Show Preview Dialog with collected data
+            report_data['settings'] = self.get_current_settings()
+            PreviewDialog(self, report_data)
+            self.update_status("Preview report generated.")
+
+        except Exception as e:
+            self.log_error(f"Error generating preview: {str(e)}")
+            messagebox.showerror("Error", f"Failed to generate preview: {str(e)}")
+            self.update_status("Preview failed")
+
+    def get_current_settings(self) -> dict:
+        """Returns a dictionary of the current settings for the preview dialog."""
+        return {
+            "Source File": os.path.basename(self.source_file.get()),
+            "Destination File": os.path.basename(self.dest_file.get()),
+            "Sort Column": self.sort_column.get() or "None",
+            "---": "---", # Separator
+            "Start Write Row": self.dest_write_start_row.get(),
+            "End Write Row": self.dest_write_end_row.get() or "Unlimited",
+            "Skip Rows": self.dest_skip_rows.get() or "None",
+            "Respect Protection": "Yes" if self.respect_cell_protection.get() else "No",
+            "Respect Formulas": "Yes" if self.respect_formulas.get() else "No",
+        }
+
     def show_debug_info(self):
         pass
     
@@ -1232,6 +1443,123 @@ https://github.com/dohuyhoang93
         except Exception as e:
             self.log_error(f"Critical error in main loop: {str(e)}")
             messagebox.showerror("Critical Error", f"Application encountered a critical error: {str(e)}")
+
+class PreviewDialog(tk.Toplevel):
+    """A comprehensive simulation report dialog."""
+    def __init__(self, parent, data: dict):
+        super().__init__(parent.root)
+        self.title("Transfer Simulation Report")
+        self.geometry("650x750")
+        self.transient(parent.root)
+        self.grab_set()
+        
+        main_frame = ttk_boot.Frame(self, padding=10)
+        main_frame.pack(fill=BOTH, expand=True)
+
+        # --- Handle potential errors first ---
+        if "error" in data:
+            error_label = ttk_boot.Label(main_frame, text=f"❌ CRITICAL ERROR\n\n{data['error']}", bootstyle=DANGER, font=("Segoe UI", 12, "bold"), justify=CENTER)
+            error_label.pack(pady=20, padx=10)
+            ok_button = ttk_boot.Button(main_frame, text="Close", command=self.destroy, bootstyle="outline-danger")
+            ok_button.pack(pady=10)
+            return
+
+        # --- 1. The Verdict ---
+        verdict_frame = ttk_boot.LabelFrame(main_frame, text="Verdict", padding=10)
+        verdict_frame.pack(padx=10, pady=5, fill=X)
+        
+        source_count = data['source_row_count']
+        available_slots = data['available_slots']
+        
+        if available_slots == "Unlimited" or source_count <= available_slots:
+            verdict_text = "✅ PERFECT"
+            verdict_details = f"All {source_count} source rows will be transferred successfully."
+            verdict_style = SUCCESS
+        else:
+            verdict_text = "⚠️ WARNING"
+            verdict_details = f"Only {available_slots} of {source_count} source rows will be transferred. {source_count - available_slots} rows will be SKIPPED due to lack of space."
+            verdict_style = WARNING
+
+        ttk_boot.Label(verdict_frame, text=verdict_text, font=("Segoe UI", 14, "bold"), bootstyle=verdict_style).pack()
+        ttk_boot.Label(verdict_frame, text=verdict_details, wraplength=600).pack(pady=(5,0))
+
+        # --- 2. Data Flow Analysis ---
+        analysis_frame = ttk_boot.LabelFrame(main_frame, text="Data Flow Analysis", padding=10)
+        analysis_frame.pack(padx=10, pady=5, fill=X)
+
+        ttk_boot.Label(analysis_frame, text=f"Source data to transfer:", font="-weight bold").grid(row=0, column=0, sticky=W)
+        ttk_boot.Label(analysis_frame, text=f"{source_count} rows").grid(row=0, column=1, sticky=W, padx=5)
+        
+        ttk_boot.Separator(analysis_frame, orient=HORIZONTAL).grid(row=1, column=0, columnspan=2, sticky=EW, pady=5)
+
+        ttk_boot.Label(analysis_frame, text=f"Destination Write Zone:", font="-weight bold").grid(row=2, column=0, sticky=W)
+        ttk_boot.Label(analysis_frame, text=f"From row {data['start_row']} to {data['end_row']}").grid(row=2, column=1, sticky=W, padx=5)
+        
+        ttk_boot.Label(analysis_frame, text=f"  Total rows in zone:").grid(row=3, column=0, sticky=E, pady=(5,0))
+        ttk_boot.Label(analysis_frame, text=f"{data['total_zone_rows']}").grid(row=3, column=1, sticky=W, padx=5, pady=(5,0))
+        
+        ttk_boot.Label(analysis_frame, text=f"  (-) Rows skipped by user:").grid(row=4, column=0, sticky=E)
+        ttk_boot.Label(analysis_frame, text=f"{data['user_skipped_count']}").grid(row=4, column=1, sticky=W, padx=5)
+        
+        ttk_boot.Label(analysis_frame, text=f"  (-) Rows skipped (protected/formula):").grid(row=5, column=0, sticky=E)
+        ttk_boot.Label(analysis_frame, text=f"{data['protected_skipped_count']}").grid(row=5, column=1, sticky=W, padx=5)
+        
+        ttk_boot.Separator(analysis_frame, orient=HORIZONTAL).grid(row=6, column=0, columnspan=2, sticky=EW, pady=5)
+        
+        ttk_boot.Label(analysis_frame, text=f"(=) Available Write Slots:", font="-weight bold").grid(row=7, column=0, sticky=E)
+        ttk_boot.Label(analysis_frame, text=f"{data['available_slots']}", font="-weight bold").grid(row=7, column=1, sticky=W, padx=5)
+
+        # --- 3. Settings Confirmation ---
+        settings_frame = ttk_boot.LabelFrame(main_frame, text="Settings Used for Simulation", padding=10)
+        settings_frame.pack(padx=10, pady=5, fill=BOTH, expand=True)
+
+        row = 0
+        for key, value in data['settings'].items():
+            ttk_boot.Label(settings_frame, text=f"{key}", font="-weight bold").grid(row=row, column=0, sticky=W, padx=5, pady=1)
+            ttk_boot.Label(settings_frame, text=value).grid(row=row, column=1, sticky=W, padx=5, pady=1)
+            if key == "---":
+                ttk_boot.Separator(settings_frame, orient=HORIZONTAL).grid(row=row, column=0, columnspan=2, sticky=EW, pady=3)
+            row += 1
+        settings_frame.columnconfigure(1, weight=1)
+        
+        # --- Close Button ---
+        ok_button = ttk_boot.Button(main_frame, text="Close", command=self.destroy, bootstyle="outline-secondary")
+        ok_button.pack(pady=10)
+
+class DetectionConfigDialog(tk.Toplevel):
+    """Dialog to configure end-row detection keywords."""
+    def __init__(self, parent):
+        super().__init__(parent.root)
+        self.parent = parent
+        self.title("Configure Detection Keywords")
+        self.geometry("500x150")
+        self.transient(parent.root)
+        self.grab_set()
+
+        # Temporary variable for editing
+        self.temp_keywords = tk.StringVar(value=self.parent.detection_keywords.get())
+
+        main_frame = ttk_boot.Frame(self, padding=15)
+        main_frame.pack(fill=BOTH, expand=True)
+
+        ttk_boot.Label(main_frame, text="Enter keywords to detect the 'total' row, separated by commas:").pack(anchor=W)
+        
+        entry = ttk_boot.Entry(main_frame, textvariable=self.temp_keywords)
+        entry.pack(fill=X, pady=5)
+        
+        button_frame = ttk_boot.Frame(main_frame)
+        button_frame.pack(fill=X, pady=10)
+
+        save_button = ttk_boot.Button(button_frame, text="Save", command=self.save, bootstyle=SUCCESS)
+        save_button.pack(side=RIGHT, padx=5)
+        
+        cancel_button = ttk_boot.Button(button_frame, text="Cancel", command=self.destroy, bootstyle="secondary")
+        cancel_button.pack(side=RIGHT)
+
+    def save(self):
+        self.parent.detection_keywords.set(self.temp_keywords.get())
+        self.parent.log_info(f"Detection keywords updated to: {self.temp_keywords.get()}")
+        self.destroy()
 
 if __name__ == "__main__":
     try:
