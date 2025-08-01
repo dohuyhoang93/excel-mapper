@@ -1,6 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox, filedialog, simpledialog
-import tkinter.font as tkFont
+from tkinter import ttk, filedialog, simpledialog
 import ttkbootstrap as ttk_boot
 from ttkbootstrap.constants import *
 import json
@@ -9,8 +8,6 @@ import logging
 from pathlib import Path
 from typing import Optional
 import openpyxl
-from openpyxl.styles import *
-from openpyxl.utils import get_column_letter
 from openpyxl.cell.cell import MergedCell
 import subprocess
 import sys
@@ -22,8 +19,10 @@ import gc
 import time
 import psutil
 from logic.parser import ExcelParser
-from gui.widgets import (ScrollableFrame, AboutDialog, 
-                         PreviewDialog, DetectionConfigDialog)
+from gui.widgets import (ScrollableFrame, AboutDialog, PreviewDialog, 
+                         DetectionConfigDialog, show_custom_info, 
+                         show_custom_error, show_custom_warning, 
+                         show_custom_question)
 
 # Cấu hình logging
 logging.basicConfig(
@@ -85,16 +84,18 @@ class ExcelDataMapper:
     def __init__(self):
         self.root = ttk_boot.Window(themename="flatly")
         self.root.title("Excel Data Mapper")
-        self.root.geometry("1000x800")
+        self.root.geometry("1000x850")
         
         self.icon_path = None
         try:
+            # Correctly determine the base path for PyInstaller
             base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
             icon_path = os.path.join(base_path, "icon.ico")
             if os.path.exists(icon_path):
                 self.root.iconbitmap(icon_path)
                 self.icon_path = icon_path
         except Exception:
+            # If icon loading fails, do nothing and proceed
             pass
         
         self.source_file = tk.StringVar()
@@ -194,20 +195,17 @@ class ExcelDataMapper:
         ttk_boot.Checkbutton(write_zone_frame, text="Respect cell protection", variable=self.respect_cell_protection).grid(row=2, column=0, columnspan=2, sticky=W, padx=5, pady=5)
         ttk_boot.Checkbutton(write_zone_frame, text="Respect formulas", variable=self.respect_formulas).grid(row=2, column=2, columnspan=3, sticky=W, padx=(20, 5), pady=5)
 
-        # Column mapping section using the reusable ScrollableFrame widget
         mapping_container = ttk_boot.LabelFrame(main_frame, text="Column Mapping", padding=10)
         mapping_container.pack(fill=BOTH, expand=True, pady=(0, 10))
         self.mapping_scroll_frame = ScrollableFrame(mapping_container)
         self.mapping_scroll_frame.pack(fill=BOTH, expand=True)
         
-        # Sort configuration
         sort_frame = ttk_boot.LabelFrame(main_frame, text="Sort Configuration", padding=10)
         sort_frame.pack(fill=X, pady=(0, 10))
         ttk_boot.Label(sort_frame, text="Sort by Column (optional):").grid(row=0, column=0, sticky=W, pady=2)
         self.sort_combo = ttk_boot.Combobox(sort_frame, textvariable=self.sort_column, width=50)
         self.sort_combo.grid(row=0, column=1, padx=5, sticky=W)
         
-        # Action buttons
         action_frame = ttk_boot.Frame(main_frame)
         action_frame.pack(fill=X, pady=(0, 10))
         self.save_button = ttk_boot.Button(action_frame, text="Save Configuration", command=self.save_config, bootstyle=SUCCESS)
@@ -222,10 +220,14 @@ class ExcelDataMapper:
         # Status bar
         self.status_frame = ttk_boot.Frame(main_frame)
         self.status_frame.pack(fill=X, pady=(5, 0))
-        self.progress = ttk_boot.Progressbar(self.status_frame, mode='determinate', bootstyle=SUCCESS)
-        self.progress.pack(side=LEFT, fill=X, expand=True, padx=(0, 10))
+
+        # Pack label first to give it priority and prevent it from being obscured
         self.status_label = ttk_boot.Label(self.status_frame, text="Ready")
-        self.status_label.pack(side=RIGHT)
+        self.status_label.pack(side=RIGHT, padx=(5, 0))
+
+        # Pack progress bar second to fill the remaining space
+        self.progress = ttk_boot.Progressbar(self.status_frame, mode='determinate', bootstyle=SUCCESS)
+        self.progress.pack(side=LEFT, fill=X, expand=True, padx=(0, 5))
     
     def browse_source_file(self):
         filename = filedialog.askopenfilename(title="Select Source Excel file", filetypes=[("Excel files", "*.xlsx *.xls")])
@@ -245,10 +247,10 @@ class ExcelDataMapper:
             FileHandleManager.force_release_handles()
             self.update_status("File handles released")
             self.log_info("Forced release of Excel file handles")
-            messagebox.showinfo("Info", "Excel file handles have been released.", parent=self.root)
+            show_custom_info(self.root, self, "Info", "Excel file handles have been released.")
         except Exception as e:
             self.log_error(f"Error forcing handle release: {str(e)}")
-            messagebox.showerror("Error", f"Error releasing handles: {str(e)}", parent=self.root)
+            show_custom_error(self.root, self, "Error", f"Error releasing handles: {str(e)}")
     
     def check_file_accessibility(self, file_path: str) -> bool:
         try:
@@ -260,7 +262,7 @@ class ExcelDataMapper:
                     if processes:
                         process_names = [p['name'] for p in processes]
                         self.log_error(f"File locked by processes: {', '.join(process_names)}")
-                        messagebox.showwarning("File Locked", f"File is locked by: {', '.join(process_names)}\nPlease close these applications and try again.", parent=self.root)
+                        show_custom_warning(self.root, self, "File Locked", f"File is locked by: {', '.join(process_names)}\nPlease close these applications and try again.")
                     return False
             return True
         except Exception as e:
@@ -282,13 +284,13 @@ class ExcelDataMapper:
     def safe_load_columns(self, saved_sort_col: Optional[str] = None, apply_suggestions: bool = True):
         try:
             if not self.source_file.get() or not self.dest_file.get():
-                messagebox.showwarning("Warning", "Please select both source and destination files first.", parent=self.root)
+                show_custom_warning(self.root, self, "Warning", "Please select both source and destination files first.")
                 return
             if not self.check_file_accessibility(self.source_file.get()):
-                messagebox.showerror("Error", f"Cannot access source file: {self.source_file.get()}", parent=self.root)
+                show_custom_error(self.root, self, "Error", f"Cannot access source file: {self.source_file.get()}")
                 return
             if not self.check_file_accessibility(self.dest_file.get()):
-                messagebox.showerror("Error", f"Cannot access destination file: {self.dest_file.get()}", parent=self.root)
+                show_custom_error(self.root, self, "Error", f"Cannot access destination file: {self.dest_file.get()}")
                 return
             
             self.force_release_excel_handles()
@@ -299,7 +301,7 @@ class ExcelDataMapper:
             self.dest_columns = self.get_excel_columns(self.dest_file.get(), self.dest_header_start_row.get(), self.dest_header_end_row.get())
             
             if not self.source_columns or not self.dest_columns:
-                messagebox.showerror("Error", "Could not load columns. Please check file paths and header row numbers.", parent=self.root)
+                show_custom_error(self.root, self, "Error", "Could not load columns. Please check file paths and header row numbers.")
                 return
             
             source_keys = list(self.source_columns.keys())
@@ -312,7 +314,7 @@ class ExcelDataMapper:
             self.log_info("Columns loaded successfully")
         except Exception as e:
             self.log_error(f"Error loading columns: {str(e)}")
-            messagebox.showerror("Error", f"Failed to load columns: {str(e)}", parent=self.root)
+            show_custom_error(self.root, self, "Error", f"Failed to load columns: {str(e)}")
             self.update_status("Error loading columns")
         finally:
             FileHandleManager.force_release_handles()
@@ -342,7 +344,7 @@ class ExcelDataMapper:
         import re
         def normalize_and_tokenize(text: str) -> set:
             text = re.sub(r'[\s\u3000_\-]+', ' ', text)
-            text = re.sub(r'[()[\]{}]', '', text)
+            text = re.sub(r'[()[\\]{}]', '', text)
             return set(text.lower().strip().split())
         source_tokens = normalize_and_tokenize(source_col)
         best_match, max_score = "", 0
@@ -364,7 +366,7 @@ class ExcelDataMapper:
     def save_config(self):
         try:
             if not hasattr(self, 'mapping_combos') or not self.mapping_combos:
-                messagebox.showwarning("Warning", "No mappings to save. Please load columns first.", parent=self.root)
+                show_custom_warning(self.root, self, "Warning", "No mappings to save. Please load columns first.")
                 return
             config_file_path = filedialog.asksaveasfilename(title="Save Configuration As", defaultextension=".json", filetypes=[("JSON files", "*.json")])
             if not config_file_path: return
@@ -385,7 +387,7 @@ class ExcelDataMapper:
             self.log_info(f"Configuration saved: {config_file_path}")
         except Exception as e:
             self.log_error(f"Error saving configuration: {str(e)}")
-            messagebox.showerror("Error", f"Failed to save configuration: {str(e)}", parent=self.root)
+            show_custom_error(self.root, self, "Error", f"Failed to save configuration: {str(e)}")
     
     def load_config(self):
         try:
@@ -420,7 +422,7 @@ class ExcelDataMapper:
             self.log_info(f"Configuration loaded: {config_file_path}")
         except Exception as e:
             self.log_error(f"Error in load_config: {str(e)}")
-            messagebox.showerror("Error", f"Failed to load configuration: {str(e)}", parent=self.root)
+            show_custom_error(self.root, self, "Error", f"Failed to load configuration: {str(e)}")
     
     def load_last_config(self):
         try:
@@ -449,19 +451,19 @@ class ExcelDataMapper:
     
     def execute_transfer(self):
         if not self.source_file.get() or not self.dest_file.get():
-            messagebox.showwarning("Warning", "Please select both source and destination files.", parent=self.root)
+            show_custom_warning(self.root, self, "Warning", "Please select both source and destination files.")
             return
         if not hasattr(self, 'mapping_combos') or not self.mapping_combos:
-            messagebox.showwarning("Warning", "Please load columns first.", parent=self.root)
+            show_custom_warning(self.root, self, "Warning", "Please load columns first.")
             return
         mappings = {s: c.get() for s, c in self.mapping_combos.items() if c.get()}
         if not mappings:
-            messagebox.showwarning("Warning", "Please configure at least one column mapping.", parent=self.root)
+            show_custom_warning(self.root, self, "Warning", "Please configure at least one column mapping.")
             return
         dest_values = list(mappings.values())
         duplicates = [d for d in set(dest_values) if dest_values.count(d) > 1]
         if duplicates:
-            messagebox.showerror("Error", f"Duplicate destination columns detected: {', '.join(duplicates)}", parent=self.root)
+            show_custom_error(self.root, self, "Error", f"Duplicate destination columns detected: {', '.join(duplicates)}")
             return
         if not self.check_file_accessibility(self.source_file.get()) or not self.check_file_accessibility(self.dest_file.get()):
             return
@@ -484,8 +486,8 @@ class ExcelDataMapper:
         self.progress['value'] = 100
         self.update_status("Transfer completed successfully")
         self.enable_controls()
-        messagebox.showinfo("Success", "Data transfer completed successfully!", parent=self.root)
-        if messagebox.askyesno("Open Folder", "Would you like to open the destination folder?", parent=self.root):
+        show_custom_info(self.root, self, "Success", "Data transfer completed successfully!")
+        if show_custom_question(self.root, self, "Open Folder", "Would you like to open the destination folder?"):
             self.open_dest_folder()
 
     def on_transfer_error(self, error):
@@ -493,14 +495,14 @@ class ExcelDataMapper:
         self.update_status("Transfer failed")
         self.progress['value'] = 0
         self.enable_controls()
-        messagebox.showerror("Error", f"Transfer failed: {str(error)}", parent=self.root)
+        show_custom_error(self.root, self, "Error", f"Transfer failed: {str(error)}")
 
     def disable_controls(self):
-        for widget in [self.execute_button, self.load_button, self.save_button, self.load_cols_button]:
+        for widget in [self.execute_button, self.load_button, self.save_button, self.load_cols_button, self.preview_button]:
             widget.config(state=DISABLED)
 
     def enable_controls(self):
-        for widget in [self.execute_button, self.load_button, self.save_button, self.load_cols_button]:
+        for widget in [self.execute_button, self.load_button, self.save_button, self.load_cols_button, self.preview_button]:
             widget.config(state=NORMAL)
     
     def perform_data_transfer(self, mappings):
@@ -524,8 +526,11 @@ class ExcelDataMapper:
             self.log_info("Data transfer completed successfully")
         except Exception as e:
             if backup_path.exists():
-                try: shutil.copy2(backup_path, dest_path); backup_path.unlink()
-                except Exception: pass
+                try:
+                    shutil.copy2(backup_path, dest_path)
+                    backup_path.unlink()
+                except Exception as backup_e:
+                    self.log_error(f"Failed to restore backup: {backup_e}")
             raise e
     
     def read_source_data(self):
@@ -601,7 +606,7 @@ class ExcelDataMapper:
                 while True:
                     if end_write_row > 0 and current_write_row > end_write_row:
                         self.log_warning(f"Reached end of write zone (row {end_write_row}). Stopping data transfer.")
-                        messagebox.showwarning("Write Limit Reached", f"Data transfer stopped at row {end_write_row} as configured.", parent=self.root)
+                        show_custom_warning(self.root, self, "Write Limit Reached", f"Data transfer stopped at row {end_write_row} as configured.")
                         workbook.save(self.dest_file.get())
                         return
                     
@@ -637,15 +642,23 @@ class ExcelDataMapper:
     
     def open_dest_folder(self):
         if not self.dest_file.get():
-            messagebox.showwarning("Warning", "No destination file selected.", parent=self.root)
+            show_custom_warning(self.root, self, "Warning", "No destination file selected.")
             return
         dest_path = Path(self.dest_file.get())
         if dest_path.exists():
             folder_path = dest_path.parent
-            if os.name == 'nt': os.startfile(folder_path)
-            else: subprocess.run(['open' if sys.platform == 'darwin' else 'xdg-open', folder_path])
+            try:
+                if os.name == 'nt':
+                    os.startfile(folder_path)
+                elif sys.platform == 'darwin':
+                    subprocess.run(['open', folder_path])
+                else:
+                    subprocess.run(['xdg-open', folder_path])
+            except Exception as e:
+                self.log_error(f"Could not open folder: {e}")
+                show_custom_error(self.root, self, "Error", f"Could not open folder:\n{e}")
         else:
-            messagebox.showwarning("Warning", "Destination file does not exist.", parent=self.root)
+            show_custom_warning(self.root, self, "Warning", "Destination file does not exist.")
     
     def show_about(self):
         AboutDialog(self.root, self)
@@ -663,7 +676,7 @@ class ExcelDataMapper:
 
     def detect_write_zone(self):
         if not self.dest_file.get() or not os.path.exists(self.dest_file.get()):
-            messagebox.showwarning("Warning", "Please select a valid destination file first.", parent=self.root)
+            show_custom_warning(self.root, self, "Warning", "Please select a valid destination file first.")
             return
         try:
             self.update_status("Detecting write zone...")
@@ -691,7 +704,7 @@ class ExcelDataMapper:
                 self.update_status(f"Detection complete. Start: {predicted_start_row}, End: Unlimited.")
         except Exception as e:
             self.log_error(f"Error detecting write zone: {str(e)}")
-            messagebox.showerror("Error", f"Failed to detect write zone: {str(e)}", parent=self.root)
+            show_custom_error(self.root, self, "Error", f"Failed to detect write zone: {str(e)}")
             self.update_status("Detection failed")
 
     def _run_preview_simulation(self):
@@ -731,10 +744,10 @@ class ExcelDataMapper:
 
     def preview_transfer(self):
         if not all([self.source_file.get(), os.path.exists(self.source_file.get()), self.dest_file.get(), os.path.exists(self.dest_file.get())]):
-            messagebox.showerror("Error", "Please select valid source and destination files.", parent=self.root)
+            show_custom_error(self.root, self, "Error", "Please select valid source and destination files.")
             return
         if not hasattr(self, 'mapping_combos') or not self.source_columns:
-            messagebox.showwarning("Warning", "Please load columns first.", parent=self.root)
+            show_custom_warning(self.root, self, "Warning", "Please load columns first.")
             return
         self.update_status("Generating simulation report...")
         try:
@@ -743,7 +756,7 @@ class ExcelDataMapper:
                 PreviewDialog(self.root, self, report_data, [], {}); return
             mappings = {s: c.get() for s, c in self.mapping_combos.items() if c.get()}
             if not mappings:
-                messagebox.showwarning("Warning", "Please configure at least one mapping for a meaningful preview.", parent=self.root)
+                show_custom_warning(self.root, self, "Warning", "Please configure at least one mapping for a meaningful preview.")
                 return
             with ExcelParser(self.source_file.get()) as p:
                 preview_data = p.read_data_preview(self.source_columns, self.source_header_end_row.get(), 10)
@@ -752,7 +765,7 @@ class ExcelDataMapper:
             self.update_status("Preview report generated.")
         except Exception as e:
             self.log_error(f"Error generating preview: {str(e)}\n{traceback.format_exc()}")
-            messagebox.showerror("Error", f"Failed to generate preview: {str(e)}", parent=self.root)
+            show_custom_error(self.root, self, "Error", f"Failed to generate preview: {str(e)}")
             self.update_status("Preview failed")
 
     def get_current_settings(self) -> dict:
@@ -769,7 +782,14 @@ class ExcelDataMapper:
             self.root.mainloop()
         except Exception as e:
             self.log_error(f"Critical error in main loop: {str(e)}")
-            messagebox.showerror("Critical Error", f"Application encountered a critical error: {str(e)}", parent=self.root)
+            # Fallback to console message if GUI fails early
+            try:
+                root = tk.Tk()
+                root.withdraw()
+                show_custom_error(None, None, "Critical Error", f"Application encountered a critical error:\n\n{e}")
+            except tk.TclError:
+                print(f"CRITICAL ERROR: {e}")
+                input("Press Enter to exit...")
 
 if __name__ == "__main__":
     try:
@@ -781,6 +801,8 @@ if __name__ == "__main__":
         try:
             root = tk.Tk()
             root.withdraw()
+            # Use a basic messagebox as a last resort if the custom one fails
+            from tkinter import messagebox
             messagebox.showerror("Critical Error", f"Application encountered a critical error:\n\n{e}")
         except tk.TclError:
             print(f"CRITICAL ERROR: {e}")
