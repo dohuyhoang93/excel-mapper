@@ -67,13 +67,11 @@ class BaseDialog(tk.Toplevel):
         self.grab_set()
         self.bind("<Escape>", lambda e: self.destroy())
 
-        # Schedule centering to run after the event loop has processed the window's layout.
-        # This is more reliable than calling it directly.
-        self.after(20, self.center_on_parent)
-
     def center_on_parent(self):
         # Force update of widget sizes
         self.update_idletasks()
+        self.deiconify()
+        
         
         parent_x = self.parent.winfo_x()
         parent_y = self.parent.winfo_y()
@@ -88,7 +86,10 @@ class BaseDialog(tk.Toplevel):
         self.geometry(f"+{x}+{y}")
         
         # Show the window now that it's ready
-        self.deiconify()
+        # self.deiconify()
+        self.lift()
+        self.focus_set()
+
 
 class AboutDialog(BaseDialog):
     """The 'About' dialog window."""
@@ -115,6 +116,7 @@ https://github.com/dohuyhoang93
 """
         ttk_boot.Label(self, text=about_text, justify=LEFT, padding=(20, 20)).pack(expand=True, fill=BOTH)
         ttk_boot.Button(self, text="OK", command=self.destroy, bootstyle=PRIMARY, width=10).pack(pady=15)
+        self.center_on_parent()
 
 class PreviewDialog(BaseDialog):
     """A comprehensive, multi-tab simulation report dialog."""
@@ -123,6 +125,7 @@ class PreviewDialog(BaseDialog):
         self.geometry("950x650")
         main_frame = ttk_boot.Frame(self, padding=10)
         main_frame.pack(fill=BOTH, expand=True)
+
         if "error" in report_data:
             self._create_error_view(main_frame, report_data["error"])
             self.center_on_parent() # Center even on error
@@ -134,11 +137,31 @@ class PreviewDialog(BaseDialog):
         self._create_mappings_tab(self.notebook, mappings)
         self._create_data_preview_tab(self.notebook, preview_data, mappings)
         ttk_boot.Button(main_frame, text="Close", command=self.destroy, bootstyle="outline-secondary").pack(pady=(10, 0))
+        
+        # This is the deterministic finalization step.
+        self._finalize_layout_and_center()
 
-    def _adjust_column_widths(self, tree, anchors):
+    def _finalize_layout_and_center(self):
+        """
+        A deterministic method to ensure final layout calculations are complete
+        before centering the dialog.
+        """
+        # Adjust the treeview columns, which might change the required window size.
+        self._adjust_column_widths(self.mappings_tree, ("Source Column", "Destination Column"), [W, W])
+        if hasattr(self, 'data_tree'):
+             self._adjust_column_widths(self.data_tree, list(self.data_tree["columns"]), ['center'] * len(self.data_tree["columns"]))
+        
+        # Force the event loop to process all pending geometry calculations.
         self.update_idletasks()
-        for idx, col in enumerate(tree["columns"]):
-            header_width = tkFont.Font().measure(tree.heading(col)["text"])
+        
+        # Now that the size is final and correct, center the dialog.
+        self.center_on_parent()
+
+    def _adjust_column_widths(self, tree, cols, anchors):
+        """Adjusts column widths based on content. Renamed 'cols' for clarity."""
+        self.update_idletasks()
+        for idx, col_name in enumerate(cols):
+            header_width = tkFont.Font().measure(tree.heading(col_name)["text"])
             max_width = header_width
             for item in tree.get_children():
                 try:
@@ -147,7 +170,7 @@ class PreviewDialog(BaseDialog):
                     if cell_width > max_width: max_width = cell_width
                 except (IndexError, KeyError):
                     continue
-            tree.column(col, width=max_width + 25, anchor=anchors[idx])
+            tree.column(col_name, width=max_width + 25, anchor=anchors[idx])
 
     def _create_error_view(self, parent, error_message):
         ttk_boot.Label(parent, text=f"❌ CRITICAL ERROR\n\n{error_message}", bootstyle=DANGER, font="-size 12 -weight bold", justify=CENTER).pack(pady=20, padx=10, fill=BOTH, expand=True)
@@ -200,16 +223,15 @@ class PreviewDialog(BaseDialog):
         container = ttk_boot.LabelFrame(tab_frame, text=f"Active Mappings ({len(mappings)})")
         container.pack(fill=BOTH, expand=True)
         cols, anchors = ("Source Column", "Destination Column"), [W, W]
-        tree = ttk.Treeview(container, columns=cols, show='headings', bootstyle="info", height=15)
+        self.mappings_tree = ttk.Treeview(container, columns=cols, show='headings', bootstyle="info", height=15)
         for i, col in enumerate(cols):
-            tree.heading(col, text=col, anchor=anchors[i])
+            self.mappings_tree.heading(col, text=col, anchor=anchors[i])
         for source, dest in sorted(mappings.items()):
-            tree.insert("", "end", values=(source, dest))
-        tree.pack(side=LEFT, fill=BOTH, expand=True, padx=5, pady=5)
-        vsb = ttk.Scrollbar(container, orient="vertical", command=tree.yview, bootstyle="info-round")
+            self.mappings_tree.insert("", "end", values=(source, dest))
+        self.mappings_tree.pack(side=LEFT, fill=BOTH, expand=True, padx=5, pady=5)
+        vsb = ttk.Scrollbar(container, orient="vertical", command=self.mappings_tree.yview, bootstyle="info-round")
         vsb.pack(side=RIGHT, fill='y')
-        tree.configure(yscrollcommand=vsb.set)
-        self.after(100, lambda: self._adjust_column_widths(tree, anchors))
+        self.mappings_tree.configure(yscrollcommand=vsb.set)
 
     def _create_data_preview_tab(self, notebook, preview_data, mappings):
         tab_frame = ttk_boot.Frame(notebook, padding=10)
@@ -220,27 +242,25 @@ class PreviewDialog(BaseDialog):
             ttk_boot.Label(container, text="No source data found to preview.", bootstyle=INFO).pack(padx=10, pady=10)
             return
         dest_cols = list(mappings.values())
-        tree = ttk.Treeview(container, columns=dest_cols, show='headings', bootstyle="info", height=10)
+        self.data_tree = ttk.Treeview(container, columns=dest_cols, show='headings', bootstyle="info", height=10)
         
         # Set alignment for both header and column content to center
         for col in dest_cols:
-            tree.column(col, anchor='center')
-            tree.heading(col, text=col, anchor='center')
+            self.data_tree.column(col, anchor='center')
+            self.data_tree.heading(col, text=col, anchor='center')
 
         dest_to_source = {v: k for k, v in mappings.items()}
         for row_data in preview_data:
             values = [str(row_data.get(dest_to_source.get(dc), ""))[:100] for dc in dest_cols]
-            tree.insert("", "end", values=values)
+            self.data_tree.insert("", "end", values=values)
             
-        vsb = ttk.Scrollbar(container, orient="vertical", command=tree.yview, bootstyle="info-round")
-        hsb = ttk.Scrollbar(container, orient="horizontal", command=tree.xview, bootstyle="info-round")
-        tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
+        vsb = ttk.Scrollbar(container, orient="vertical", command=self.data_tree.yview, bootstyle="info-round")
+        hsb = ttk.Scrollbar(container, orient="horizontal", command=self.data_tree.xview, bootstyle="info-round")
+        self.data_tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
         vsb.pack(side='right', fill='y')
         hsb.pack(side='bottom', fill='x')
-        tree.pack(side=LEFT, fill='both', expand=True, padx=5, pady=5)
-        
-        # Adjust widths after a short delay
-        self.after(100, lambda: self._adjust_column_widths(tree, ['center'] * len(dest_cols)))
+        self.data_tree.pack(side=LEFT, fill='both', expand=True, padx=5, pady=5)
+
 
 class DetectionConfigDialog(BaseDialog):
     """Dialog to configure end-row detection keywords."""
@@ -258,6 +278,7 @@ class DetectionConfigDialog(BaseDialog):
         button_frame.pack(fill=X, pady=10)
         ttk_boot.Button(button_frame, text="Save", command=self.save, bootstyle=SUCCESS).pack(side=RIGHT, padx=5)
         ttk_boot.Button(button_frame, text="Cancel", command=self.destroy, bootstyle="secondary").pack(side=RIGHT)
+        self.center_on_parent()
 
 
     def save(self):
@@ -312,6 +333,8 @@ class CustomMessageDialog(BaseDialog):
             yes_button.focus_set()
             self.bind("<Return>", lambda e: self.on_yes())
 
+        self.center_on_parent()
+        
         # Make the dialog blocking
         self.wait_window()
 
