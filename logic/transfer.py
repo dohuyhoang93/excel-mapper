@@ -1,386 +1,209 @@
 """
-Data transfer engine for copying data between Excel files while preserving formatting
+Data transfer engine for copying data between Excel files while preserving formatting.
+This module encapsulates the core business logic of the data transfer process.
 """
 import openpyxl
-from openpyxl.styles import *
-from openpyxl.utils import get_column_letter
-from typing import List, Dict, Any, Optional, Callable
 import shutil
 from pathlib import Path
 import logging
-from datetime import datetime
-from typing import Tuple
-from copy import copy
+from typing import List, Dict, Any, Optional, Callable, Set
+from openpyxl.cell.cell import MergedCell
+
+def parse_skip_rows_string(skip_rows_str: str) -> Set[int]:
+    """
+    Parses a user-provided string of rows to skip into a set of integers.
+    This is a public utility function that can be used by other modules.
+
+    Args:
+        skip_rows_str: A string like "15, 22, 30-35".
+
+    Returns:
+        A set of integers representing the rows to be skipped.
+    """
+    skipped_rows = set()
+    if not skip_rows_str:
+        return skipped_rows
+    for part in skip_rows_str.split(','):
+        part = part.strip()
+        if not part:
+            continue
+        if '-' in part:
+            try:
+                start, end = map(int, part.split('-'))
+                if start <= end:
+                    skipped_rows.update(range(start, end + 1))
+            except ValueError:
+                logging.warning(f"Could not parse range in skip_rows: {part}")
+        else:
+            try:
+                skipped_rows.add(int(part))
+            except ValueError:
+                logging.warning(f"Could not parse number in skip_rows: {part}")
+    return skipped_rows
 
 class ExcelTransferEngine:
-    """Handles data transfer between Excel files with formatting preservation"""
-    
-    def __init__(self, source_path: str, destination_path: str):
-        self.source_path = Path(source_path)
-        self.destination_path = Path(destination_path)
+    """
+    Handles the entire data transfer process from a source to a destination Excel file.
+    It takes a comprehensive settings dictionary to control its behavior.
+    """
+    def __init__(self, settings: Dict[str, Any], progress_callback: Optional[Callable[[int, str], None]] = None):
+        self.source_path = Path(settings["source_file"])
+        self.dest_path = Path(settings["dest_file"])
+        self.source_header_end_row = settings["source_header_end_row"]
+        self.dest_header_end_row = settings["dest_header_end_row"]
+        self.dest_write_start_row = settings["dest_write_start_row"]
+        self.dest_write_end_row = settings["dest_write_end_row"]
+        self.dest_skip_rows_str = settings["dest_skip_rows"]
+        self.respect_cell_protection = settings["respect_cell_protection"]
+        self.respect_formulas = settings["respect_formulas"]
+        self.sort_column = settings.get("sort_column")
+        self.mappings = settings["mappings"]
+        self.source_columns = settings["source_columns"]
+        self.dest_columns = settings["dest_columns"]
+
+        self.progress_callback = progress_callback
         self.backup_path = None
-        self.progress_callback = None
-        
-    def set_progress_callback(self, callback: Callable[[int], None]):
-        """Set callback function for progress updates"""
-        self.progress_callback = callback
-        
-    def create_backup(self) -> Path:
-        """Create backup of destination file"""
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        backup_name = f"{self.destination_path.stem}_backup_{timestamp}{self.destination_path.suffix}"
-        self.backup_path = self.destination_path.parent / backup_name
-        
-        shutil.copy2(self.destination_path, self.backup_path)
-        logging.info(f"Backup created: {self.backup_path}")
-        return self.backup_path
-        
-    def restore_backup(self):
-        """Restore from backup if something goes wrong"""
-        if self.backup_path and self.backup_path.exists():
-            shutil.copy2(self.backup_path, self.destination_path)
-            logging.info("Restored from backup")
-            
-    def cleanup_backup(self):
-        """Remove backup file after successful transfer"""
-        if self.backup_path and self.backup_path.exists():
-            self.backup_path.unlink()
-            logging.info("Backup cleaned up")
-            
-    def read_source_data(self, header_row: int, sort_column: Optional[str] = None) -> Tuple[List[str], List[Dict[str, Any]]]:
+
+    def _update_progress(self, value: int, message: str):
+        """Safely calls the progress callback function if it exists."""
+        if self.progress_callback:
+            self.progress_callback(value, message)
+
+    def run_transfer(self):
         """
-        Read data from source Excel file
-        
-        Args:
-            header_row: Row number containing headers
-            sort_column: Column name to sort by (optional)
-            
-        Returns:
-            Tuple of (headers, data_rows)
+        Executes the entire data transfer process: backup, read, sort, write, and cleanup.
         """
-        workbook = openpyxl.load_workbook(self.source_path, data_only=True)
-        worksheet = workbook.active
-        
+        self.backup_path = self.dest_path.with_suffix(f'.{self.dest_path.suffix}.backup')
         try:
-            # Get headers
-            headers = []
-            for col in range(1, worksheet.max_column + 1):
-                cell = worksheet.cell(row=header_row, column=col)
-                header_value = str(cell.value) if cell.value else f"Column_{col}"
-                headers.append(header_value.strip())
-            
-            # Read data rows
+            shutil.copy2(self.dest_path, self.backup_path)
+            logging.info(f"Backup created at {self.backup_path}")
+
+            self._update_progress(10, "Reading source data...")
+            source_data = self._read_source_data()
+            if not source_data:
+                raise ValueError("No data found in source file. Please check the file and header settings.")
+
+            if self.sort_column:
+                self._update_progress(30, "Sorting data...")
+                source_data.sort(key=lambda x: (
+                    x.get(self.sort_column) is None or str(x.get(self.sort_column, "")).strip() == "",
+                    str(x.get(self.sort_column, ""))
+                ))
+
+            self._update_progress(50, "Writing to destination...")
+            self._write_to_destination(source_data)
+
+            if self.backup_path.exists():
+                self.backup_path.unlink()
+            self._update_progress(100, "Transfer completed successfully")
+            logging.info("Data transfer completed successfully")
+
+        except Exception as e:
+            logging.error(f"Transfer failed: {e}", exc_info=True)
+            if self.backup_path and self.backup_path.exists():
+                try:
+                    shutil.copy2(self.backup_path, self.dest_path)
+                    self.backup_path.unlink()
+                    logging.info("Restored destination file from backup.")
+                except Exception as backup_e:
+                    logging.error(f"CRITICAL: Failed to restore backup: {backup_e}", exc_info=True)
+            raise e
+
+    def _read_source_data(self) -> List[Dict[str, Any]]:
+        """Reads all data rows from the source file based on the source column definitions."""
+        workbook = None
+        try:
+            workbook = openpyxl.load_workbook(self.source_path, data_only=True)
+            worksheet = workbook.active
+            start_data_row = self.source_header_end_row + 1
             data = []
-            for row in range(header_row + 1, worksheet.max_row + 1):
-                row_data = {}
-                has_data = False
-                
-                for col, header in enumerate(headers, start=1):
-                    cell = worksheet.cell(row=row, column=col)
-                    value = cell.value
-                    
+            for row_index in range(start_data_row, worksheet.max_row + 1):
+                row_data, has_data = {}, False
+                for header_name, col_index in self.source_columns.items():
+                    value = worksheet.cell(row=row_index, column=col_index).value
                     if value is not None:
                         has_data = True
-                    
-                    row_data[header] = value
-                
+                    row_data[header_name] = value
                 if has_data:
                     data.append(row_data)
-            
-            # Sort data if requested
-            if sort_column and sort_column in headers:
-                data = sorted(data, key=lambda x: str(x.get(sort_column, "")) if x.get(sort_column) is not None else "")
-                logging.info(f"Data sorted by column: {sort_column}")
-            
-            return headers, data
-            
+            return data
         finally:
-            workbook.close()
-    
-    def get_destination_column_map(self, header_row: int) -> Dict[str, int]:
-        """
-        Get mapping of column names to column numbers in destination file
-        
-        Args:
-            header_row: Row number containing headers
-            
-        Returns:
-            Dictionary mapping column names to column numbers
-        """
-        workbook = openpyxl.load_workbook(self.destination_path)
-        worksheet = workbook.active
-        
+            if workbook:
+                workbook.close()
+
+    def _write_to_destination(self, source_data: List[Dict[str, Any]]):
+        """Writes the processed data to the destination file, respecting all write zone rules."""
+        workbook = None
         try:
-            column_map = {}
-            merged_ranges = worksheet.merged_cells.ranges
+            workbook = openpyxl.load_workbook(self.dest_path)
+            worksheet = workbook.active
             
-            for col in range(1, worksheet.max_column + 1):
-                cell = worksheet.cell(row=header_row, column=col)
-                cell_value = cell.value
-                
-                # Handle merged cells
-                if cell_value is None:
-                    for merged_range in merged_ranges:
+            skipped_rows = parse_skip_rows_string(self.dest_skip_rows_str)
+            
+            if self.dest_write_start_row <= self.dest_header_end_row:
+                raise ValueError("Start Write Row must be after the destination header rows.")
+
+            def get_writable_cell(row_idx, col_idx):
+                cell = worksheet.cell(row=row_idx, column=col_idx)
+                if isinstance(cell, MergedCell):
+                    for merged_range in worksheet.merged_cells.ranges:
                         if cell.coordinate in merged_range:
-                            top_left = worksheet.cell(merged_range.min_row, merged_range.min_col)
-                            cell_value = top_left.value
-                            break
-                
-                if cell_value:
-                    column_map[str(cell_value).strip()] = col
-            
-            return column_map
-            
-        finally:
-            workbook.close()
-    
-    def write_data_to_destination(self, data: List[Dict[str, Any]], 
-                                mappings: Dict[str, str], 
-                                dest_header_row: int,
-                                preserve_formulas: bool = True) -> int:
-        """
-        Write data to destination file preserving formatting
-        
-        Args:
-            data: List of data rows to write
-            mappings: Dictionary mapping source columns to destination columns
-            dest_header_row: Row number of headers in destination
-            preserve_formulas: Whether to skip cells with formulas
-            
-        Returns:
-            Number of rows written
-        """
-        workbook = openpyxl.load_workbook(self.destination_path)
-        worksheet = workbook.active
-        
-        try:
-            # Get destination column mapping
-            dest_columns = self.get_destination_column_map_from_worksheet(worksheet, dest_header_row)
-            
-            # Find data start row
-            data_start_row = dest_header_row + 1
-            
-            # Clear existing data (but preserve formatting)
-            self._clear_data_area(worksheet, data_start_row, dest_columns, preserve_formulas)
-            
-            # Write new data
-            rows_written = 0
-            total_rows = len(data)
-            
-            for i, row_data in enumerate(data):
-                current_row = data_start_row + i
-                
-                # Update progress
-                if self.progress_callback and i % 10 == 0:
-                    progress = int((i / total_rows) * 100)
-                    self.progress_callback(progress)
-                
-                # Write mapped columns
-                for source_col, dest_col in mappings.items():
-                    if dest_col in dest_columns:
-                        dest_col_num = dest_columns[dest_col]
-                        source_value = row_data.get(source_col)
-                        
-                        if source_value is not None:
-                            dest_cell = worksheet.cell(row=current_row, column=dest_col_num)
-                            
-                            # Skip formula cells if requested
-                            if preserve_formulas and dest_cell.data_type == 'f':
-                                logging.warning(f"Skipping formula cell at {dest_cell.coordinate}")
-                                continue
-                            
-                            # Copy value while preserving cell formatting
-                            self._copy_value_preserve_format(dest_cell, source_value)
-                
-                rows_written += 1
-            
-            # Save workbook
-            workbook.save(self.destination_path)
-            logging.info(f"Successfully wrote {rows_written} rows to destination")
-            
-            return rows_written
-            
-        finally:
-            workbook.close()
-    
-    def get_destination_column_map_from_worksheet(self, worksheet, header_row: int) -> Dict[str, int]:
-        """Get column mapping from worksheet object"""
-        column_map = {}
-        merged_ranges = worksheet.merged_cells.ranges
-        
-        for col in range(1, worksheet.max_column + 1):
-            cell = worksheet.cell(row=header_row, column=col)
-            cell_value = cell.value
-            
-            # Handle merged cells
-            if cell_value is None:
-                for merged_range in merged_ranges:
-                    if cell.coordinate in merged_range:
-                        top_left = worksheet.cell(merged_range.min_row, merged_range.min_col)
-                        cell_value = top_left.value
+                            return worksheet.cell(row=merged_range.min_row, column=merged_range.min_col)
+                return cell
+
+            clear_until_row = self.dest_write_end_row if self.dest_write_end_row > 0 else worksheet.max_row + 50
+            cleared_anchors = set()
+            for row_to_clear in range(self.dest_write_start_row, clear_until_row + 1):
+                if row_to_clear in skipped_rows:
+                    continue
+                for dest_col_num in self.dest_columns.values():
+                    anchor_cell = get_writable_cell(row_to_clear, dest_col_num)
+                    if (anchor_cell.row >= self.dest_write_start_row and 
+                            anchor_cell.coordinate not in cleared_anchors and 
+                            anchor_cell.row not in skipped_rows):
+                        if not (self.respect_formulas and anchor_cell.data_type == 'f'):
+                            anchor_cell.value = None
+                        cleared_anchors.add(anchor_cell.coordinate)
+
+            current_write_row = self.dest_write_start_row
+            EXCEL_MAX_ROW = 1048576
+            total_source_rows = len(source_data)
+
+            for i, row_data in enumerate(source_data):
+                while True:
+                    if self.dest_write_end_row > 0 and current_write_row > self.dest_write_end_row:
+                        logging.warning(f"Reached end of write zone (row {self.dest_write_end_row}). Stopping data transfer.")
+                        workbook.save(self.dest_path)
+                        return
+
+                    if current_write_row > EXCEL_MAX_ROW:
+                        logging.error(f"Reached absolute maximum Excel row limit ({EXCEL_MAX_ROW}). Stopping.")
+                        workbook.save(self.dest_path)
+                        raise RuntimeError(f"Reached maximum Excel row limit ({EXCEL_MAX_ROW}).")
+                    
+                    is_invalid_row = current_write_row in skipped_rows
+                    if not is_invalid_row and self.respect_cell_protection and worksheet.protection.sheet:
+                        for dest_col_num in self.dest_columns.values():
+                            if get_writable_cell(current_write_row, dest_col_num).protection.locked:
+                                is_invalid_row = True
+                                break
+                    
+                    if not is_invalid_row:
                         break
+                    current_write_row += 1
+
+                progress_value = 50 + int((i / total_source_rows) * 45)
+                self._update_progress(progress_value, f"Writing row {i+1}/{total_source_rows}")
+
+                for source_col, dest_col in self.mappings.items():
+                    if dest_col in self.dest_columns:
+                        dest_col_num = self.dest_columns[dest_col]
+                        cell_to_write = get_writable_cell(current_write_row, dest_col_num)
+                        if cell_to_write.row >= current_write_row and not (self.respect_formulas and cell_to_write.data_type == 'f'):
+                            cell_to_write.value = row_data.get(source_col)
+                current_write_row += 1
             
-            if cell_value:
-                column_map[str(cell_value).strip()] = col
-        
-        return column_map
-    
-    def _clear_data_area(self, worksheet, start_row: int, dest_columns: Dict[str, int], preserve_formulas: bool):
-        """Clear data area while preserving formatting"""
-        max_row = worksheet.max_row
-        
-        for row in range(start_row, max_row + 1):
-            for col_name, col_num in dest_columns.items():
-                cell = worksheet.cell(row=row, column=col_num)
-                
-                # Only clear non-formula cells if preserve_formulas is True
-                if not preserve_formulas or cell.data_type != 'f':
-                    cell.value = None
-    
-    def _copy_value_preserve_format(self, dest_cell, source_value):
-        """Copy value to destination cell while preserving formatting"""
-        # Store original formatting
-        original_font = copy(dest_cell.font) if dest_cell.font else None
-        original_border = copy(dest_cell.border) if dest_cell.border else None
-        original_fill = copy(dest_cell.fill) if dest_cell.fill else None
-        original_alignment = copy(dest_cell.alignment) if dest_cell.alignment else None
-        original_number_format = dest_cell.number_format
-        
-        # Set the value
-        dest_cell.value = source_value
-        
-        # Restore formatting
-        if original_font:
-            dest_cell.font = original_font
-        if original_border:
-            dest_cell.border = original_border
-        if original_fill:
-            dest_cell.fill = original_fill
-        if original_alignment:
-            dest_cell.alignment = original_alignment
-        if original_number_format:
-            dest_cell.number_format = original_number_format
-    
-    def transfer_data(self, source_header_row: int, dest_header_row: int, 
-                     mappings: Dict[str, str], sort_column: Optional[str] = None) -> Dict[str, Any]:
-        """
-        Complete data transfer operation
-        
-        Args:
-            source_header_row: Header row in source file
-            dest_header_row: Header row in destination file
-            mappings: Column mappings
-            sort_column: Column to sort by
-            
-        Returns:
-            Dictionary with transfer results
-        """
-        try:
-            # Create backup
-            self.create_backup()
-            
-            # Read source data
-            if self.progress_callback:
-                self.progress_callback(10)
-            
-            headers, data = self.read_source_data(source_header_row, sort_column)
-            
-            if self.progress_callback:
-                self.progress_callback(30)
-            
-            # Validate mappings
-            validation_errors = self._validate_mappings(mappings, headers, dest_header_row)
-            if validation_errors:
-                raise ValueError(f"Mapping validation failed: {'; '.join(validation_errors)}")
-            
-            if self.progress_callback:
-                self.progress_callback(40)
-            
-            # Write to destination
-            rows_written = self.write_data_to_destination(data, mappings, dest_header_row)
-            
-            if self.progress_callback:
-                self.progress_callback(100)
-            
-            # Cleanup backup on success
-            self.cleanup_backup()
-            
-            return {
-                'success': True,
-                'rows_written': rows_written,
-                'source_rows': len(data),
-                'mappings_used': len(mappings),
-                'sorted_by': sort_column
-            }
-            
-        except Exception as e:
-            # Restore backup on failure
-            self.restore_backup()
-            logging.error(f"Transfer failed: {str(e)}")
-            raise
-    
-    def _validate_mappings(self, mappings: Dict[str, str], source_headers: List[str], dest_header_row: int) -> List[str]:
-        """Validate that mappings are correct"""
-        errors = []
-        
-        # Check that all source columns exist
-        for source_col in mappings.keys():
-            if source_col not in source_headers:
-                errors.append(f"Source column '{source_col}' not found")
-        
-        # Check that all destination columns exist
-        dest_columns = self.get_destination_column_map(dest_header_row)
-        for dest_col in mappings.values():
-            if dest_col not in dest_columns:
-                errors.append(f"Destination column '{dest_col}' not found")
-        
-        # Check for duplicate destination mappings
-        dest_values = list(mappings.values())
-        duplicates = [col for col in set(dest_values) if dest_values.count(col) > 1]
-        if duplicates:
-            errors.append(f"Duplicate destination columns: {', '.join(duplicates)}")
-        
-        return errors
-    
-    def preview_transfer(self, source_header_row: int, dest_header_row: int, 
-                        mappings: Dict[str, str], preview_rows: int = 5) -> Dict[str, Any]:
-        """
-        Preview what the transfer would look like
-        
-        Args:
-            source_header_row: Header row in source file
-            dest_header_row: Header row in destination file  
-            mappings: Column mappings
-            preview_rows: Number of rows to preview
-            
-        Returns:
-            Preview data dictionary
-        """
-        try:
-            # Read limited source data
-            headers, data = self.read_source_data(source_header_row)
-            preview_data = data[:preview_rows]
-            
-            # Get destination columns
-            dest_columns = self.get_destination_column_map(dest_header_row)
-            
-            # Validate mappings
-            validation_errors = self._validate_mappings(mappings, headers, dest_header_row)
-            
-            return {
-                'source_headers': headers,
-                'destination_headers': list(dest_columns.keys()),
-                'preview_data': preview_data,
-                'total_source_rows': len(data),
-                'mappings': mappings,
-                'validation_errors': validation_errors,
-                'is_valid': len(validation_errors) == 0
-            }
-            
-        except Exception as e:
-            logging.error(f"Preview failed: {str(e)}")
-            return {
-                'error': str(e),
-                'is_valid': False
-            }
-            
+            workbook.save(self.dest_path)
+        finally:
+            if workbook:
+                workbook.close()

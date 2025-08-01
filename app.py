@@ -20,6 +20,8 @@ import time
 import psutil
 from logic.parser import ExcelParser
 from logic.config_manager import ConfigurationManager
+from logic.mapper import ColumnMapper
+from logic.transfer import ExcelTransferEngine, parse_skip_rows_string
 from gui.widgets import (ScrollableFrame, AboutDialog, PreviewDialog, 
                          DetectionConfigDialog, show_custom_info, 
                          show_custom_error, show_custom_warning, 
@@ -129,6 +131,7 @@ class ExcelDataMapper:
         self.mapping_combos = {}
         
         self.config_manager = ConfigurationManager()
+        self.column_mapper = ColumnMapper()
 
         self.setup_menu()
         self.setup_gui()
@@ -346,33 +349,9 @@ class ExcelDataMapper:
             dest_combo = ttk_boot.Combobox(self.mapping_scroll_frame.scrollable_frame, values=[""] + list(self.dest_columns.keys()), width=60)
             dest_combo.grid(row=i, column=2, sticky=EW, padx=5, pady=2)
             if apply_suggestions:
-                suggested = self.suggest_mapping(source_col_name, list(self.dest_columns.keys()))
+                suggested = self.column_mapper.suggest_mapping(source_col_name, list(self.dest_columns.keys()))
                 if suggested: dest_combo.set(suggested)
             self.mapping_combos[source_col_name] = dest_combo
-    
-    def suggest_mapping(self, source_col, dest_cols):
-        if str(source_col).startswith('Column_'): return ""
-        import re
-        def normalize_and_tokenize(text: str) -> set:
-            text = re.sub(r'[\s\u3000_\-]+', ' ', text)
-            text = re.sub(r'[()[\\]{}]', '', text)
-            return set(text.lower().strip().split())
-        source_tokens = normalize_and_tokenize(source_col)
-        best_match, max_score = "", 0
-        keywords_map = {'content': 'contents', 'purpose': 'purpose', 'amount': 'amount', 'vat': 'vat', 'currency': 'currency', 'date': 'trading date', 'no': 'no.', 'number': 'no.', 'code': 'code reference', 'total': 'sub total'}
-        for dest_col in dest_cols:
-            current_score = 0
-            dest_tokens = normalize_and_tokenize(dest_col)
-            if not dest_tokens: continue
-            if source_tokens == dest_tokens: current_score = 100
-            common_tokens = source_tokens.intersection(dest_tokens)
-            current_score += len(common_tokens) * 50
-            for key, value in keywords_map.items():
-                if key in source_tokens and value in dest_tokens: current_score += 40
-            source_norm_str, dest_norm_str = "".join(source_tokens), "".join(dest_tokens)
-            if source_norm_str in dest_norm_str or dest_norm_str in source_norm_str: current_score += 20
-            if current_score > max_score: max_score, best_match = current_score, dest_col
-        return best_match
     
     def save_config(self):
         try:
@@ -525,10 +504,40 @@ class ExcelDataMapper:
 
     def _execute_transfer_thread(self, mappings):
         try:
-            self.perform_data_transfer(mappings)
+            # 1. Collect all settings for the engine
+            settings = {
+                "source_file": self.source_file.get(),
+                "dest_file": self.dest_file.get(),
+                "source_header_start_row": self.source_header_start_row.get(),
+                "source_header_end_row": self.source_header_end_row.get(),
+                "dest_header_start_row": self.dest_header_start_row.get(),
+                "dest_header_end_row": self.dest_header_end_row.get(),
+                "dest_write_start_row": self.dest_write_start_row.get(),
+                "dest_write_end_row": self.dest_write_end_row.get(),
+                "dest_skip_rows": self.dest_skip_rows.get(),
+                "respect_cell_protection": self.respect_cell_protection.get(),
+                "respect_formulas": self.respect_formulas.get(),
+                "sort_column": self.sort_column.get(),
+                "mappings": mappings,
+                "source_columns": self.source_columns,
+                "dest_columns": self.dest_columns,
+            }
+
+            # 2. Create and run the engine
+            engine = ExcelTransferEngine(settings, self.update_progress_callback)
+            engine.run_transfer()
+            
+            # 3. Update UI on success
             self.root.after(0, self.on_transfer_success)
         except Exception as e:
+            # 4. Update UI on error
             self.root.after(0, self.on_transfer_error, e)
+
+    def update_progress_callback(self, value: int, message: str):
+        """Callback function for the engine to update the GUI's progress."""
+        self.progress['value'] = value
+        self.update_status(message)
+        self.root.update() # Use update, not update_idletasks, to force redraw
     
     def on_transfer_success(self):
         self.progress['value'] = 100
@@ -539,7 +548,7 @@ class ExcelDataMapper:
             self.open_dest_folder()
 
     def on_transfer_error(self, error):
-        self.log_error(f"Error in execute_transfer: {str(error)}\n{traceback.format_exc()}")
+        self.log_error(f"Error during transfer thread: {str(error)}\n{traceback.format_exc()}")
         self.update_status("Transfer failed")
         self.progress['value'] = 0
         self.enable_controls()
@@ -553,144 +562,6 @@ class ExcelDataMapper:
         for widget in [self.execute_button, self.load_button, self.save_button, self.load_cols_button, self.preview_button]:
             widget.config(state=NORMAL)
     
-    def perform_data_transfer(self, mappings):
-        dest_path = Path(self.dest_file.get())
-        backup_path = dest_path.with_suffix('.backup' + dest_path.suffix)
-        try:
-            shutil.copy2(dest_path, backup_path)
-            self.update_status("Reading source data..."); self.progress['value'] = 10; self.root.update()
-            source_data = self.read_source_data()
-            if not source_data: raise ValueError("No data found in source file")
-            
-            if self.sort_column.get() in mappings:
-                self.update_status("Sorting data..."); self.progress['value'] = 30; self.root.update()
-                sort_col_key = self.sort_column.get()
-                source_data.sort(key=lambda x: (x.get(sort_col_key) is None or str(x.get(sort_col_key, "")).strip() == "", str(x.get(sort_col_key, ""))))
-            
-            self.update_status("Writing to destination..."); self.progress['value'] = 50; self.root.update()
-            self.write_to_destination(source_data, mappings)
-            if backup_path.exists(): backup_path.unlink()
-            self.progress['value'] = 100
-            self.log_info("Data transfer completed successfully")
-        except Exception as e:
-            if backup_path.exists():
-                try:
-                    shutil.copy2(backup_path, dest_path)
-                    backup_path.unlink()
-                except Exception as backup_e:
-                    self.log_error(f"Failed to restore backup: {backup_e}")
-            raise e
-    
-    def read_source_data(self):
-        FileHandleManager.force_release_handles()
-        workbook = None
-        try:
-            workbook = openpyxl.load_workbook(self.source_file.get(), data_only=True)
-            worksheet = workbook.active
-            start_data_row = self.source_header_end_row.get() + 1
-            data = []
-            for row_index in range(start_data_row, worksheet.max_row + 1):
-                row_data, has_data = {}, False
-                for header_name, col_index in self.source_columns.items():
-                    value = worksheet.cell(row=row_index, column=col_index).value
-                    if value is not None: has_data = True
-                    row_data[header_name] = value
-                if has_data: data.append(row_data)
-            return data
-        finally:
-            if workbook:
-                workbook.close()
-            FileHandleManager.force_release_handles()
-    
-    def _parse_skip_rows(self, skip_rows_str: str) -> set:
-        skipped_rows = set()
-        if not skip_rows_str: return skipped_rows
-        for part in skip_rows_str.split(','):
-            part = part.strip()
-            if not part: continue
-            if '-' in part:
-                try:
-                    start, end = map(int, part.split('-'))
-                    if start <= end: skipped_rows.update(range(start, end + 1))
-                except ValueError: self.log_warning(f"Could not parse range in skip_rows: {part}")
-            else:
-                try: skipped_rows.add(int(part))
-                except ValueError: self.log_warning(f"Could not parse number in skip_rows: {part}")
-        return skipped_rows
-
-    def write_to_destination(self, source_data, mappings):
-        FileHandleManager.force_release_handles()
-        workbook = None
-        try:
-            workbook = openpyxl.load_workbook(self.dest_file.get())
-            worksheet = workbook.active
-            start_write_row, end_write_row = self.dest_write_start_row.get(), self.dest_write_end_row.get()
-            skipped_rows = self._parse_skip_rows(self.dest_skip_rows.get())
-            respect_protection, respect_formulas = self.respect_cell_protection.get(), self.respect_formulas.get()
-            if start_write_row <= self.dest_header_end_row.get():
-                raise ValueError("Start Write Row must be after the destination header rows.")
-
-            def get_writable_cell(row_idx, col_idx):
-                cell = worksheet.cell(row=row_idx, column=col_idx)
-                if isinstance(cell, MergedCell):
-                    for merged_range in worksheet.merged_cells.ranges:
-                        if cell.coordinate in merged_range:
-                            return worksheet.cell(row=merged_range.min_row, column=merged_range.min_col)
-                return cell
-
-            clear_until_row = end_write_row if end_write_row > 0 else worksheet.max_row + 50
-            cleared_anchors = set()
-            for row_to_clear in range(start_write_row, clear_until_row + 1):
-                if row_to_clear in skipped_rows: continue
-                for dest_col_num in self.dest_columns.values():
-                    anchor_cell = get_writable_cell(row_to_clear, dest_col_num)
-                    if (anchor_cell.row >= start_write_row and anchor_cell.coordinate not in cleared_anchors and anchor_cell.row not in skipped_rows):
-                        if not (respect_formulas and anchor_cell.data_type == 'f'):
-                            anchor_cell.value = None
-                        cleared_anchors.add(anchor_cell.coordinate)
-
-            current_write_row = start_write_row
-            EXCEL_MAX_ROW = 1048576  # Max rows in .xlsx
-            for i, row_data in enumerate(source_data):
-                while True:
-                    # Check 1: User-defined limit
-                    if end_write_row > 0 and current_write_row > end_write_row:
-                        self.log_warning(f"Reached end of write zone (row {end_write_row}). Stopping data transfer.")
-                        show_custom_warning(self.root, self, "Write Limit Reached", f"Data transfer stopped at row {end_write_row} as configured.")
-                        workbook.save(self.dest_file.get())
-                        return
-
-                    # Check 2: Absolute Excel limit
-                    if current_write_row > EXCEL_MAX_ROW:
-                        self.log_error(f"Reached absolute maximum Excel row limit ({EXCEL_MAX_ROW}). Stopping.")
-                        show_custom_error(self.root, self, "Limit Reached", f"Reached maximum Excel row limit ({EXCEL_MAX_ROW}). Transfer stopped.")
-                        workbook.save(self.dest_file.get())
-                        return
-                    
-                    is_invalid = current_write_row in skipped_rows
-                    if not is_invalid and respect_protection and worksheet.protection.sheet:
-                        for dest_col_num in self.dest_columns.values():
-                            if get_writable_cell(current_write_row, dest_col_num).protection.locked:
-                                is_invalid = True; break
-                    if not is_invalid: break
-                    current_write_row += 1
-
-                if i > 0 and i % 10 == 0:
-                    self.progress['value'] = 50 + (i / len(source_data)) * 45; self.root.update()
-
-                for source_col, dest_col in mappings.items():
-                    if dest_col in self.dest_columns:
-                        dest_col_num = self.dest_columns[dest_col]
-                        cell_to_write = get_writable_cell(current_write_row, dest_col_num)
-                        if cell_to_write.row >= current_write_row and not (respect_formulas and cell_to_write.data_type == 'f'):
-                            cell_to_write.value = row_data.get(source_col, "")
-                current_write_row += 1
-            workbook.save(self.dest_file.get())
-        finally:
-            if workbook:
-                workbook.close()
-            FileHandleManager.force_release_handles()
-
     def toggle_theme(self):
         new_theme = "superhero" if self.current_theme == "flatly" else "flatly"
         self.root.style.theme_use(new_theme)
@@ -780,16 +651,32 @@ class ExcelDataMapper:
                     report["error"] = "Start Write Row cannot be after End Write Row."
                     return report
                 report.update({'start_row': start_row, 'end_row': end_row or "Unlimited", 'total_zone_rows': (end_limit - start_row + 1) if end_row > 0 else "Unlimited"})
-                skipped_rows_set = self._parse_skip_rows(self.dest_skip_rows.get())
+                
+                skipped_rows_set = parse_skip_rows_string(self.dest_skip_rows.get())
+                mappings = {s: c.get() for s, c in self.mapping_combos.items() if c.get()}
+                mapped_dest_indices = {self.dest_columns[name] for name in mappings.values() if name in self.dest_columns}
+
                 user_skipped, protected_skipped = 0, 0
                 for r in range(start_row, end_limit + 1):
-                    if r in skipped_rows_set: user_skipped += 1; continue
-                    is_auto_skipped = False
+                    if r in skipped_rows_set:
+                        user_skipped += 1
+                        continue
+                    
+                    # Check for protected cells or formulas in the row
+                    is_row_auto_skipped = False
                     if self.respect_cell_protection.get() and ws.protection.sheet:
-                        if any(ws.cell(r, c).protection.locked for c in self.dest_columns.values()): is_auto_skipped = True
-                    if not is_auto_skipped and self.respect_formulas.get():
-                        if any(ws.cell(r, c).data_type == 'f' for c in self.dest_columns.values()): is_auto_skipped = True
-                    if is_auto_skipped: protected_skipped += 1
+                        # A row is considered skipped if ANY of its destination cells are locked
+                        if any(ws.cell(r, c_idx).protection.locked for c_idx in mapped_dest_indices):
+                            is_row_auto_skipped = True
+                    
+                    # A row is also considered skipped if ALL of its mapped destination cells contain formulas
+                    if self.respect_formulas.get():
+                        if mapped_dest_indices and all(ws.cell(r, c_idx).data_type == 'f' for c_idx in mapped_dest_indices):
+                             is_row_auto_skipped = True
+
+                    if is_row_auto_skipped:
+                        protected_skipped += 1
+
                 report.update({'user_skipped_count': user_skipped, 'protected_skipped_count': protected_skipped})
                 if end_row > 0:
                     report['available_slots'] = max(0, report['total_zone_rows'] - user_skipped - protected_skipped)
