@@ -87,7 +87,7 @@ class ExcelDataMapper:
     def __init__(self):
         self.root = ttk_boot.Window(themename="flatly")
         self.root.title("Excel Data Mapper")
-        self.root.geometry("1000x850")
+        self.root.geometry("1000x700")
 
         # Center the window on the screen
         self.root.update_idletasks()
@@ -140,11 +140,11 @@ class ExcelDataMapper:
         
     def setup_menu(self):
         menubar_frame = ttk_boot.Frame(self.root)
-        menubar_frame.pack(fill=X, side=TOP, padx=5, pady=(2, 0))
+        menubar_frame.pack(fill=X, side=TOP, padx=5, pady=(1, 0))
 
         def create_menu_button(text, menu):
             button = ttk_boot.Button(menubar_frame, text=text, bootstyle="link")
-            button.pack(side=LEFT, padx=10)
+            button.pack(side=LEFT, padx=10, pady=1)
             button.config(command=lambda: menu.post(button.winfo_rootx(), button.winfo_rooty() + button.winfo_height()))
             return button
 
@@ -165,21 +165,21 @@ class ExcelDataMapper:
         create_menu_button("About", about_menu)
         
     def setup_gui(self):
-        main_frame = ttk_boot.Frame(self.root, padding=10)
+        main_frame = ttk_boot.Frame(self.root, padding=5)
         main_frame.pack(fill=BOTH, expand=True, side=TOP)
         
-        file_frame = ttk_boot.LabelFrame(main_frame, text="File Selection", padding=10)
-        file_frame.pack(fill=X, pady=(0, 10))
+        file_frame = ttk_boot.LabelFrame(main_frame, text="File Selection", padding=5)
+        file_frame.pack(fill=X, pady=(0, 1))
         file_frame.columnconfigure(1, weight=1)
         ttk_boot.Label(file_frame, text="Source File:").grid(row=0, column=0, sticky=W, pady=2)
-        ttk_boot.Entry(file_frame, textvariable=self.source_file, width=50).grid(row=0, column=1, padx=5, pady=5, sticky=EW)
-        ttk_boot.Button(file_frame, bootstyle="outline", text="Browse", command=self.browse_source_file).grid(row=0, column=2, padx=5, pady=5)
+        ttk_boot.Entry(file_frame, textvariable=self.source_file, width=50).grid(row=0, column=1, padx=5, pady=2, sticky=EW)
+        ttk_boot.Button(file_frame, bootstyle="outline", text="Browse", command=self.browse_source_file).grid(row=0, column=2, padx=5, pady=2)
         ttk_boot.Label(file_frame, text="Destination File:").grid(row=1, column=0, sticky=W, pady=2)
         ttk_boot.Entry(file_frame, textvariable=self.dest_file, width=50).grid(row=1, column=1, padx=5, pady=2, sticky=EW)
         ttk_boot.Button(file_frame, bootstyle="outline", text="Browse", command=self.browse_dest_file).grid(row=1, column=2, padx=5, pady=2)
         
-        header_frame = ttk_boot.LabelFrame(main_frame, text="Header Configuration", padding=10)
-        header_frame.pack(fill=X, pady=(0, 10))
+        header_frame = ttk_boot.LabelFrame(main_frame, text="Header Configuration", padding=5)
+        header_frame.pack(fill=X, pady=(0, 2))
         ttk_boot.Label(header_frame, text="Source Header Rows:").grid(row=0, column=0, sticky=W, pady=2)
         ttk_boot.Label(header_frame, text="From:").grid(row=0, column=1, sticky=W, padx=(10, 0))
         ttk_boot.Spinbox(header_frame, from_=1, to=50, textvariable=self.source_header_start_row, width=5).grid(row=0, column=2, padx=5)
@@ -193,35 +193,35 @@ class ExcelDataMapper:
         self.load_cols_button = ttk_boot.Button(header_frame, text="Load Columns", command=self.safe_load_columns, bootstyle=INFO)
         self.load_cols_button.grid(row=0, column=10, padx=20)
         
-        write_zone_frame = ttk_boot.LabelFrame(main_frame, text="Setting write zone", padding=10)
-        write_zone_frame.pack(fill=X, pady=(0, 10))
+        write_zone_frame = ttk_boot.LabelFrame(main_frame, text="Setting write zone", padding=5)
+        write_zone_frame.pack(fill=X, pady=(0, 2))
         write_zone_frame.columnconfigure(1, weight=1)
         write_zone_frame.columnconfigure(3, weight=1)
         write_zone_frame.columnconfigure(4, weight=2)
-        ttk_boot.Label(write_zone_frame, text="Start Write Row:").grid(row=0, column=0, sticky=W, padx=5, pady=5)
+        ttk_boot.Label(write_zone_frame, text="Start Write Row:").grid(row=0, column=0, sticky=W, padx=5, pady=2)
         ttk_boot.Spinbox(write_zone_frame, from_=1, to=99999, textvariable=self.dest_write_start_row, width=8).grid(row=0, column=1, sticky=W, padx=5)
-        ttk_boot.Label(write_zone_frame, text="End Write Row (0 = unlimited):").grid(row=0, column=2, sticky=W, padx=(20, 5), pady=5)
+        ttk_boot.Label(write_zone_frame, text="End Write Row (0 = unlimited):").grid(row=0, column=2, sticky=W, padx=(20, 5), pady=2)
         ttk_boot.Spinbox(write_zone_frame, from_=0, to=99999, textvariable=self.dest_write_end_row, width=8).grid(row=0, column=3, sticky=W, padx=5)
         self.detect_button = ttk_boot.Button(write_zone_frame, text="Detect Zone", command=self.detect_write_zone, bootstyle="outline-info")
-        self.detect_button.grid(row=0, column=4, padx=(10, 5), pady=5, sticky=E)
-        ttk_boot.Label(write_zone_frame, text="Skip Rows (e.g., 15, 20-25):").grid(row=1, column=0, sticky=W, padx=5, pady=5)
+        self.detect_button.grid(row=0, column=4, padx=(10, 5), pady=2, sticky=E)
+        ttk_boot.Label(write_zone_frame, text="Skip Rows (e.g., 15, 20-25):").grid(row=1, column=0, sticky=W, padx=5, pady=2)
         ttk_boot.Entry(write_zone_frame, textvariable=self.dest_skip_rows).grid(row=1, column=1, columnspan=4, padx=5, sticky=EW)
-        ttk_boot.Checkbutton(write_zone_frame, text="Respect cell protection", variable=self.respect_cell_protection).grid(row=2, column=0, columnspan=2, sticky=W, padx=5, pady=5)
-        ttk_boot.Checkbutton(write_zone_frame, text="Respect formulas", variable=self.respect_formulas).grid(row=2, column=2, columnspan=3, sticky=W, padx=(20, 5), pady=5)
+        ttk_boot.Checkbutton(write_zone_frame, text="Respect cell protection", variable=self.respect_cell_protection).grid(row=2, column=0, columnspan=2, sticky=W, padx=5, pady=2)
+        ttk_boot.Checkbutton(write_zone_frame, text="Respect formulas", variable=self.respect_formulas).grid(row=2, column=2, columnspan=3, sticky=W, padx=(20, 5), pady=2)
 
-        mapping_container = ttk_boot.LabelFrame(main_frame, text="Column Mapping", padding=10)
-        mapping_container.pack(fill=BOTH, expand=True, pady=(0, 10))
+        mapping_container = ttk_boot.LabelFrame(main_frame, text="Column Mapping", padding=3)
+        mapping_container.pack(fill=BOTH, expand=True, pady=(0, 2))
         self.mapping_scroll_frame = ScrollableFrame(mapping_container)
         self.mapping_scroll_frame.pack(fill=BOTH, expand=True)
         
-        sort_frame = ttk_boot.LabelFrame(main_frame, text="Sort Configuration", padding=10)
-        sort_frame.pack(fill=X, pady=(0, 10))
-        ttk_boot.Label(sort_frame, text="Sort by Column (optional):").grid(row=0, column=0, sticky=W, pady=2)
+        sort_frame = ttk_boot.LabelFrame(main_frame, text="Sort Configuration", padding=5)
+        sort_frame.pack(fill=X, pady=(0, 2))
+        ttk_boot.Label(sort_frame, text="Sort by Column (optional):").grid(row=0, column=0, sticky=W, pady=(0,2))
         self.sort_combo = ttk_boot.Combobox(sort_frame, textvariable=self.sort_column, width=50)
         self.sort_combo.grid(row=0, column=1, padx=5, sticky=W)
         
         action_frame = ttk_boot.Frame(main_frame)
-        action_frame.pack(fill=X, pady=(0, 10))
+        action_frame.pack(fill=X, pady=(0, 2))
         self.save_button = ttk_boot.Button(action_frame, text="Save Configuration", command=self.save_config, bootstyle=SUCCESS)
         self.save_button.pack(side=LEFT, padx=5)
         self.load_button = ttk_boot.Button(action_frame, text="Load Configuration", command=self.load_config, bootstyle=INFO)
@@ -233,7 +233,7 @@ class ExcelDataMapper:
         
         # Status bar
         self.status_frame = ttk_boot.Frame(main_frame)
-        self.status_frame.pack(fill=X, pady=(5, 0))
+        self.status_frame.pack(fill=X, pady=(2, 0))
         self.status_frame.columnconfigure(0, weight=1)  # Column for progress bar will expand
         self.status_frame.columnconfigure(1, weight=0)  # Column for label will not expand
 
@@ -339,8 +339,8 @@ class ExcelDataMapper:
         
         self.mapping_scroll_frame.scrollable_frame.columnconfigure(0, weight=1)
         self.mapping_scroll_frame.scrollable_frame.columnconfigure(2, weight=1)
-        ttk_boot.Label(self.mapping_scroll_frame.scrollable_frame, text="Source Column", font="-weight bold").grid(row=0, column=0, sticky=W, padx=5, pady=(5, 10))
-        ttk_boot.Label(self.mapping_scroll_frame.scrollable_frame, text="Destination Column", font="-weight bold").grid(row=0, column=2, sticky=W, padx=5, pady=(5, 10))
+        ttk_boot.Label(self.mapping_scroll_frame.scrollable_frame, text="Source Column", font="-weight bold").grid(row=0, column=0, sticky=W, padx=5, pady=(2, 2))
+        ttk_boot.Label(self.mapping_scroll_frame.scrollable_frame, text="Destination Column", font="-weight bold").grid(row=0, column=2, sticky=W, padx=5, pady=(2, 2))
         
         self.mapping_combos = {}
         for i, source_col_name in enumerate(self.source_columns.keys(), start=1):
@@ -370,7 +370,7 @@ class ExcelDataMapper:
             mappings = {source_col: combo.get() for source_col, combo in self.mapping_combos.items() if combo.get()}
             
             job_config = {
-                "source_file": self.source_file.get(), "dest_file": self.dest_file.get(),
+                #"source_file": self.source_file.get(), "dest_file": self.dest_file.get(),
                 "source_header_start_row": self.source_header_start_row.get(), "source_header_end_row": self.source_header_end_row.get(),
                 "dest_header_start_row": self.dest_header_start_row.get(), "dest_header_end_row": self.dest_header_end_row.get(),
                 "dest_write_start_row": self.dest_write_start_row.get(), "dest_write_end_row": self.dest_write_end_row.get(),
@@ -401,8 +401,8 @@ class ExcelDataMapper:
 
             config = self.config_manager.load_job_config(config_file_path)
 
-            self.source_file.set(config.get("source_file", ""))
-            self.dest_file.set(config.get("dest_file", ""))
+            #self.source_file.set(config.get("source_file", ""))
+            #self.dest_file.set(config.get("dest_file", ""))
             self.source_header_start_row.set(config.get("source_header_start_row", 1))
             self.source_header_end_row.set(config.get("source_header_end_row", 1))
             self.dest_header_start_row.set(config.get("dest_header_start_row", 9))
