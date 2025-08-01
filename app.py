@@ -19,6 +19,7 @@ import gc
 import time
 import psutil
 from logic.parser import ExcelParser
+from logic.config_manager import ConfigurationManager
 from gui.widgets import (ScrollableFrame, AboutDialog, PreviewDialog, 
                          DetectionConfigDialog, show_custom_info, 
                          show_custom_error, show_custom_warning, 
@@ -85,6 +86,16 @@ class ExcelDataMapper:
         self.root = ttk_boot.Window(themename="flatly")
         self.root.title("Excel Data Mapper")
         self.root.geometry("1000x850")
+
+        # Center the window on the screen
+        self.root.update_idletasks()
+        width = self.root.winfo_width()
+        height = self.root.winfo_height()
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+        x = (screen_width // 2) - (width // 2)
+        y = (screen_height // 2) - (height // 2)
+        self.root.geometry(f'{width}x{height}+{x}+{y}')
         
         self.icon_path = None
         try:
@@ -117,12 +128,12 @@ class ExcelDataMapper:
         self.dest_columns = {}
         self.mapping_combos = {}
         
-        self.config_dir = Path("configs")
-        self.config_dir.mkdir(exist_ok=True)
-        
+        self.config_manager = ConfigurationManager()
+
         self.setup_menu()
         self.setup_gui()
-        self.load_last_config()
+        self.load_app_settings()
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         
     def setup_menu(self):
         menubar_frame = ttk_boot.Frame(self.root)
@@ -186,7 +197,7 @@ class ExcelDataMapper:
         write_zone_frame.columnconfigure(4, weight=2)
         ttk_boot.Label(write_zone_frame, text="Start Write Row:").grid(row=0, column=0, sticky=W, padx=5, pady=5)
         ttk_boot.Spinbox(write_zone_frame, from_=1, to=99999, textvariable=self.dest_write_start_row, width=8).grid(row=0, column=1, sticky=W, padx=5)
-        ttk_boot.Label(write_zone_frame, text="End Write Row:").grid(row=0, column=2, sticky=W, padx=(20, 5), pady=5)
+        ttk_boot.Label(write_zone_frame, text="End Write Row (0 = unlimited):").grid(row=0, column=2, sticky=W, padx=(20, 5), pady=5)
         ttk_boot.Spinbox(write_zone_frame, from_=0, to=99999, textvariable=self.dest_write_end_row, width=8).grid(row=0, column=3, sticky=W, padx=5)
         self.detect_button = ttk_boot.Button(write_zone_frame, text="Detect Zone", command=self.detect_write_zone, bootstyle="outline-info")
         self.detect_button.grid(row=0, column=4, padx=(10, 5), pady=5, sticky=E)
@@ -224,10 +235,10 @@ class ExcelDataMapper:
         self.status_frame.columnconfigure(1, weight=0)  # Column for label will not expand
 
         self.progress = ttk_boot.Progressbar(self.status_frame, mode='determinate', bootstyle=SUCCESS)
-        self.progress.grid(row=0, column=0, sticky='ew')
+        self.progress.grid(row=0, column=0, sticky='we')
         
         self.status_label = ttk_boot.Label(self.status_frame, text="Ready")
-        self.status_label.grid(row=0, column=1, sticky='ew')
+        self.status_label.grid(row=0, column=1, sticky='we')
     
     def browse_source_file(self):
         filename = filedialog.askopenfilename(title="Select Source Excel file", filetypes=[("Excel files", "*.xlsx *.xls")])
@@ -332,7 +343,7 @@ class ExcelDataMapper:
         for i, source_col_name in enumerate(self.source_columns.keys(), start=1):
             ttk_boot.Label(self.mapping_scroll_frame.scrollable_frame, text=source_col_name, anchor=W).grid(row=i, column=0, sticky=EW, padx=5, pady=2)
             ttk_boot.Label(self.mapping_scroll_frame.scrollable_frame, text="→").grid(row=i, column=1, sticky=W, padx=5)
-            dest_combo = ttk_boot.Combobox(self.mapping_scroll_frame.scrollable_frame, values=[""] + list(self.dest_columns.keys()))
+            dest_combo = ttk_boot.Combobox(self.mapping_scroll_frame.scrollable_frame, values=[""] + list(self.dest_columns.keys()), width=60)
             dest_combo.grid(row=i, column=2, sticky=EW, padx=5, pady=2)
             if apply_suggestions:
                 suggested = self.suggest_mapping(source_col_name, list(self.dest_columns.keys()))
@@ -368,33 +379,49 @@ class ExcelDataMapper:
             if not hasattr(self, 'mapping_combos') or not self.mapping_combos:
                 show_custom_warning(self.root, self, "Warning", "No mappings to save. Please load columns first.")
                 return
-            config_file_path = filedialog.asksaveasfilename(title="Save Configuration As", defaultextension=".json", filetypes=[("JSON files", "*.json")])
+            
+            config_file_path = filedialog.asksaveasfilename(
+                title="Save Job Configuration As",
+                defaultextension=".json",
+                filetypes=[("JSON files", "*.json")],
+                initialdir=self.config_manager.config_dir
+            )
             if not config_file_path: return
+
             mappings = {source_col: combo.get() for source_col, combo in self.mapping_combos.items() if combo.get()}
-            config = {
+            
+            job_config = {
                 "source_file": self.source_file.get(), "dest_file": self.dest_file.get(),
                 "source_header_start_row": self.source_header_start_row.get(), "source_header_end_row": self.source_header_end_row.get(),
                 "dest_header_start_row": self.dest_header_start_row.get(), "dest_header_end_row": self.dest_header_end_row.get(),
                 "dest_write_start_row": self.dest_write_start_row.get(), "dest_write_end_row": self.dest_write_end_row.get(),
-                "dest_skip_rows": self.dest_skip_rows.get(), "respect_cell_protection": self.respect_cell_protection.get(),
-                "respect_formulas": self.respect_formulas.get(), "detection_keywords": self.detection_keywords.get(),
-                "sort_column": self.sort_column.get(), "theme": self.current_theme, "mapping": mappings,
-                "created_date": datetime.now().isoformat()
+                "dest_skip_rows": self.dest_skip_rows.get(), 
+                "respect_cell_protection": self.respect_cell_protection.get(),
+                "respect_formulas": self.respect_formulas.get(), 
+                "sort_column": self.sort_column.get(), 
+                "mapping": mappings,
             }
-            with open(config_file_path, 'w', encoding='utf-8') as f:
-                json.dump(config, f, indent=2, ensure_ascii=False)
-            self.update_status(f"Configuration saved to {os.path.basename(config_file_path)}")
-            self.log_info(f"Configuration saved: {config_file_path}")
+            
+            self.config_manager.save_job_config(job_config, config_file_path)
+            self.save_app_settings() # Update last used files in app settings
+            
+            self.update_status(f"Job configuration saved to {os.path.basename(config_file_path)}")
+            self.log_info(f"Job configuration saved: {config_file_path}")
         except Exception as e:
-            self.log_error(f"Error saving configuration: {str(e)}")
-            show_custom_error(self.root, self, "Error", f"Failed to save configuration: {str(e)}")
+            self.log_error(f"Error saving job configuration: {str(e)}")
+            show_custom_error(self.root, self, "Error", f"Failed to save job configuration: {str(e)}")
     
     def load_config(self):
         try:
-            config_file_path = filedialog.askopenfilename(title="Load Configuration", filetypes=[("JSON files", "*.json")])
+            config_file_path = filedialog.askopenfilename(
+                title="Load Job Configuration", 
+                filetypes=[("JSON files", "*.json")],
+                initialdir=self.config_manager.config_dir
+            )
             if not config_file_path: return
-            with open(config_file_path, 'r', encoding='utf-8') as f:
-                config = json.load(f)
+
+            config = self.config_manager.load_job_config(config_file_path)
+
             self.source_file.set(config.get("source_file", ""))
             self.dest_file.set(config.get("dest_file", ""))
             self.source_header_start_row.set(config.get("source_header_start_row", 1))
@@ -406,11 +433,7 @@ class ExcelDataMapper:
             self.dest_skip_rows.set(config.get("dest_skip_rows", ""))
             self.respect_cell_protection.set(config.get("respect_cell_protection", True))
             self.respect_formulas.set(config.get("respect_formulas", True))
-            self.detection_keywords.set(config.get("detection_keywords", "total,sum,cộng,tổng,thành tiền"))
-            new_theme = config.get("theme", "flatly")
-            if new_theme != self.current_theme:
-                self.root.style.theme_use(new_theme)
-                self.current_theme = new_theme
+            
             if self.source_file.get() and self.dest_file.get():
                 saved_sort_col = config.get("sort_column", "")
                 self.safe_load_columns(saved_sort_col=saved_sort_col, apply_suggestions=False)
@@ -418,36 +441,61 @@ class ExcelDataMapper:
                 for source_col, dest_col in mappings.items():
                     if source_col in self.mapping_combos:
                         self.mapping_combos[source_col].set(dest_col)
-            self.update_status(f"Configuration loaded from {os.path.basename(config_file_path)}")
-            self.log_info(f"Configuration loaded: {config_file_path}")
+
+            self.save_app_settings() # Update last used files
+            self.update_status(f"Job configuration loaded from {os.path.basename(config_file_path)}")
+            self.log_info(f"Job configuration loaded: {config_file_path}")
         except Exception as e:
             self.log_error(f"Error in load_config: {str(e)}")
-            show_custom_error(self.root, self, "Error", f"Failed to load configuration: {str(e)}")
+            show_custom_error(self.root, self, "Error", f"Failed to load job configuration: {str(e)}")
     
-    def load_last_config(self):
+    def load_app_settings(self):
+        """Loads global application settings at startup."""
         try:
-            config_files = list(self.config_dir.glob("*.json"))
-            if not config_files: return
-            latest_config = max(config_files, key=os.path.getctime)
-            with open(latest_config, 'r', encoding='utf-8') as f:
-                config = json.load(f)
-            if os.path.exists(config.get("source_file", "")):
-                self.source_file.set(config.get("source_file", ""))
-            if os.path.exists(config.get("dest_file", "")):
-                self.dest_file.set(config.get("dest_file", ""))
-            self.source_header_start_row.set(config.get("source_header_start_row", 1))
-            self.source_header_end_row.set(config.get("source_header_end_row", 1))
-            self.dest_header_start_row.set(config.get("dest_header_start_row", 9))
-            self.dest_header_end_row.set(config.get("dest_header_end_row", 9))
-            self.dest_write_start_row.set(config.get("dest_write_start_row", self.dest_header_end_row.get() + 1))
-            self.dest_write_end_row.set(config.get("dest_write_end_row", 0))
-            self.dest_skip_rows.set(config.get("dest_skip_rows", ""))
-            new_theme = config.get("theme", "flatly")
+            settings = self.config_manager.load_app_settings()
+            
+            # Restore last used theme
+            new_theme = settings.get("theme", "flatly")
             if new_theme != self.current_theme:
                 self.root.style.theme_use(new_theme)
                 self.current_theme = new_theme
+            
+            # Restore last used keywords
+            self.detection_keywords.set(settings.get("detection_keywords", "total,sum,cộng,tổng,thành tiền"))
+
+            # Restore last used file paths if they exist
+            last_source = settings.get("last_source_file", "")
+            if os.path.exists(last_source):
+                self.source_file.set(last_source)
+            
+            last_dest = settings.get("last_dest_file", "")
+            if os.path.exists(last_dest):
+                self.dest_file.set(last_dest)
+
+            self.log_info("Application settings loaded.")
+
         except Exception as e:
-            self.log_error(f"Error loading last config: {str(e)}")
+            self.log_error(f"Error loading application settings: {str(e)}")
+            # Don't show a popup for this, just log it.
+            
+    def save_app_settings(self):
+        """Saves global application settings."""
+        try:
+            settings = {
+                "theme": self.current_theme,
+                "detection_keywords": self.detection_keywords.get(),
+                "last_source_file": self.source_file.get(),
+                "last_dest_file": self.dest_file.get()
+            }
+            self.config_manager.save_app_settings(settings)
+            self.log_info("Application settings saved.")
+        except Exception as e:
+            self.log_error(f"Error saving application settings: {str(e)}")
+
+    def on_closing(self):
+        """Handles window closing event."""
+        self.save_app_settings()
+        self.root.destroy()
     
     def execute_transfer(self):
         if not self.source_file.get() or not self.dest_file.get():
@@ -602,11 +650,20 @@ class ExcelDataMapper:
                         cleared_anchors.add(anchor_cell.coordinate)
 
             current_write_row = start_write_row
+            EXCEL_MAX_ROW = 1048576  # Max rows in .xlsx
             for i, row_data in enumerate(source_data):
                 while True:
+                    # Check 1: User-defined limit
                     if end_write_row > 0 and current_write_row > end_write_row:
                         self.log_warning(f"Reached end of write zone (row {end_write_row}). Stopping data transfer.")
                         show_custom_warning(self.root, self, "Write Limit Reached", f"Data transfer stopped at row {end_write_row} as configured.")
+                        workbook.save(self.dest_file.get())
+                        return
+
+                    # Check 2: Absolute Excel limit
+                    if current_write_row > EXCEL_MAX_ROW:
+                        self.log_error(f"Reached absolute maximum Excel row limit ({EXCEL_MAX_ROW}). Stopping.")
+                        show_custom_error(self.root, self, "Limit Reached", f"Reached maximum Excel row limit ({EXCEL_MAX_ROW}). Transfer stopped.")
                         workbook.save(self.dest_file.get())
                         return
                     

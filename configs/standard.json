@@ -10,9 +10,7 @@
   "dest_skip_rows": "12-15",
   "respect_cell_protection": true,
   "respect_formulas": true,
-  "detection_keywords": "total,sum,cộng,tổng,thành tiền,grand",
   "sort_column": "Contents",
-  "theme": "flatly",
   "mapping": {
     "Trading   date\nNgày lập cover": "Trading   date",
     "Applicant - Division": "Cost burden - Division CD",
@@ -24,5 +22,5 @@
     "Amount": "VND or US$　or JPY - Amount",
     "Official invoice number": "Official invoice number"
   },
-  "created_date": "2025-08-01T11:16:56.160105"
+  "created_date": "2025-08-01T14:20:17.819422"
 }

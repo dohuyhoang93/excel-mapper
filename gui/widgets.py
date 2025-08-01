@@ -67,6 +67,10 @@ class BaseDialog(tk.Toplevel):
         self.grab_set()
         self.bind("<Escape>", lambda e: self.destroy())
 
+        # Schedule centering to run after the event loop has processed the window's layout.
+        # This is more reliable than calling it directly.
+        self.after(20, self.center_on_parent)
+
     def center_on_parent(self):
         # Force update of widget sizes
         self.update_idletasks()
@@ -111,9 +115,6 @@ https://github.com/dohuyhoang93
 """
         ttk_boot.Label(self, text=about_text, justify=LEFT, padding=(20, 20)).pack(expand=True, fill=BOTH)
         ttk_boot.Button(self, text="OK", command=self.destroy, bootstyle=PRIMARY, width=10).pack(pady=15)
-        
-        # This must be called at the end of the child __init__
-        self.center_on_parent()
 
 class PreviewDialog(BaseDialog):
     """A comprehensive, multi-tab simulation report dialog."""
@@ -133,9 +134,6 @@ class PreviewDialog(BaseDialog):
         self._create_mappings_tab(self.notebook, mappings)
         self._create_data_preview_tab(self.notebook, preview_data, mappings)
         ttk_boot.Button(main_frame, text="Close", command=self.destroy, bootstyle="outline-secondary").pack(pady=(10, 0))
-        
-        # This must be called at the end of the child __init__
-        self.center_on_parent()
 
     def _adjust_column_widths(self, tree, anchors):
         self.update_idletasks()
@@ -260,7 +258,6 @@ class DetectionConfigDialog(BaseDialog):
         button_frame.pack(fill=X, pady=10)
         ttk_boot.Button(button_frame, text="Save", command=self.save, bootstyle=SUCCESS).pack(side=RIGHT, padx=5)
         ttk_boot.Button(button_frame, text="Cancel", command=self.destroy, bootstyle="secondary").pack(side=RIGHT)
-        self.center_on_parent()
 
 
     def save(self):
@@ -315,8 +312,6 @@ class CustomMessageDialog(BaseDialog):
             yes_button.focus_set()
             self.bind("<Return>", lambda e: self.on_yes())
 
-        self.center_on_parent()
-        
         # Make the dialog blocking
         self.wait_window()
 
