@@ -220,14 +220,14 @@ class ExcelDataMapper:
         # Status bar
         self.status_frame = ttk_boot.Frame(main_frame)
         self.status_frame.pack(fill=X, pady=(5, 0))
+        self.status_frame.columnconfigure(0, weight=1)  # Column for progress bar will expand
+        self.status_frame.columnconfigure(1, weight=0)  # Column for label will not expand
 
-        # Pack label first to give it priority and prevent it from being obscured
-        self.status_label = ttk_boot.Label(self.status_frame, text="Ready")
-        self.status_label.pack(side=RIGHT, padx=(5, 0))
-
-        # Pack progress bar second to fill the remaining space
         self.progress = ttk_boot.Progressbar(self.status_frame, mode='determinate', bootstyle=SUCCESS)
-        self.progress.pack(side=LEFT, fill=X, expand=True, padx=(0, 5))
+        self.progress.grid(row=0, column=0, sticky='ew')
+        
+        self.status_label = ttk_boot.Label(self.status_frame, text="Ready")
+        self.status_label.grid(row=0, column=1, sticky='ew')
     
     def browse_source_file(self):
         filename = filedialog.askopenfilename(title="Select Source Excel file", filetypes=[("Excel files", "*.xlsx *.xls")])
