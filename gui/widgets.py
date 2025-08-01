@@ -1,3 +1,4 @@
+
 """
 Reusable GUI widgets for the Excel Data Mapper application
 """
@@ -6,6 +7,7 @@ from tkinter import ttk, messagebox
 import ttkbootstrap as ttk_boot
 from ttkbootstrap.constants import *
 from typing import List, Dict, Callable, Optional, Any
+import tkinter.font as tkFont
 
 class ScrollableFrame(ttk_boot.Frame):
     """A scrollable frame widget"""
@@ -356,6 +358,186 @@ class ValidationPanel(ttk_boot.LabelFrame):
         
         self.issues_text.config(state=tk.DISABLED)
 
+# --- DIALOGS MOVED FROM APP.PY ---
+
+class BaseDialog(tk.Toplevel):
+    """A base class for consistent dialog windows."""
+    def __init__(self, parent, app_instance, title=""):
+        super().__init__(parent)
+        self.parent = parent
+        self.app = app_instance
+        self.title(title)
+        self.resizable(False, False)
+        if hasattr(self.app, 'icon_path') and self.app.icon_path:
+            try:
+                self.iconbitmap(self.app.icon_path)
+            except tk.TclError:
+                pass
+        self.transient(parent)
+        self.grab_set()
+        self.center_on_parent()
+        self.bind("<Escape>", lambda e: self.destroy())
+
+    def center_on_parent(self):
+        self.update_idletasks()
+        parent_x, parent_y = self.parent.winfo_x(), self.parent.winfo_y()
+        parent_w, parent_h = self.parent.winfo_width(), self.parent.winfo_height()
+        dialog_w, dialog_h = self.winfo_width(), self.winfo_height()
+        x = parent_x + (parent_w // 2) - (dialog_w // 2)
+        y = parent_y + (parent_h // 2) - (dialog_h // 2)
+        self.geometry(f"+{x}+{y}")
+
+class AboutDialog(BaseDialog):
+    """The 'About' dialog window."""
+    def __init__(self, parent, app_instance):
+        super().__init__(parent, app_instance, title="About Excel Data Mapper")
+        self.geometry("400x350")
+        about_text = """Excel Data Mapper v1.2\n\nA powerful tool for mapping and transferring data \nbetween Excel files while preserving formatting.\n\nFeatures:\n• Flexible column mapping\n• Sort data before transfer\n• Preserve Excel formatting and styles\n• Configuration save/load\n• Theme switching\n• Comprehensive error handling\n• Enhanced file handle management\n\nDeveloped by Do Huy Hoang\nhttps://github.com/dohuyhoang93\n"""
+        ttk_boot.Label(self, text=about_text, justify=LEFT, padding=(15, 15)).pack(expand=True, fill=BOTH)
+        ttk_boot.Button(self, text="OK", command=self.destroy, bootstyle=PRIMARY, width=10).pack(pady=10)
+        self.center_on_parent()
+
+class PreviewDialog(BaseDialog):
+    """A comprehensive, multi-tab simulation report dialog with professional, theme-aware styling."""
+    def __init__(self, parent, app_instance, report_data: dict, preview_data: list, mappings: dict):
+        super().__init__(parent, app_instance, title="Transfer Simulation Report")
+        self.geometry("950x650")
+        main_frame = ttk_boot.Frame(self, padding=10)
+        main_frame.pack(fill=BOTH, expand=True)
+        if "error" in report_data:
+            self._create_error_view(main_frame, report_data["error"])
+            return
+        self.notebook = ttk.Notebook(main_frame)
+        self.notebook.pack(fill=BOTH, expand=True, pady=5)
+        self._create_summary_tab(self.notebook, report_data)
+        self._create_mappings_tab(self.notebook, mappings)
+        self._create_data_preview_tab(self.notebook, preview_data, mappings)
+        ttk_boot.Button(main_frame, text="Close", command=self.destroy, bootstyle="outline-secondary").pack(pady=(10, 0))
+        self.center_on_parent()
+
+    def _adjust_column_widths(self, tree, anchors):
+        self.update_idletasks()
+        for idx, col in enumerate(tree["columns"]):
+            header_width = tkFont.Font().measure(tree.heading(col)["text"])
+            max_width = header_width
+            for item in tree.get_children():
+                try:
+                    cell_text = tree.item(item)["values"][idx]
+                    cell_width = tkFont.Font().measure(str(cell_text))
+                    if cell_width > max_width: max_width = cell_width
+                except (IndexError, KeyError):
+                    continue
+            tree.column(col, width=max_width + 25, anchor=anchors[idx])
+
+    def _create_error_view(self, parent, error_message):
+        ttk_boot.Label(parent, text=f"❌ CRITICAL ERROR\n\n{error_message}", bootstyle=DANGER, font="-size 12 -weight bold", justify=CENTER).pack(pady=20, padx=10, fill=BOTH, expand=True)
+        ttk_boot.Button(parent, text="Close", command=self.destroy, bootstyle="outline-danger").pack(pady=10)
+
+    def _create_summary_tab(self, notebook, data):
+        summary_frame = ttk_boot.Frame(notebook, padding=10)
+        notebook.add(summary_frame, text="📊 Summary")
+        verdict_frame = ttk_boot.LabelFrame(summary_frame, text="Verdict", padding=10)
+        verdict_frame.pack(padx=10, pady=5, fill=X)
+        source_count, available_slots = data['source_row_count'], data['available_slots']
+        if available_slots == "Unlimited" or source_count <= available_slots:
+            verdict_text, details, style = "✅ PERFECT", f"All {source_count} source rows will be transferred.", SUCCESS
+        else:
+            verdict_text, details, style = "⚠️ WARNING", f"Only {available_slots} of {source_count} source rows will be transferred.", WARNING
+        ttk_boot.Label(verdict_frame, text=verdict_text, font="-size 14 -weight bold", bootstyle=style).pack()
+        ttk_boot.Label(verdict_frame, text=details, wraplength=800).pack(pady=(5,0))
+        
+        bottom_frame = ttk_boot.Frame(summary_frame)
+        bottom_frame.pack(fill=BOTH, expand=True, pady=5)
+        analysis_frame = ttk_boot.LabelFrame(bottom_frame, text="Data Flow Analysis", padding=10)
+        analysis_frame.pack(side=LEFT, fill=BOTH, expand=True, padx=(0, 5))
+        analysis_frame.columnconfigure(1, weight=1)
+
+        analysis_data = [
+            ("Source rows to transfer:", data.get('source_row_count', 'N/A')),
+            ("Destination write zone:", f"Row {data.get('start_row', '?')} to {data.get('end_row', '?')}"),
+            ("Total rows in zone:", data.get('total_zone_rows', 'N/A')),
+            ("User-skipped rows:", data.get('user_skipped_count', 'N/A')),
+            ("Protected/Formula rows skipped:", data.get('protected_skipped_count', 'N/A')),
+            ("Available rows for writing:", data.get('available_slots', 'N/A'))
+        ]
+        for i, (label, value) in enumerate(analysis_data):
+            ttk_boot.Label(analysis_frame, text=label, anchor=W).grid(row=i, column=0, sticky=EW, pady=2, padx=5)
+            ttk_boot.Label(analysis_frame, text=str(value), anchor=W, bootstyle="info").grid(row=i, column=1, sticky=EW, pady=2, padx=5)
+
+        settings_frame = ttk_boot.LabelFrame(bottom_frame, text="Settings Used", padding=10)
+        settings_frame.pack(side=LEFT, fill=BOTH, expand=True, padx=(5, 0))
+        settings_frame.columnconfigure(1, weight=1)
+
+        settings_data = data.get('settings', {})
+        for i, (key, value) in enumerate(settings_data.items()):
+            ttk_boot.Label(settings_frame, text=f"{key}:", anchor=W).grid(row=i, column=0, sticky=EW, pady=2, padx=5)
+            style = "info" if value not in ["No", "None"] else "secondary"
+            ttk_boot.Label(settings_frame, text=str(value), anchor=W, bootstyle=style).grid(row=i, column=1, sticky=EW, pady=2, padx=5)
+
+    def _create_mappings_tab(self, notebook, mappings):
+        tab_frame = ttk_boot.Frame(notebook, padding=10)
+        notebook.add(tab_frame, text="🔗 Column Mappings")
+        container = ttk_boot.LabelFrame(tab_frame, text="Active Mappings")
+        container.pack(fill=BOTH, expand=True)
+        cols, anchors = ("Source Column", "Destination Column"), [W, W]
+        tree = ttk.Treeview(container, columns=cols, show='headings', bootstyle="info", height=15)
+        for i, col in enumerate(cols):
+            tree.heading(col, text=col, anchor=anchors[i])
+        for source, dest in mappings.items():
+            tree.insert("", "end", values=(source, dest))
+        tree.pack(side=LEFT, fill=BOTH, expand=True, padx=5, pady=5)
+        vsb = ttk.Scrollbar(container, orient="vertical", command=tree.yview, bootstyle="info-round")
+        vsb.pack(side=RIGHT, fill='y')
+        tree.configure(yscrollcommand=vsb.set)
+        self.after(100, lambda: self._adjust_column_widths(tree, anchors))
+
+    def _create_data_preview_tab(self, notebook, preview_data, mappings):
+        tab_frame = ttk_boot.Frame(notebook, padding=10)
+        notebook.add(tab_frame, text="📄 Data Preview")
+        container = ttk_boot.LabelFrame(tab_frame, text="Preview of Data to be Transferred")
+        container.pack(fill=BOTH, expand=True)
+        if not preview_data:
+            ttk_boot.Label(container, text="No source data found to preview.", bootstyle=INFO).pack(padx=10, pady=10)
+            return
+        dest_cols = list(mappings.values())
+        anchors = ['center'] * len(dest_cols)
+        tree = ttk.Treeview(container, columns=dest_cols, show='headings', bootstyle="info", height=10)
+        for i, col in enumerate(dest_cols):
+            tree.heading(col, text=col, anchor=anchors[i])
+        dest_to_source = {v: k for k, v in mappings.items()}
+        for row_data in preview_data:
+            values = [str(row_data.get(dest_to_source.get(dc), ""))[:100] for dc in dest_cols]
+            tree.insert("", "end", values=values)
+        vsb = ttk.Scrollbar(container, orient="vertical", command=tree.yview, bootstyle="info-round")
+        hsb = ttk.Scrollbar(container, orient="horizontal", command=tree.xview, bootstyle="info-round")
+        tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
+        vsb.pack(side='right', fill='y')
+        hsb.pack(side='bottom', fill='x')
+        tree.pack(side=LEFT, fill='both', expand=True, padx=5, pady=5)
+        self.after(100, lambda: self._adjust_column_widths(tree, anchors))
+
+class DetectionConfigDialog(BaseDialog):
+    """Dialog to configure end-row detection keywords."""
+    def __init__(self, parent, app_instance):
+        super().__init__(parent, app_instance, title="Configure Detection Keywords")
+        self.geometry("500x150")
+        self.parent_app = app_instance
+        self.temp_keywords = tk.StringVar(value=self.parent_app.detection_keywords.get())
+        main_frame = ttk_boot.Frame(self, padding=15)
+        main_frame.pack(fill=BOTH, expand=True)
+        ttk_boot.Label(main_frame, text="Enter keywords to detect the 'total' row, separated by commas:").pack(anchor=W)
+        ttk_boot.Entry(main_frame, textvariable=self.temp_keywords).pack(fill=X, pady=5)
+        button_frame = ttk_boot.Frame(main_frame)
+        button_frame.pack(fill=X, pady=10)
+        ttk_boot.Button(button_frame, text="Save", command=self.save, bootstyle=SUCCESS).pack(side=RIGHT, padx=5)
+        ttk_boot.Button(button_frame, text="Cancel", command=self.destroy, bootstyle="secondary").pack(side=RIGHT)
+        self.center_on_parent()
+
+    def save(self):
+        self.parent_app.detection_keywords.set(self.temp_keywords.get())
+        self.parent_app.log_info(f"Detection keywords updated to: {self.temp_keywords.get()}")
+        self.destroy()
+
 # Utility functions for common dialogs
 def show_error_dialog(parent, title: str, message: str, details: Optional[str] = None):
     """Show enhanced error dialog with optional details"""
@@ -399,3 +581,7 @@ def show_error_dialog(parent, title: str, message: str, details: Optional[str] =
 def show_confirmation_dialog(parent, title: str, message: str) -> bool:
     """Show confirmation dialog"""
     return messagebox.askyesno(title, message, parent=parent)
+
+def show_info_dialog(parent, title: str, message: str):
+    """Show info dialog"""
+    messagebox.showinfo(title, message, parent=parent)

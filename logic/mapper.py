@@ -3,13 +3,13 @@ Mapping logic for suggesting column relationships between source and destination
 """
 import difflib
 from typing import List, Dict, Optional, Tuple
-from config import Config
+# from config import Config
 
 class ColumnMapper:
     """Handles intelligent column mapping suggestions"""
     
     def __init__(self):
-        self.common_mappings = Config.COMMON_MAPPINGS
+        self.common_mappings = {} # Config.COMMON_MAPPINGS
     
     def suggest_mapping(self, source_column: str, destination_columns: List[str]) -> Optional[str]:
         """

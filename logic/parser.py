@@ -322,6 +322,42 @@ class ExcelParser:
         
         return column_types
 
+    def count_data_rows(self, header_end_row: int) -> int:
+        """Efficiently counts the number of non-empty data rows."""
+        if not self.worksheet:
+            raise ValueError("Worksheet not loaded")
+
+        count = 0
+        start_data_row = header_end_row + 1
+        
+        # Iterate through rows and check if any cell has data
+        for row in self.worksheet.iter_rows(min_row=start_data_row, values_only=True):
+            if any(cell is not None for cell in row):
+                count += 1
+        return count
+
+    def read_data_preview(self, headers: Dict[str, int], header_end_row: int, num_rows: int) -> List[Dict[str, Any]]:
+        """Reads a specified number of data rows for preview."""
+        if not self.worksheet:
+            raise ValueError("Worksheet not loaded")
+
+        data = []
+        start_data_row = header_end_row + 1
+        
+        for row_index in range(start_data_row, min(start_data_row + num_rows, self.worksheet.max_row + 1)):
+            row_data = {}
+            has_data = False
+            for header_name, col_index in headers.items():
+                cell_value = self.worksheet.cell(row=row_index, column=col_index).value
+                if cell_value is not None:
+                    has_data = True
+                row_data[header_name] = cell_value
+            
+            if has_data:
+                data.append(row_data)
+        
+        return data
+
 # Utility functions for external use with enhanced resource management
 def quick_validate_excel(file_path: str) -> bool:
     """Quick validation of Excel file with proper cleanup"""
