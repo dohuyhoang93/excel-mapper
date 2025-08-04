@@ -3,7 +3,7 @@
 A powerful application to map and transfer data between Excel files while preserving formatting and styles.
 
 <!-- Add a screenshot of the application's UI here -->
-<!-- ![Excel Data Mapper UI](path/to/your/screenshot.png) -->
+![Excel Data Mapper UI](./screenshot.png)
 
 ---
 
