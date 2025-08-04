@@ -217,7 +217,7 @@ class ExcelDataMapper:
         
         header_frame = ttk_boot.LabelFrame(left_panel, text="Header Configuration", padding=5)
         header_frame.pack(fill=X, pady=(0, 5), anchor=N)
-        header_frame.columnconfigure(2, weight=1)
+        # Make the column with the last spinbox expand, pushing the button to the right
         header_frame.columnconfigure(4, weight=1)
 
         # Row 0: Source Headers
@@ -225,18 +225,18 @@ class ExcelDataMapper:
         ttk_boot.Label(header_frame, text="From:").grid(row=0, column=1, sticky=W, padx=(5, 0))
         ttk_boot.Spinbox(header_frame, from_=1, to=50, textvariable=self.source_header_start_row, width=5).grid(row=0, column=2, padx=(5, 10))
         ttk_boot.Label(header_frame, text="To:").grid(row=0, column=3, sticky=W)
-        ttk_boot.Spinbox(header_frame, from_=1, to=50, textvariable=self.source_header_end_row, width=5).grid(row=0, column=4, padx=5)
+        ttk_boot.Spinbox(header_frame, from_=1, to=50, textvariable=self.source_header_end_row, width=5).grid(row=0, column=4, padx=5, sticky=EW)
         
         # Row 1: Destination Headers
         ttk_boot.Label(header_frame, text="Destination:").grid(row=1, column=0, sticky=W, pady=(0, 2))
         ttk_boot.Label(header_frame, text="From:").grid(row=1, column=1, sticky=W, padx=(5, 0))
         ttk_boot.Spinbox(header_frame, from_=1, to=50, textvariable=self.dest_header_start_row, width=5).grid(row=1, column=2, padx=(5, 10))
         ttk_boot.Label(header_frame, text="To:").grid(row=1, column=3, sticky=W)
-        ttk_boot.Spinbox(header_frame, from_=1, to=50, textvariable=self.dest_header_end_row, width=5).grid(row=1, column=4, padx=5)
+        ttk_boot.Spinbox(header_frame, from_=1, to=50, textvariable=self.dest_header_end_row, width=5).grid(row=1, column=4, padx=5, sticky=EW)
         
-        # Row 2: Load Button
-        self.load_cols_button = ttk_boot.Button(header_frame, text="Load Columns", command=self.safe_load_columns, bootstyle=INFO)
-        self.load_cols_button.grid(row=2, column=0, columnspan=5, pady=(5, 2), sticky=W)
+        # Load Button, aligned to the right, spanning two rows
+        self.load_cols_button = ttk_boot.Button(header_frame, text="Load Columns", command=self.safe_load_columns, bootstyle="outline-info")
+        self.load_cols_button.grid(row=0, column=5, rowspan=2, padx=(10, 0), pady=2, sticky="ns")
 
         write_zone_frame = ttk_boot.LabelFrame(left_panel, text="Setting write zone", padding=5)
         write_zone_frame.pack(fill=X, pady=(0, 5), anchor=N)
