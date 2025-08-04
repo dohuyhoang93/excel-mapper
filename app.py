@@ -167,9 +167,46 @@ class ExcelDataMapper:
     def setup_gui(self):
         main_frame = ttk_boot.Frame(self.root, padding=5)
         main_frame.pack(fill=BOTH, expand=True, side=TOP)
+
+        # --- Bottom Panels (Status and Actions) ---
+        # We pack them first to reserve their space at the bottom
+        self.status_frame = ttk_boot.Frame(main_frame)
+        self.status_frame.pack(side=BOTTOM, fill=X, pady=(5, 0))
+        self.status_frame.columnconfigure(0, weight=1)
+        self.status_frame.columnconfigure(1, weight=0)
+
+        self.progress = ttk_boot.Progressbar(self.status_frame, mode='determinate', bootstyle=SUCCESS)
+        self.progress.grid(row=0, column=0, sticky='we', padx=(0, 5))
         
-        file_frame = ttk_boot.LabelFrame(main_frame, text="File Selection", padding=5)
-        file_frame.pack(fill=X, pady=(0, 1))
+        self.status_label = ttk_boot.Label(self.status_frame, text="Ready")
+        self.status_label.grid(row=0, column=1, sticky='e')
+
+        action_frame = ttk_boot.Frame(main_frame)
+        action_frame.pack(side=BOTTOM, fill=X, pady=5)
+        self.save_button = ttk_boot.Button(action_frame, text="Save Configuration", command=self.save_config, bootstyle=SUCCESS)
+        self.save_button.pack(side=LEFT, padx=(0, 5))
+        self.load_button = ttk_boot.Button(action_frame, text="Load Configuration", command=self.load_config, bootstyle=INFO)
+        self.load_button.pack(side=LEFT, padx=5)
+        self.execute_button = ttk_boot.Button(action_frame, text="Execute Transfer", command=self.execute_transfer, bootstyle=PRIMARY)
+        self.execute_button.pack(side=RIGHT, padx=0)
+        self.preview_button = ttk_boot.Button(action_frame, text="Preview Transfer", command=self.preview_transfer, bootstyle="outline-secondary")
+        self.preview_button.pack(side=RIGHT, padx=5)
+
+        # --- Top Panels (Content Area with Two Columns) ---
+        content_frame = ttk_boot.Frame(main_frame)
+        content_frame.pack(fill=BOTH, expand=True)
+
+        # Left column for configuration panels
+        left_panel = ttk_boot.Frame(content_frame, padding=(0, 0, 10, 0))
+        left_panel.pack(side=LEFT, fill=Y, anchor=N)
+
+        # Right column for the mapping table
+        right_panel = ttk_boot.Frame(content_frame)
+        right_panel.pack(side=LEFT, fill=BOTH, expand=True)
+
+        # --- Populate Left Panel ---
+        file_frame = ttk_boot.LabelFrame(left_panel, text="File Selection", padding=5)
+        file_frame.pack(fill=X, pady=(0, 5), anchor=N)
         file_frame.columnconfigure(1, weight=1)
         ttk_boot.Label(file_frame, text="Source File:").grid(row=0, column=0, sticky=W, pady=2)
         ttk_boot.Entry(file_frame, textvariable=self.source_file, width=50).grid(row=0, column=1, padx=5, pady=2, sticky=EW)
@@ -178,70 +215,54 @@ class ExcelDataMapper:
         ttk_boot.Entry(file_frame, textvariable=self.dest_file, width=50).grid(row=1, column=1, padx=5, pady=2, sticky=EW)
         ttk_boot.Button(file_frame, bootstyle="outline", text="Browse", command=self.browse_dest_file).grid(row=1, column=2, padx=5, pady=2)
         
-        header_frame = ttk_boot.LabelFrame(main_frame, text="Header Configuration", padding=5)
-        header_frame.pack(fill=X, pady=(0, 2))
-        ttk_boot.Label(header_frame, text="Source Header Rows:").grid(row=0, column=0, sticky=W, pady=2)
-        ttk_boot.Label(header_frame, text="From:").grid(row=0, column=1, sticky=W, padx=(10, 0))
-        ttk_boot.Spinbox(header_frame, from_=1, to=50, textvariable=self.source_header_start_row, width=5).grid(row=0, column=2, padx=5)
-        ttk_boot.Label(header_frame, text="To:").grid(row=0, column=3, sticky=W)
-        ttk_boot.Spinbox(header_frame, from_=1, to=50, textvariable=self.source_header_end_row, width=5).grid(row=0, column=4, padx=5)
-        ttk_boot.Label(header_frame, text="Destination Header Rows:").grid(row=0, column=5, sticky=W, padx=(20, 0), pady=2)
-        ttk_boot.Label(header_frame, text="From:").grid(row=0, column=6, sticky=W, padx=(10, 0))
-        ttk_boot.Spinbox(header_frame, from_=1, to=50, textvariable=self.dest_header_start_row, width=5).grid(row=0, column=7, padx=5)
-        ttk_boot.Label(header_frame, text="To:").grid(row=0, column=8, sticky=W)
-        ttk_boot.Spinbox(header_frame, from_=1, to=50, textvariable=self.dest_header_end_row, width=5).grid(row=0, column=9, padx=5)
-        self.load_cols_button = ttk_boot.Button(header_frame, text="Load Columns", command=self.safe_load_columns, bootstyle=INFO)
-        self.load_cols_button.grid(row=0, column=10, padx=20)
-        
-        write_zone_frame = ttk_boot.LabelFrame(main_frame, text="Setting write zone", padding=5)
-        write_zone_frame.pack(fill=X, pady=(0, 2))
-        write_zone_frame.columnconfigure(1, weight=1)
-        write_zone_frame.columnconfigure(3, weight=1)
-        write_zone_frame.columnconfigure(4, weight=2)
-        ttk_boot.Label(write_zone_frame, text="Start Write Row:").grid(row=0, column=0, sticky=W, padx=5, pady=2)
-        ttk_boot.Spinbox(write_zone_frame, from_=1, to=99999, textvariable=self.dest_write_start_row, width=8).grid(row=0, column=1, sticky=W, padx=5)
-        ttk_boot.Label(write_zone_frame, text="End Write Row (0 = unlimited):").grid(row=0, column=2, sticky=W, padx=(20, 5), pady=2)
-        ttk_boot.Spinbox(write_zone_frame, from_=0, to=99999, textvariable=self.dest_write_end_row, width=8).grid(row=0, column=3, sticky=W, padx=5)
-        self.detect_button = ttk_boot.Button(write_zone_frame, text="Detect Zone", command=self.detect_write_zone, bootstyle="outline-info")
-        self.detect_button.grid(row=0, column=4, padx=(10, 5), pady=2, sticky=E)
-        ttk_boot.Label(write_zone_frame, text="Skip Rows (e.g., 15, 20-25):").grid(row=1, column=0, sticky=W, padx=5, pady=2)
-        ttk_boot.Entry(write_zone_frame, textvariable=self.dest_skip_rows).grid(row=1, column=1, columnspan=4, padx=5, sticky=EW)
-        ttk_boot.Checkbutton(write_zone_frame, text="Respect cell protection", variable=self.respect_cell_protection).grid(row=2, column=0, columnspan=2, sticky=W, padx=5, pady=2)
-        ttk_boot.Checkbutton(write_zone_frame, text="Respect formulas", variable=self.respect_formulas).grid(row=2, column=2, columnspan=3, sticky=W, padx=(20, 5), pady=2)
+        header_frame = ttk_boot.LabelFrame(left_panel, text="Header Configuration", padding=5)
+        header_frame.pack(fill=X, pady=(0, 5), anchor=N)
+        # Using a sub-frame for better alignment
+        src_header_subframe = ttk_boot.Frame(header_frame)
+        src_header_subframe.pack(fill=X)
+        ttk_boot.Label(src_header_subframe, text="Source:").pack(side=LEFT, pady=2)
+        ttk_boot.Label(src_header_subframe, text="From:").pack(side=LEFT, padx=(5,0))
+        ttk_boot.Spinbox(src_header_subframe, from_=1, to=50, textvariable=self.source_header_start_row, width=4).pack(side=LEFT, padx=5)
+        ttk_boot.Label(src_header_subframe, text="To:").pack(side=LEFT)
+        ttk_boot.Spinbox(src_header_subframe, from_=1, to=50, textvariable=self.source_header_end_row, width=4).pack(side=LEFT, padx=5)
 
-        mapping_container = ttk_boot.LabelFrame(main_frame, text="Column Mapping", padding=3)
-        mapping_container.pack(fill=BOTH, expand=True, pady=(0, 2))
+        dest_header_subframe = ttk_boot.Frame(header_frame)
+        dest_header_subframe.pack(fill=X)
+        ttk_boot.Label(dest_header_subframe, text="Destination:").pack(side=LEFT, pady=2)
+        ttk_boot.Label(dest_header_subframe, text="From:").pack(side=LEFT, padx=(5,0))
+        ttk_boot.Spinbox(dest_header_subframe, from_=1, to=50, textvariable=self.dest_header_start_row, width=4).pack(side=LEFT, padx=5)
+        ttk_boot.Label(dest_header_subframe, text="To:").pack(side=LEFT)
+        ttk_boot.Spinbox(dest_header_subframe, from_=1, to=50, textvariable=self.dest_header_end_row, width=4).pack(side=LEFT, padx=5)
+        
+        self.load_cols_button = ttk_boot.Button(header_frame, text="Load Columns", command=self.safe_load_columns, bootstyle=INFO)
+        self.load_cols_button.pack(pady=(5,2))
+
+        write_zone_frame = ttk_boot.LabelFrame(left_panel, text="Setting write zone", padding=5)
+        write_zone_frame.pack(fill=X, pady=(0, 5), anchor=N)
+        write_zone_frame.columnconfigure(1, weight=1)
+        ttk_boot.Label(write_zone_frame, text="Start Write Row:").grid(row=0, column=0, sticky=W, padx=(0,5), pady=2)
+        ttk_boot.Spinbox(write_zone_frame, from_=1, to=99999, textvariable=self.dest_write_start_row, width=8).grid(row=0, column=1, sticky=W)
+        ttk_boot.Label(write_zone_frame, text="End Write Row:").grid(row=1, column=0, sticky=W, padx=(0,5), pady=2)
+        ttk_boot.Spinbox(write_zone_frame, from_=0, to=99999, textvariable=self.dest_write_end_row, width=8).grid(row=1, column=1, sticky=W)
+        self.detect_button = ttk_boot.Button(write_zone_frame, text="Detect Zone", command=self.detect_write_zone, bootstyle="outline-info")
+        self.detect_button.grid(row=0, column=2, rowspan=2, padx=(5,0), pady=2, sticky="ns")
+        ttk_boot.Label(write_zone_frame, text="Skip Rows (e.g., 15, 20-25):").grid(row=2, column=0, columnspan=3, sticky=W, pady=(5,2))
+        ttk_boot.Entry(write_zone_frame, textvariable=self.dest_skip_rows).grid(row=3, column=0, columnspan=3, padx=0, sticky=EW)
+        ttk_boot.Checkbutton(write_zone_frame, text="Respect cell protection", variable=self.respect_cell_protection).grid(row=4, column=0, columnspan=3, sticky=W, pady=(5,0))
+        ttk_boot.Checkbutton(write_zone_frame, text="Respect formulas", variable=self.respect_formulas).grid(row=5, column=0, columnspan=3, sticky=W)
+
+        sort_frame = ttk_boot.LabelFrame(left_panel, text="Sort Configuration", padding=5)
+        sort_frame.pack(fill=X, pady=(0, 5), anchor=N)
+        sort_frame.columnconfigure(0, weight=1)
+        ttk_boot.Label(sort_frame, text="Sort by Column (optional):").pack(fill=X)
+        self.sort_combo = ttk_boot.Combobox(sort_frame, textvariable=self.sort_column)
+        self.sort_combo.pack(fill=X)
+
+        # --- Populate Right Panel ---
+        mapping_container = ttk_boot.LabelFrame(right_panel, text="Column Mapping", padding=5)
+        mapping_container.pack(fill=BOTH, expand=True)
         self.mapping_scroll_frame = ScrollableFrame(mapping_container)
         self.mapping_scroll_frame.pack(fill=BOTH, expand=True)
-        
-        sort_frame = ttk_boot.LabelFrame(main_frame, text="Sort Configuration", padding=5)
-        sort_frame.pack(fill=X, pady=(0, 2))
-        ttk_boot.Label(sort_frame, text="Sort by Column (optional):").grid(row=0, column=0, sticky=W, pady=(0,2))
-        self.sort_combo = ttk_boot.Combobox(sort_frame, textvariable=self.sort_column, width=50)
-        self.sort_combo.grid(row=0, column=1, padx=5, sticky=W)
-        
-        action_frame = ttk_boot.Frame(main_frame)
-        action_frame.pack(fill=X, pady=(0, 2))
-        self.save_button = ttk_boot.Button(action_frame, text="Save Configuration", command=self.save_config, bootstyle=SUCCESS)
-        self.save_button.pack(side=LEFT, padx=5)
-        self.load_button = ttk_boot.Button(action_frame, text="Load Configuration", command=self.load_config, bootstyle=INFO)
-        self.load_button.pack(side=LEFT, padx=5)
-        self.execute_button = ttk_boot.Button(action_frame, text="Execute Transfer", command=self.execute_transfer, bootstyle=PRIMARY)
-        self.execute_button.pack(side=RIGHT, padx=5)
-        self.preview_button = ttk_boot.Button(action_frame, text="Preview Transfer", command=self.preview_transfer, bootstyle="outline-secondary")
-        self.preview_button.pack(side=RIGHT, padx=5)
-        
-        # Status bar
-        self.status_frame = ttk_boot.Frame(main_frame)
-        self.status_frame.pack(fill=X, pady=(2, 0))
-        self.status_frame.columnconfigure(0, weight=1)  # Column for progress bar will expand
-        self.status_frame.columnconfigure(1, weight=0)  # Column for label will not expand
-
-        self.progress = ttk_boot.Progressbar(self.status_frame, mode='determinate', bootstyle=SUCCESS)
-        self.progress.grid(row=0, column=0, sticky='we')
-        
-        self.status_label = ttk_boot.Label(self.status_frame, text="Ready")
-        self.status_label.grid(row=0, column=1, sticky='we')
     
     def browse_source_file(self):
         filename = filedialog.askopenfilename(title="Select Source Excel file", filetypes=[("Excel files", "*.xlsx *.xls")])

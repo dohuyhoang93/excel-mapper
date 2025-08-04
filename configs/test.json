@@ -2,21 +2,22 @@
   "source_header_start_row": 1,
   "source_header_end_row": 1,
   "dest_header_start_row": 1,
-  "dest_header_end_row": 1,
-  "dest_write_start_row": 2,
-  "dest_write_end_row": 16,
+  "dest_header_end_row": 3,
+  "dest_write_start_row": 4,
+  "dest_write_end_row": 44,
   "dest_skip_rows": "",
   "respect_cell_protection": true,
   "respect_formulas": true,
   "sort_column": "Name",
   "mapping": {
     "STT": "STT",
-    "Name": "Name",
-    "Type": "Type",
-    "Content": "Content",
-    "Price": "Price",
-    "Store": "Store",
-    "Address": "Address"
+    "Name": "Định danh sản phẩm - Name",
+    "Code": "Định danh sản phẩm - Code",
+    "id": "Định danh sản phẩm - id",
+    "Group": "Bên yêu cầu - Bộ phận - Group",
+    "Purpose": "Bên yêu cầu - Lý do - Purpose",
+    "Qty": "Chi tiết đơn hàng - Qty",
+    "Cost": "Chi tiết đơn hàng - Cost"
   },
-  "created_date": "2025-08-01T22:27:52.815746"
+  "created_date": "2025-08-04T10:26:09.485546"
 }
