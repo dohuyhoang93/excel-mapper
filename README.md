@@ -2,6 +2,9 @@
 
 A powerful application to map and transfer data between Excel files while preserving formatting and styles.
 
+<!-- Add a screenshot of the application's UI here -->
+<!-- ![Excel Data Mapper UI](path/to/your/screenshot.png) -->
+
 ---
 
 ## ✨ Key Features
@@ -12,9 +15,30 @@ A powerful application to map and transfer data between Excel files while preser
 - **Merged Cell Handling**: Intelligently supports reading from and writing to merged cells.
 - **Data Sorting**: Allows sorting data by a specified column before the transfer.
 - **Save/Load Configuration**: Saves all settings, including advanced ones, to a JSON file for reuse.
-- **User-Friendly Interface**: Uses ttkbootstrap with switchable light/dark themes.
+- **User-Friendly Interface**: Uses ttkbootstrap with switchable light/dark themes and a responsive two-column layout.
 - **Comprehensive Error Handling**: Provides clear error messages and automatic backups for the destination file.
 - **Robust File Handle Management**: Detects and warns if a file is locked by another program.
+
+## 📂 Project Structure
+```
+ExcelMapper/
+
+├── app.py                  # Main application entry point, contains GUI logic
+├── setup.py                # Build script for creating the executable
+├── ExcelDataMapper.spec    # PyInstaller specification file for the build
+├── requirements.txt        # Python dependencies
+├── icon.ico                # Application icon
+├── README.md               # This file
+├── configs/                # Directory for configuration files
+│   └── app_settings.json
+├── gui/                    # GUI-related modules (custom widgets)
+│   └── widgets.py
+└── logic/                  # Core business logic
+    ├── config_manager.py   # Handles loading/saving configurations
+    ├── mapper.py           # Logic for suggesting column mappings
+    ├── parser.py           # Handles reading and parsing Excel files
+    └── transfer.py         # Engine for the data transfer process
+```
 
 ## 🚀 Installation and Execution
 
@@ -28,7 +52,7 @@ A powerful application to map and transfer data between Excel files while preser
 1.  **Clone the repository:**
     ```bash
     git clone <repository-url>
-    cd excel_mapper
+    cd ExcelMapper
     ```
 
 2.  **Install dependencies:**
@@ -43,10 +67,10 @@ A powerful application to map and transfer data between Excel files while preser
 
 ### Method 2: Build the Executable (.exe)
 
-1.  **Automatic build:**
-    Run the `setup.py` file
+1.  **Run the build script:**
+    This command uses the `ExcelDataMapper.spec` file to build the application with all necessary files and libraries included.
     ```bash
-    python setup.py build
+    python setup.py
     ```
 
 2.  **The executable will be created at:** `dist/ExcelDataMapper.exe`
@@ -146,6 +170,9 @@ All operations and errors are logged to the `app.log` file in the same directory
 
 Một ứng dụng mạnh mẽ để ánh xạ và chuyển dữ liệu giữa các file Excel trong khi vẫn giữ nguyên định dạng và style.
 
+<!-- Thêm ảnh chụp màn hình giao diện ứng dụng tại đây -->
+<!-- ![Giao diện Excel Data Mapper](path/to/your/screenshot.png) -->
+
 ## ✨ Tính năng chính
 
 - **Ánh xạ cột linh hoạt**: Tự động gợi ý và cho phép ánh xạ thủ công giữa cột nguồn và đích.
@@ -154,9 +181,30 @@ Một ứng dụng mạnh mẽ để ánh xạ và chuyển dữ liệu giữa c
 - **Xử lý merge cells**: Hỗ trợ đọc và ghi dữ liệu vào các ô đã được merge một cách thông minh.
 - **Sắp xếp dữ liệu**: Cho phép sắp xếp dữ liệu theo cột được chỉ định trước khi chuyển.
 - **Lưu/Tải cấu hình**: Lưu lại toàn bộ cài đặt, bao gồm cả các tùy chọn nâng cao, vào file JSON để tái sử dụng.
-- **Giao diện thân thiện**: Sử dụng ttkbootstrap với 2 theme (sáng/tối) có thể chuyển đổi.
+- **Giao diện thân thiện**: Sử dụng ttkbootstrap với 2 theme (sáng/tối) có thể chuyển đổi và bố cục hai cột linh hoạt.
 - **Xử lý lỗi toàn diện**: Báo lỗi rõ ràng và có backup tự động cho file đích.
 - **Quản lý File Handle mạnh mẽ**: Phát hiện và cảnh báo nếu file đang bị khóa bởi chương trình khác.
+
+## 📂 Cấu trúc dự án
+```
+ExcelMapper/
+
+├── app.py                  # File chính của ứng dụng, chứa logic giao diện
+├── setup.py                # Script để build ra file thực thi
+├── ExcelDataMapper.spec    # File cấu hình cho PyInstaller để build
+├── requirements.txt        # Các thư viện Python cần thiết
+├── icon.ico                # Icon của ứng dụng
+├── README.md               # Chính là file này
+├── configs/                # Thư mục chứa các file cấu hình
+│   └── app_settings.json
+├── gui/                    # Các module liên quan đến giao diện (widget tùy chỉnh)
+│   └── widgets.py
+└── logic/                  # Nơi chứa logic nghiệp vụ cốt lõi
+    ├── config_manager.py   # Xử lý lưu/tải cấu hình
+    ├── mapper.py           # Logic gợi ý ánh xạ cột
+    ├── parser.py           # Xử lý đọc và phân tích file Excel
+    └── transfer.py         # "Động cơ" chính cho việc chuyển dữ liệu
+```
 
 ## 🚀 Cài đặt và chạy
 
@@ -170,7 +218,7 @@ Một ứng dụng mạnh mẽ để ánh xạ và chuyển dữ liệu giữa c
 1. **Clone repository:**
 ```bash
 git clone <repository-url>
-cd excel_mapper
+cd ExcelMapper
 ```
 
 2. **Cài đặt dependencies:**
@@ -185,10 +233,10 @@ python app.py
 
 ### Cách 2: Build file thực thi (.exe)
 
-1. **Tự động build:**
-Chạy file `setup.py`.
+1. **Chạy script build:**
+Lệnh này sẽ sử dụng file `ExcelDataMapper.spec` để build ứng dụng với đầy đủ các file và thư viện cần thiết.
 ```bash
-python setup.py build
+python setup.py
 ```
 
 2. **File thực thi sẽ được tạo tại:** `dist/ExcelDataMapper.exe`
