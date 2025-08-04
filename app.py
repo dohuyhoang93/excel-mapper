@@ -554,6 +554,10 @@ class ExcelDataMapper:
         except Exception as e:
             # 4. Update UI on error
             self.root.after(0, self.on_transfer_error, e)
+        finally:
+            # 5. ALWAYS release handles and re-enable controls
+            FileHandleManager.force_release_handles()
+            self.root.after(0, self.enable_controls)
 
     def update_progress_callback(self, value: int, message: str):
         """Callback function for the engine to update the GUI's progress."""
@@ -564,7 +568,6 @@ class ExcelDataMapper:
     def on_transfer_success(self):
         self.progress['value'] = 100
         self.update_status("Transfer completed successfully")
-        self.enable_controls()
         show_custom_info(self.root, self, "Success", "Data transfer completed successfully!")
         if show_custom_question(self.root, self, "Open Folder", "Would you like to open the destination folder?"):
             self.open_dest_folder()
@@ -573,7 +576,6 @@ class ExcelDataMapper:
         self.log_error(f"Error during transfer thread: {str(error)}\n{traceback.format_exc()}")
         self.update_status("Transfer failed")
         self.progress['value'] = 0
-        self.enable_controls()
         show_custom_error(self.root, self, "Error", f"Transfer failed: {str(error)}")
 
     def disable_controls(self):
