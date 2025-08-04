@@ -217,25 +217,26 @@ class ExcelDataMapper:
         
         header_frame = ttk_boot.LabelFrame(left_panel, text="Header Configuration", padding=5)
         header_frame.pack(fill=X, pady=(0, 5), anchor=N)
-        # Using a sub-frame for better alignment
-        src_header_subframe = ttk_boot.Frame(header_frame)
-        src_header_subframe.pack(fill=X)
-        ttk_boot.Label(src_header_subframe, text="Source:").pack(side=LEFT, pady=2)
-        ttk_boot.Label(src_header_subframe, text="From:").pack(side=LEFT, padx=(5,0))
-        ttk_boot.Spinbox(src_header_subframe, from_=1, to=50, textvariable=self.source_header_start_row, width=4).pack(side=LEFT, padx=5)
-        ttk_boot.Label(src_header_subframe, text="To:").pack(side=LEFT)
-        ttk_boot.Spinbox(src_header_subframe, from_=1, to=50, textvariable=self.source_header_end_row, width=4).pack(side=LEFT, padx=5)
+        header_frame.columnconfigure(2, weight=1)
+        header_frame.columnconfigure(4, weight=1)
 
-        dest_header_subframe = ttk_boot.Frame(header_frame)
-        dest_header_subframe.pack(fill=X)
-        ttk_boot.Label(dest_header_subframe, text="Destination:").pack(side=LEFT, pady=2)
-        ttk_boot.Label(dest_header_subframe, text="From:").pack(side=LEFT, padx=(5,0))
-        ttk_boot.Spinbox(dest_header_subframe, from_=1, to=50, textvariable=self.dest_header_start_row, width=4).pack(side=LEFT, padx=5)
-        ttk_boot.Label(dest_header_subframe, text="To:").pack(side=LEFT)
-        ttk_boot.Spinbox(dest_header_subframe, from_=1, to=50, textvariable=self.dest_header_end_row, width=4).pack(side=LEFT, padx=5)
+        # Row 0: Source Headers
+        ttk_boot.Label(header_frame, text="Source:").grid(row=0, column=0, sticky=W, pady=(0, 2))
+        ttk_boot.Label(header_frame, text="From:").grid(row=0, column=1, sticky=W, padx=(5, 0))
+        ttk_boot.Spinbox(header_frame, from_=1, to=50, textvariable=self.source_header_start_row, width=5).grid(row=0, column=2, padx=(5, 10))
+        ttk_boot.Label(header_frame, text="To:").grid(row=0, column=3, sticky=W)
+        ttk_boot.Spinbox(header_frame, from_=1, to=50, textvariable=self.source_header_end_row, width=5).grid(row=0, column=4, padx=5)
         
+        # Row 1: Destination Headers
+        ttk_boot.Label(header_frame, text="Destination:").grid(row=1, column=0, sticky=W, pady=(0, 2))
+        ttk_boot.Label(header_frame, text="From:").grid(row=1, column=1, sticky=W, padx=(5, 0))
+        ttk_boot.Spinbox(header_frame, from_=1, to=50, textvariable=self.dest_header_start_row, width=5).grid(row=1, column=2, padx=(5, 10))
+        ttk_boot.Label(header_frame, text="To:").grid(row=1, column=3, sticky=W)
+        ttk_boot.Spinbox(header_frame, from_=1, to=50, textvariable=self.dest_header_end_row, width=5).grid(row=1, column=4, padx=5)
+        
+        # Row 2: Load Button
         self.load_cols_button = ttk_boot.Button(header_frame, text="Load Columns", command=self.safe_load_columns, bootstyle=INFO)
-        self.load_cols_button.pack(pady=(5,2))
+        self.load_cols_button.grid(row=2, column=0, columnspan=5, pady=(5, 2), sticky=W)
 
         write_zone_frame = ttk_boot.LabelFrame(left_panel, text="Setting write zone", padding=5)
         write_zone_frame.pack(fill=X, pady=(0, 5), anchor=N)
