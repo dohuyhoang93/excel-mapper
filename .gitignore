@@ -3,7 +3,6 @@ config.json
 specs.md
 
 # PyInstaller build artifacts
-*.spec
 *.exe
 build/
 dist/
