@@ -1,0 +1,25 @@
+{
+  "source_header_start_row": 3,
+  "source_header_end_row": 4,
+  "dest_header_start_row": 9,
+  "dest_header_end_row": 10,
+  "dest_write_start_row": 11,
+  "dest_write_end_row": 29,
+  "dest_skip_rows": "",
+  "respect_cell_protection": true,
+  "respect_formulas": true,
+  "sort_column": "Contents",
+  "mapping": {
+    "Số\ncover": "No.",
+    "Trading   date\nNgày lập cover": "Trading   date",
+    "Applicant - Division": "Cost burden - Division CD",
+    "Trading day's exchange rate    (To VND)": "Trading day's exchange rate    (To VND)",
+    "Cost burden - Production number\n(Chọn)": "Cost burden - Production number",
+    "Contents": "Contents",
+    "Purpose\nChọn": "Purpose",
+    "Currency\n(Chọn)": "VND or US$　or JPY - Currency",
+    "Amount": "VND or US$　or JPY - Amount",
+    "Official invoice number": "Official invoice number"
+  },
+  "created_date": "2025-08-04T12:05:10.987434"
+}

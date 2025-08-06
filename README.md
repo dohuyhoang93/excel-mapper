@@ -67,13 +67,22 @@ ExcelMapper/
 
 ### Method 2: Build the Executable (.exe)
 
-1.  **Run the build script:**
-    This command uses the `ExcelDataMapper.spec` file to build the application with all necessary files and libraries included.
+This project can be built in two ways:
+
+- **One-Dir (Default)**: Creates a folder containing the executable and all its dependencies. This is the recommended method.
+- **One-File**: Creates a single, standalone executable file. This may have a slower startup time.
+
+1.  **To build a directory (default):**
     ```bash
     python setup.py
     ```
+    The application will be located at `dist/ExcelDataMapper/ExcelDataMapper.exe`.
 
-2.  **The executable will be created at:** `dist/ExcelDataMapper.exe`
+2.  **To build a single file:**
+    ```bash
+    python setup.py --onefile
+    ```
+    The executable will be created at `dist/ExcelDataMapper.exe`.
 
 ## 📖 User Guide
 
@@ -233,13 +242,22 @@ python app.py
 
 ### Cách 2: Build file thực thi (.exe)
 
-1. **Chạy script build:**
-Lệnh này sẽ sử dụng file `ExcelDataMapper.spec` để build ứng dụng với đầy đủ các file và thư viện cần thiết.
-```bash
-python setup.py
-```
+Dự án có thể được build theo hai cách:
 
-2. **File thực thi sẽ được tạo tại:** `dist/ExcelDataMapper.exe`
+- **One-Dir (Mặc định)**: Tạo ra một thư mục chứa file thực thi và tất cả các tệp phụ thuộc. Đây là phương pháp được khuyến nghị.
+- **One-File**: Tạo ra một file thực thi duy nhất, độc lập. Cách này có thể làm ứng dụng khởi động chậm hơn.
+
+1.  **Để build ra một thư mục (mặc định):**
+    ```bash
+    python setup.py
+    ```
+    Ứng dụng sẽ nằm tại `dist/ExcelDataMapper/ExcelDataMapper.exe`.
+
+2.  **Để build ra một file duy nhất:**
+    ```bash
+    python setup.py --onefile
+    ```
+    File thực thi sẽ được tạo tại `dist/ExcelDataMapper.exe`.
 
 ## 📖 Hướng dẫn sử dụng
 
