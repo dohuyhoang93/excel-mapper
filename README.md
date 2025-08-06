@@ -68,6 +68,7 @@ ExcelMapper/
 ### Method 2: Build the Executable (.exe)
 
 This project can be built in two ways:
+<<<<<<< HEAD
 
 - **One-Dir (Default)**: Creates a folder containing the executable and all its dependencies. This is the recommended method.
 - **One-File**: Creates a single, standalone executable file. This may have a slower startup time.
@@ -81,6 +82,21 @@ This project can be built in two ways:
 2.  **To build a single file:**
     ```bash
     python setup.py build_binary --onefile
+=======
+
+- **One-Dir (Default)**: Creates a folder containing the executable and all its dependencies. This is the recommended method.
+- **One-File**: Creates a single, standalone executable file. This may have a slower startup time.
+
+1.  **To build a directory (default):**
+    ```bash
+    python setup.py
+    ```
+    The application will be located at `dist/ExcelDataMapper/ExcelDataMapper.exe`.
+
+2.  **To build a single file:**
+    ```bash
+    python setup.py --onefile
+>>>>>>> 4b8cbb364fe49caa4def35363b0714671af8f6c7
     ```
     The executable will be created at `dist/ExcelDataMapper.exe`.
 
@@ -249,13 +265,21 @@ Dự án có thể được build theo hai cách:
 
 1.  **Để build ra một thư mục (mặc định):**
     ```bash
+<<<<<<< HEAD
     python setup.py buid_binary
+=======
+    python setup.py
+>>>>>>> 4b8cbb364fe49caa4def35363b0714671af8f6c7
     ```
     Ứng dụng sẽ nằm tại `dist/ExcelDataMapper/ExcelDataMapper.exe`.
 
 2.  **Để build ra một file duy nhất:**
     ```bash
+<<<<<<< HEAD
     python setup.py build_binary --onefile
+=======
+    python setup.py --onefile
+>>>>>>> 4b8cbb364fe49caa4def35363b0714671af8f6c7
     ```
     File thực thi sẽ được tạo tại `dist/ExcelDataMapper.exe`.
 
