@@ -9,26 +9,21 @@ import logging
 from typing import List, Dict, Any, Optional, Callable, Set
 from openpyxl.cell.cell import MergedCell
 import re
+from copy import copy
 
 def _sanitize_sheet_name(name: str) -> str:
     """Sanitizes a string to be a valid Excel sheet name."""
     if not name:
         return "Untitled"
+    name = str(name) # Ensure name is a string
     # Remove invalid characters
-    name = re.sub(r'[\\/*?:[\]]', '', name)
+    name = re.sub(r'[\\/*?:[\\]', '', name)
     # Truncate to 31 characters (Excel's limit)
     return name[:31]
 
 def parse_skip_rows_string(skip_rows_str: str) -> Set[int]:
     """
     Parses a user-provided string of rows to skip into a set of integers.
-    This is a public utility function that can be used by other modules.
-
-    Args:
-        skip_rows_str: A string like "15, 22, 30-35".
-
-    Returns:
-        A set of integers representing the rows to be skipped.
     """
     skipped_rows = set()
     if not skip_rows_str:
@@ -54,7 +49,6 @@ def parse_skip_rows_string(skip_rows_str: str) -> Set[int]:
 class ExcelTransferEngine:
     """
     Handles the entire data transfer process from a source to a destination Excel file.
-    It takes a comprehensive settings dictionary to control its behavior.
     """
     def __init__(self, settings: Dict[str, Any], progress_callback: Optional[Callable[[int, str], None]] = None):
         self.source_path = Path(settings["source_file"])
@@ -71,19 +65,23 @@ class ExcelTransferEngine:
         self.mappings = settings["mappings"]
         self.source_columns = settings["source_columns"]
         self.dest_columns = settings["dest_columns"]
-
         self.progress_callback = progress_callback
         self.backup_path = None
 
     def _update_progress(self, value: int, message: str):
-        """Safely calls the progress callback function if it exists."""
         if self.progress_callback:
             self.progress_callback(value, message)
 
+    def _get_writable_cell(self, worksheet, row_idx, col_idx):
+        """Gets the top-left cell of a potentially merged range."""
+        cell = worksheet.cell(row=row_idx, column=col_idx)
+        if isinstance(cell, MergedCell):
+            for merged_range in worksheet.merged_cells.ranges:
+                if cell.coordinate in merged_range:
+                    return worksheet.cell(row=merged_range.min_row, column=merged_range.min_col)
+        return cell
+
     def run_transfer(self):
-        """
-        Executes the grouped data transfer process.
-        """
         if not self.group_by_column:
             raise ValueError("'Group by Column' must be selected for this operation.")
         if not self.master_sheet_name:
@@ -122,7 +120,6 @@ class ExcelTransferEngine:
             raise e
 
     def _read_source_data(self) -> List[Dict[str, Any]]:
-        """Reads all data rows from the source file."""
         workbook = None
         try:
             workbook = openpyxl.load_workbook(self.source_path, data_only=True)
@@ -133,7 +130,9 @@ class ExcelTransferEngine:
                 row_data, has_data = {}, False
                 for header_name, col_index in self.source_columns.items():
                     value = worksheet.cell(row=row_index, column=col_index).value
-                    if value is not None:
+                    if isinstance(value, str):
+                        value = value.strip() # ISSUE 1 FIX: Strip whitespace
+                    if value is not None and str(value).strip() != '':
                         has_data = True
                     row_data[header_name] = value
                 if has_data:
@@ -144,7 +143,6 @@ class ExcelTransferEngine:
                 workbook.close()
 
     def _group_data(self, source_data: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
-        """Groups source data by the selected column."""
         grouped = {}
         for row in source_data:
             key = str(row.get(self.group_by_column, "Uncategorized"))
@@ -155,71 +153,84 @@ class ExcelTransferEngine:
 
     def _write_group_identifier(self, worksheet, group_name: str, group_by_header: str):
         """Finds the cell with the group-by header and writes the group name next to it."""
-        # Search in a reasonable range, e.g., first 50 rows and 20 columns
-        for row in worksheet.iter_rows(min_row=1, max_row=50, max_col=20):
+        # Search in a reasonable range
+        for row in worksheet.iter_rows(min_row=1, max_row=50, max_col=50):
             for cell in row:
                 cell_value = str(cell.value).strip() if cell.value is not None else ""
-                # A simple, case-insensitive comparison
                 if cell_value.lower() == group_by_header.lower():
                     try:
-                        # Get the cell to the right
-                        target_cell = worksheet.cell(row=cell.row, column=cell.column + 1)
+                        # ISSUE 3 FIX: Use _get_writable_cell to handle merged cells
+                        target_cell = self._get_writable_cell(worksheet, cell.row, cell.column + 1)
                         target_cell.value = group_name
-                        logging.info(f"Wrote group name '{group_name}' to cell {target_cell.coordinate} in sheet '{worksheet.title}'")
-                        return # Exit after finding and writing
+                        logging.info(f"Wrote group name '{group_name}' to cell {target_cell.coordinate}")
+                        return
                     except Exception as e:
-                        logging.error(f"Error writing group identifier for group '{group_name}': {e}")
+                        logging.error(f"Error writing group identifier for '{group_name}': {e}")
                         return
 
     def _write_grouped_data(self, grouped_data: Dict[str, List[Dict[str, Any]]]):
-        """
-        Writes the grouped data to the destination file, creating a new sheet for each group.
-        """
         workbook = None
         try:
             workbook = openpyxl.load_workbook(self.dest_path)
             
             if self.master_sheet_name not in workbook.sheetnames:
-                raise ValueError(f"Master sheet '{self.master_sheet_name}' not found in the destination file.")
+                raise ValueError(f"Master sheet '{self.master_sheet_name}' not found.")
             master_sheet = workbook[self.master_sheet_name]
 
+            # Remove default sheet if it exists and is not the master
+            if "Sheet" in workbook.sheetnames and len(workbook.sheetnames) > 1 and workbook["Sheet"] != master_sheet:
+                workbook.remove(workbook["Sheet"])
+
             total_groups = len(grouped_data)
+            created_sheets = []
             for i, (group_name, data_rows) in enumerate(grouped_data.items()):
                 self._update_progress(25 + int((i / total_groups) * 70), f"Processing group {i+1}/{total_groups}: {group_name}")
 
-                # 1. Create new sheet from master
                 new_sheet_name = _sanitize_sheet_name(group_name)
                 if new_sheet_name in workbook.sheetnames:
                     new_sheet_name = _sanitize_sheet_name(f"{group_name}_{i+1}")
                 
                 new_sheet = workbook.copy_worksheet(master_sheet)
                 new_sheet.title = new_sheet_name
+                created_sheets.append(new_sheet_name)
 
-                # 1.5 Write the group identifier
                 self._write_group_identifier(new_sheet, group_name, self.group_by_column)
 
-                # 2. Insert rows if necessary
                 skipped_rows = parse_skip_rows_string(self.dest_skip_rows_str)
-                available_rows = 0
-                if self.dest_write_end_row > 0:
-                    for r in range(self.dest_write_start_row, self.dest_write_end_row + 1):
-                        if r not in skipped_rows:
-                            available_rows += 1
-                
                 rows_to_write = len(data_rows)
-                if self.dest_write_end_row > 0 and rows_to_write > available_rows:
-                    rows_to_insert = rows_to_write - available_rows
-                    new_sheet.insert_rows(self.dest_write_end_row, amount=rows_to_insert)
-                    logging.info(f"Inserted {rows_to_insert} rows into sheet '{new_sheet_name}'.")
-                    current_end_row = self.dest_write_end_row + rows_to_insert
-                else:
-                    current_end_row = self.dest_write_end_row
+                current_end_row = self.dest_write_end_row
 
-                # 3. Write data to the new sheet
+                if self.dest_write_end_row > 0:
+                    available_rows = sum(1 for r in range(self.dest_write_start_row, self.dest_write_end_row + 1) if r not in skipped_rows)
+                    if rows_to_write > available_rows:
+                        rows_to_insert = rows_to_write - available_rows
+                        insertion_point = self.dest_write_end_row
+                        new_sheet.insert_rows(insertion_point, amount=rows_to_insert)
+                        logging.info(f"Inserted {rows_to_insert} rows into '{new_sheet_name}'.")
+                        current_end_row += rows_to_insert
+
+                        # ISSUE 2 FIX: Copy styles to new rows
+                        style_source_row = insertion_point - 1 if insertion_point > 1 else 1
+                        for row_idx in range(insertion_point, insertion_point + rows_to_insert):
+                            for col_idx in range(1, new_sheet.max_column + 1):
+                                source_cell = new_sheet.cell(row=style_source_row, column=col_idx)
+                                new_cell = new_sheet.cell(row=row_idx, column=col_idx)
+                                if source_cell.has_style:
+                                    new_cell.font = copy(source_cell.font)
+                                    new_cell.border = copy(source_cell.border)
+                                    new_cell.fill = copy(source_cell.fill)
+                                    new_cell.number_format = source_cell.number_format
+                                    new_cell.protection = copy(source_cell.protection)
+                                    new_cell.alignment = copy(source_cell.alignment)
+                
                 self._write_single_sheet(new_sheet, data_rows, skipped_rows, current_end_row)
 
-            # Optional: remove the master sheet after all groups are processed
-            # del workbook[self.master_sheet_name]
+            if self.master_sheet_name in workbook.sheetnames and len(workbook.sheetnames) > 1:
+                del workbook[self.master_sheet_name]
+            
+            # ISSUE 4 FIX: Set active sheet before saving
+            if created_sheets and created_sheets[0] in workbook.sheetnames:
+                workbook.active = workbook[created_sheets[0]]
 
             workbook.save(self.dest_path)
         finally:
@@ -227,16 +238,6 @@ class ExcelTransferEngine:
                 workbook.close()
 
     def _write_single_sheet(self, worksheet, data_rows, skipped_rows, current_end_row):
-        """Writes data rows to a single sheet, respecting write zone rules."""
-        
-        def get_writable_cell(row_idx, col_idx):
-            cell = worksheet.cell(row=row_idx, column=col_idx)
-            if isinstance(cell, MergedCell):
-                for merged_range in worksheet.merged_cells.ranges:
-                    if cell.coordinate in merged_range:
-                        return worksheet.cell(row=merged_range.min_row, column=merged_range.min_col)
-            return cell
-
         current_write_row = self.dest_write_start_row
         EXCEL_MAX_ROW = 1048576
 
@@ -245,13 +246,12 @@ class ExcelTransferEngine:
                 if current_end_row > 0 and current_write_row > current_end_row:
                     logging.warning(f"Reached end of write zone on sheet '{worksheet.title}'.")
                     return
-
                 if current_write_row > EXCEL_MAX_ROW:
-                    raise RuntimeError(f"Reached maximum Excel row limit on sheet '{worksheet.title}'.")
+                    raise RuntimeError(f"Reached max Excel row limit on sheet '{worksheet.title}'.")
                 
                 is_invalid_row = current_write_row in skipped_rows
                 if not is_invalid_row and self.respect_cell_protection and worksheet.protection.sheet:
-                    if any(get_writable_cell(current_write_row, c).protection.locked for c in self.dest_columns.values()):
+                    if any(self._get_writable_cell(worksheet, current_write_row, c).protection.locked for c in self.dest_columns.values()):
                         is_invalid_row = True
                 
                 if not is_invalid_row:
@@ -261,7 +261,7 @@ class ExcelTransferEngine:
             for source_col, dest_col in self.mappings.items():
                 if dest_col in self.dest_columns:
                     dest_col_num = self.dest_columns[dest_col]
-                    cell_to_write = get_writable_cell(current_write_row, dest_col_num)
+                    cell_to_write = self._get_writable_cell(worksheet, current_write_row, dest_col_num)
                     if cell_to_write.row >= current_write_row and not (self.respect_formulas and cell_to_write.data_type == 'f'):
                         cell_to_write.value = row_data.get(source_col)
             current_write_row += 1
