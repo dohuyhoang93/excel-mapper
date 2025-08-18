@@ -179,43 +179,40 @@ class PreviewDialog(BaseDialog):
     def _create_summary_tab(self, notebook, data):
         summary_frame = ttk_boot.Frame(notebook, padding=10)
         notebook.add(summary_frame, text="📊 Summary")
-        verdict_frame = ttk_boot.LabelFrame(summary_frame, text="Verdict", padding=10)
-        verdict_frame.pack(padx=10, pady=5, fill=X)
-        source_count = data.get('source_row_count', 0)
-        available_slots = data.get('available_slots', 0)
-        if available_slots == "Unlimited" or source_count <= available_slots:
-            verdict_text, details, style = "✅ PERFECT", f"All {source_count} source rows will be transferred.", SUCCESS
-        else:
-            verdict_text, details, style = "⚠️ WARNING", f"Only {available_slots} of {source_count} source rows will be transferred.", WARNING
-        ttk_boot.Label(verdict_frame, text=verdict_text, font="-size 14 -weight bold", bootstyle=style).pack()
-        ttk_boot.Label(verdict_frame, text=details, wraplength=800).pack(pady=(5,0))
-        
-        bottom_frame = ttk_boot.Frame(summary_frame)
-        bottom_frame.pack(fill=BOTH, expand=True, pady=5)
-        
-        analysis_frame = ttk_boot.LabelFrame(bottom_frame, text="Data Flow Analysis", padding=10)
-        analysis_frame.pack(side=LEFT, fill=BOTH, expand=True, padx=(0, 5))
-        analysis_frame.columnconfigure(1, weight=1)
-        analysis_data = [
-            ("Source rows to transfer:", data.get('source_row_count', 'N/A')),
-            ("Destination write zone:", f"Row {data.get('start_row', '?')} to {data.get('end_row', '?')}"),
-            ("Total rows in zone:", data.get('total_zone_rows', 'N/A')),
-            ("User-skipped rows:", data.get('user_skipped_count', 'N/A')),
-            ("Protected/Formula rows skipped:", data.get('protected_skipped_count', 'N/A')),
-            ("Available rows for writing:", data.get('available_slots', 'N/A'))
-        ]
-        for i, (label, value) in enumerate(analysis_data):
-            ttk_boot.Label(analysis_frame, text=label, anchor=W).grid(row=i, column=0, sticky=EW, pady=2, padx=5)
-            ttk_boot.Label(analysis_frame, text=str(value), anchor=W, bootstyle="info").grid(row=i, column=1, sticky=EW, pady=2, padx=5)
 
-        settings_frame = ttk_boot.LabelFrame(bottom_frame, text="Settings Used", padding=10)
-        settings_frame.pack(side=LEFT, fill=BOTH, expand=True, padx=(5, 0))
-        settings_frame.columnconfigure(1, weight=1)
-        settings_data = data.get('settings', {})
-        for i, (key, value) in enumerate(settings_data.items()):
-            ttk_boot.Label(settings_frame, text=f"{key}:", anchor=W).grid(row=i, column=0, sticky=EW, pady=2, padx=5)
-            style = "info" if str(value).lower() not in ["no", "none", ""] else "secondary"
-            ttk_boot.Label(settings_frame, text=str(value), anchor=W, bootstyle=style).grid(row=i, column=1, sticky=EW, pady=2, padx=5)
+        # --- Top Frame for General Stats ---
+        stats_frame = ttk_boot.LabelFrame(summary_frame, text="Grouping Summary", padding=10)
+        stats_frame.pack(padx=10, pady=5, fill=X)
+        stats_frame.columnconfigure(1, weight=1)
+
+        summary_data = [
+            ("Total source rows:", data.get('total_rows', 'N/A')),
+            ("Number of unique groups found:", data.get('group_count', 'N/A')),
+            ("New sheets to be created:", data.get('group_count', 'N/A')),
+        ]
+        for i, (label, value) in enumerate(summary_data):
+            ttk_boot.Label(stats_frame, text=label, anchor=W).grid(row=i, column=0, sticky=EW, pady=2, padx=5)
+            ttk_boot.Label(stats_frame, text=str(value), anchor=W, bootstyle="info").grid(row=i, column=1, sticky=EW, pady=2, padx=5)
+
+        # --- Bottom Frame for Top 5 Groups ---
+        top_groups_frame = ttk_boot.LabelFrame(summary_frame, text="Top 5 Largest Groups", padding=10)
+        top_groups_frame.pack(padx=10, pady=5, fill=BOTH, expand=True)
+
+        cols = ("Group Name", "Row Count")
+        self.top_groups_tree = ttk.Treeview(top_groups_frame, columns=cols, show='headings', bootstyle="info", height=6)
+        self.top_groups_tree.column("Group Name", anchor=W, width=400)
+        self.top_groups_tree.column("Row Count", anchor=E, width=100)
+        self.top_groups_tree.heading("Group Name", text="Group Name", anchor=W)
+        self.top_groups_tree.heading("Row Count", text="Row Count", anchor=E)
+
+        top_groups_data = data.get('top_groups', [])
+        for group_name, row_count in top_groups_data:
+            self.top_groups_tree.insert("", "end", values=(group_name, row_count))
+
+        self.top_groups_tree.pack(side=LEFT, fill=BOTH, expand=True, padx=5, pady=5)
+        vsb = ttk.Scrollbar(top_groups_frame, orient="vertical", command=self.top_groups_tree.yview, bootstyle="info-round")
+        vsb.pack(side=RIGHT, fill='y')
+        self.top_groups_tree.configure(yscrollcommand=vsb.set)
 
     def _create_mappings_tab(self, notebook, mappings):
         tab_frame = ttk_boot.Frame(notebook, padding=10)

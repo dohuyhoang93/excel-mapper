@@ -117,7 +117,8 @@ class ExcelDataMapper:
         self.source_header_end_row = tk.IntVar(value=1)
         self.dest_header_start_row = tk.IntVar(value=9)
         self.dest_header_end_row = tk.IntVar(value=9)
-        self.sort_column = tk.StringVar()
+        self.group_by_column = tk.StringVar()
+        self.master_sheet = tk.StringVar()
         self.current_theme = "flatly"
         self.dest_write_start_row = tk.IntVar(value=11)
         self.dest_write_end_row = tk.IntVar(value=0)
@@ -238,6 +239,13 @@ class ExcelDataMapper:
         self.load_cols_button = ttk_boot.Button(header_frame, text="Load Columns", command=self.safe_load_columns, bootstyle="outline-info")
         self.load_cols_button.grid(row=0, column=5, rowspan=2, padx=(10, 0), pady=2, sticky="ns")
 
+        master_sheet_frame = ttk_boot.LabelFrame(left_panel, text="Master Sheet Selection", padding=5)
+        master_sheet_frame.pack(fill=X, pady=(0, 5), anchor=N)
+        master_sheet_frame.columnconfigure(0, weight=1)
+        ttk_boot.Label(master_sheet_frame, text="Master Sheet:").pack(fill=X)
+        self.master_sheet_combo = ttk_boot.Combobox(master_sheet_frame, textvariable=self.master_sheet, state=DISABLED)
+        self.master_sheet_combo.pack(fill=X)
+
         write_zone_frame = ttk_boot.LabelFrame(left_panel, text="Setting write zone", padding=5)
         write_zone_frame.pack(fill=X, pady=(0, 5), anchor=N)
         write_zone_frame.columnconfigure(1, weight=1)
@@ -252,12 +260,12 @@ class ExcelDataMapper:
         ttk_boot.Checkbutton(write_zone_frame, text="Respect cell protection", variable=self.respect_cell_protection).grid(row=4, column=0, columnspan=3, sticky=W, pady=(5,0))
         ttk_boot.Checkbutton(write_zone_frame, text="Respect formulas", variable=self.respect_formulas).grid(row=5, column=0, columnspan=3, sticky=W)
 
-        sort_frame = ttk_boot.LabelFrame(left_panel, text="Sort Configuration", padding=5)
-        sort_frame.pack(fill=X, pady=(0, 5), anchor=N)
-        sort_frame.columnconfigure(0, weight=1)
-        ttk_boot.Label(sort_frame, text="Sort by Column (optional):").pack(fill=X)
-        self.sort_combo = ttk_boot.Combobox(sort_frame, textvariable=self.sort_column)
-        self.sort_combo.pack(fill=X)
+        group_by_frame = ttk_boot.LabelFrame(left_panel, text="Group by Configuration", padding=5)
+        group_by_frame.pack(fill=X, pady=(0, 5), anchor=N)
+        group_by_frame.columnconfigure(0, weight=1)
+        ttk_boot.Label(group_by_frame, text="Group by Column:").pack(fill=X)
+        self.group_by_combo = ttk_boot.Combobox(group_by_frame, textvariable=self.group_by_column)
+        self.group_by_combo.pack(fill=X)
 
         # --- Populate Right Panel ---
         mapping_container = ttk_boot.LabelFrame(right_panel, text="Column Mapping", padding=5)
@@ -276,6 +284,37 @@ class ExcelDataMapper:
         if filename:
             self.dest_file.set(filename)
             self.log_info(f"Destination file selected: {filename}")
+            self._load_destination_sheets(filename)
+
+    def _load_destination_sheets(self, file_path: str):
+        """Loads sheet names from the destination file into the master sheet combobox."""
+        try:
+            if not file_path or not os.path.exists(file_path):
+                self.master_sheet_combo['values'] = []
+                self.master_sheet.set('')
+                self.master_sheet_combo.config(state=DISABLED)
+                return
+
+            FileHandleManager.force_release_handles()
+            wb = openpyxl.load_workbook(file_path, read_only=True)
+            sheet_names = wb.sheetnames
+            wb.close()
+            
+            self.master_sheet_combo['values'] = sheet_names
+            if sheet_names:
+                self.master_sheet.set(sheet_names[0])
+                self.master_sheet_combo.config(state='readonly')
+            else:
+                self.master_sheet.set('')
+                self.master_sheet_combo.config(state=DISABLED)
+            self.log_info(f"Loaded sheets from {os.path.basename(file_path)}")
+
+        except Exception as e:
+            self.log_error(f"Error loading destination sheets: {str(e)}")
+            show_custom_error(self.root, self, "Error", f"Could not read sheets from destination file: {str(e)}")
+            self.master_sheet_combo['values'] = []
+            self.master_sheet.set('')
+            self.master_sheet_combo.config(state=DISABLED)
     
     def force_release_excel_handles(self):
         try:
@@ -317,7 +356,7 @@ class ExcelDataMapper:
         finally:
             FileHandleManager.force_release_handles()
 
-    def safe_load_columns(self, saved_sort_col: Optional[str] = None, apply_suggestions: bool = True):
+    def safe_load_columns(self, saved_group_by_col: Optional[str] = None, apply_suggestions: bool = True):
         try:
             if not self.source_file.get() or not self.dest_file.get():
                 show_custom_warning(self.root, self, "Warning", "Please select both source and destination files first.")
@@ -341,9 +380,9 @@ class ExcelDataMapper:
                 return
             
             source_keys = list(self.source_columns.keys())
-            self.sort_combo['values'] = source_keys
-            if saved_sort_col and saved_sort_col in source_keys:
-                self.sort_column.set(saved_sort_col)
+            self.group_by_combo['values'] = source_keys
+            if saved_group_by_col and saved_group_by_col in source_keys:
+                self.group_by_column.set(saved_group_by_col)
             
             self.create_mapping_widgets(apply_suggestions=apply_suggestions)
             self.update_status(f"Loaded {len(self.source_columns)} source and {len(self.dest_columns)} destination columns")
@@ -399,7 +438,7 @@ class ExcelDataMapper:
                 "dest_skip_rows": self.dest_skip_rows.get(), 
                 "respect_cell_protection": self.respect_cell_protection.get(),
                 "respect_formulas": self.respect_formulas.get(), 
-                "sort_column": self.sort_column.get(), 
+                "group_by_column": self.group_by_column.get(), 
                 "mapping": mappings,
             }
             
@@ -436,8 +475,8 @@ class ExcelDataMapper:
             self.respect_formulas.set(config.get("respect_formulas", True))
             
             if self.source_file.get() and self.dest_file.get():
-                saved_sort_col = config.get("sort_column", "")
-                self.safe_load_columns(saved_sort_col=saved_sort_col, apply_suggestions=False)
+                saved_group_by_col = config.get("group_by_column", "")
+                self.safe_load_columns(saved_group_by_col=saved_group_by_col, apply_suggestions=False)
                 mappings = config.get("mapping", {})
                 for source_col, dest_col in mappings.items():
                     if source_col in self.mapping_combos:
@@ -472,6 +511,7 @@ class ExcelDataMapper:
             last_dest = settings.get("last_dest_file", "")
             if os.path.exists(last_dest):
                 self.dest_file.set(last_dest)
+                self._load_destination_sheets(last_dest)
 
             self.log_info("Application settings loaded.")
 
@@ -504,6 +544,12 @@ class ExcelDataMapper:
             return
         if not hasattr(self, 'mapping_combos') or not self.mapping_combos:
             show_custom_warning(self.root, self, "Warning", "Please load columns first.")
+            return
+        if not self.group_by_column.get():
+            show_custom_warning(self.root, self, "Warning", "Please select a 'Group by Column'.")
+            return
+        if not self.master_sheet.get():
+            show_custom_warning(self.root, self, "Warning", "Please select a 'Master Sheet'.")
             return
         mappings = {s: c.get() for s, c in self.mapping_combos.items() if c.get()}
         if not mappings:
@@ -539,7 +585,8 @@ class ExcelDataMapper:
                 "dest_skip_rows": self.dest_skip_rows.get(),
                 "respect_cell_protection": self.respect_cell_protection.get(),
                 "respect_formulas": self.respect_formulas.get(),
-                "sort_column": self.sort_column.get(),
+                "group_by_column": self.group_by_column.get(),
+                "master_sheet": self.master_sheet.get(),
                 "mappings": mappings,
                 "source_columns": self.source_columns,
                 "dest_columns": self.dest_columns,
@@ -662,50 +709,50 @@ class ExcelDataMapper:
     def _run_preview_simulation(self):
         report = {}
         try:
+            group_by_col = self.group_by_column.get()
+            if not group_by_col:
+                report["error"] = "Please select a 'Group by Column' for the preview."
+                return report
+
+            # Read source data - using the main parser to get all data for accurate grouping
             with ExcelParser(self.source_file.get()) as p:
-                report['source_row_count'] = p.count_data_rows(self.source_header_end_row.get())
-            with ExcelParser(self.dest_file.get()) as p:
-                ws = p.worksheet
-                start_row, end_row = self.dest_write_start_row.get(), self.dest_write_end_row.get()
-                if start_row <= self.dest_header_end_row.get():
-                    report["error"] = "Start Write Row must be after the destination header."
-                    return report
-                end_limit = end_row if end_row > 0 else ws.max_row
-                if end_row > 0 and start_row > end_row:
-                    report["error"] = "Start Write Row cannot be after End Write Row."
-                    return report
-                report.update({'start_row': start_row, 'end_row': end_row or "Unlimited", 'total_zone_rows': (end_limit - start_row + 1) if end_row > 0 else "Unlimited"})
-                
-                skipped_rows_set = parse_skip_rows_string(self.dest_skip_rows.get())
-                mappings = {s: c.get() for s, c in self.mapping_combos.items() if c.get()}
-                mapped_dest_indices = {self.dest_columns[name] for name in mappings.values() if name in self.dest_columns}
+                # Re-using the logic from the transfer engine's _read_source_data
+                worksheet = p.worksheet
+                start_data_row = self.source_header_end_row.get() + 1
+                source_data = []
+                for row_index in range(start_data_row, worksheet.max_row + 1):
+                    row_data, has_data = {}, False
+                    for header_name, col_index in self.source_columns.items():
+                        value = worksheet.cell(row=row_index, column=col_index).value
+                        if value is not None:
+                            has_data = True
+                        row_data[header_name] = value
+                    if has_data:
+                        source_data.append(row_data)
 
-                user_skipped, protected_skipped = 0, 0
-                for r in range(start_row, end_limit + 1):
-                    if r in skipped_rows_set:
-                        user_skipped += 1
-                        continue
-                    
-                    # Check for protected cells or formulas in the row
-                    is_row_auto_skipped = False
-                    if self.respect_cell_protection.get() and ws.protection.sheet:
-                        # A row is considered skipped if ANY of its destination cells are locked
-                        if any(ws.cell(r, c_idx).protection.locked for c_idx in mapped_dest_indices):
-                            is_row_auto_skipped = True
-                    
-                    # A row is also considered skipped if ALL of its mapped destination cells contain formulas
-                    if self.respect_formulas.get():
-                        if mapped_dest_indices and all(ws.cell(r, c_idx).data_type == 'f' for c_idx in mapped_dest_indices):
-                             is_row_auto_skipped = True
+            if not source_data:
+                report["error"] = "No data found in source file to generate a preview."
+                return report
 
-                    if is_row_auto_skipped:
-                        protected_skipped += 1
+            # Group data
+            grouped_data = {}
+            for row in source_data:
+                key = str(row.get(group_by_col, "Uncategorized"))
+                if key not in grouped_data:
+                    grouped_data[key] = []
+                grouped_data[key].append(row)
 
-                report.update({'user_skipped_count': user_skipped, 'protected_skipped_count': protected_skipped})
-                if end_row > 0:
-                    report['available_slots'] = max(0, report['total_zone_rows'] - user_skipped - protected_skipped)
-                else:
-                    report['available_slots'] = "Unlimited"
+            report['group_count'] = len(grouped_data)
+            report['total_rows'] = len(source_data)
+            
+            # Get top 5 largest groups
+            top_groups = sorted(grouped_data.items(), key=lambda item: len(item[1]), reverse=True)[:5]
+            report['top_groups'] = [(name, len(rows)) for name, rows in top_groups]
+
+            return report
+        except Exception as e:
+            self.log_error(f"Error during preview simulation: {str(e)}\n{traceback.format_exc()}")
+            report["error"] = f"An error occurred: {str(e)}"
             return report
         finally:
             FileHandleManager.force_release_handles()
@@ -739,7 +786,7 @@ class ExcelDataMapper:
     def get_current_settings(self) -> dict:
         return {
             "Source File": os.path.basename(self.source_file.get()), "Destination File": os.path.basename(self.dest_file.get()),
-            "Sort Column": self.sort_column.get() or "None", "---": "---",
+            "Group by Column": self.group_by_column.get() or "None", "---": "---",
             "Start Write Row": self.dest_write_start_row.get(), "End Write Row": self.dest_write_end_row.get() or "Unlimited",
             "Skip Rows": self.dest_skip_rows.get() or "None", "Respect Protection": "Yes" if self.respect_cell_protection.get() else "No",
             "Respect Formulas": "Yes" if self.respect_formulas.get() else "No",
