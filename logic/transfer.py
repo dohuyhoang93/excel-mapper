@@ -8,49 +8,6 @@ from pathlib import Path
 import logging
 from typing import List, Dict, Any, Optional, Callable, Set
 from openpyxl.cell.cell import MergedCell
-
-def parse_skip_rows_string(skip_rows_str: str) -> Set[int]:
-    """
-    Parses a user-provided string of rows to skip into a set of integers.
-    This is a public utility function that can be used by other modules.
-
-    Args:
-        skip_rows_str: A string like "15, 22, 30-35".
-
-    Returns:
-        A set of integers representing the rows to be skipped.
-    """
-    skipped_rows = set()
-    if not skip_rows_str:
-        return skipped_rows
-    for part in skip_rows_str.split(','):
-        part = part.strip()
-        if not part:
-            continue
-        if '-' in part:
-            try:
-                start, end = map(int, part.split('-'))
-                if start <= end:
-                    skipped_rows.update(range(start, end + 1))
-            except ValueError:
-                logging.warning(f"Could not parse range in skip_rows: {part}")
-        else:
-            try:
-                skipped_rows.add(int(part))
-            except ValueError:
-                logging.warning(f"Could not parse number in skip_rows: {part}")
-    return skipped_rows
-
-"""
-Data transfer engine for copying data between Excel files while preserving formatting.
-This module encapsulates the core business logic of the data transfer process.
-"""
-import openpyxl
-import shutil
-from pathlib import Path
-import logging
-from typing import List, Dict, Any, Optional, Callable, Set
-from openpyxl.cell.cell import MergedCell
 import re
 
 def _sanitize_sheet_name(name: str) -> str:
@@ -58,7 +15,7 @@ def _sanitize_sheet_name(name: str) -> str:
     if not name:
         return "Untitled"
     # Remove invalid characters
-    name = re.sub(r'[\\/*?:[\\]]', '', name)
+    name = re.sub(r'[\\/*?:[\]]', '', name)
     # Truncate to 31 characters (Excel's limit)
     return name[:31]
 
@@ -166,7 +123,6 @@ class ExcelTransferEngine:
 
     def _read_source_data(self) -> List[Dict[str, Any]]:
         """Reads all data rows from the source file."""
-        # This function is reused from the old implementation
         workbook = None
         try:
             workbook = openpyxl.load_workbook(self.source_path, data_only=True)
@@ -197,6 +153,24 @@ class ExcelTransferEngine:
             grouped[key].append(row)
         return grouped
 
+    def _write_group_identifier(self, worksheet, group_name: str, group_by_header: str):
+        """Finds the cell with the group-by header and writes the group name next to it."""
+        # Search in a reasonable range, e.g., first 50 rows and 20 columns
+        for row in worksheet.iter_rows(min_row=1, max_row=50, max_col=20):
+            for cell in row:
+                cell_value = str(cell.value).strip() if cell.value is not None else ""
+                # A simple, case-insensitive comparison
+                if cell_value.lower() == group_by_header.lower():
+                    try:
+                        # Get the cell to the right
+                        target_cell = worksheet.cell(row=cell.row, column=cell.column + 1)
+                        target_cell.value = group_name
+                        logging.info(f"Wrote group name '{group_name}' to cell {target_cell.coordinate} in sheet '{worksheet.title}'")
+                        return # Exit after finding and writing
+                    except Exception as e:
+                        logging.error(f"Error writing group identifier for group '{group_name}': {e}")
+                        return
+
     def _write_grouped_data(self, grouped_data: Dict[str, List[Dict[str, Any]]]):
         """
         Writes the grouped data to the destination file, creating a new sheet for each group.
@@ -216,11 +190,13 @@ class ExcelTransferEngine:
                 # 1. Create new sheet from master
                 new_sheet_name = _sanitize_sheet_name(group_name)
                 if new_sheet_name in workbook.sheetnames:
-                    # Handle duplicate sheet names if necessary
                     new_sheet_name = _sanitize_sheet_name(f"{group_name}_{i+1}")
                 
                 new_sheet = workbook.copy_worksheet(master_sheet)
                 new_sheet.title = new_sheet_name
+
+                # 1.5 Write the group identifier
+                self._write_group_identifier(new_sheet, group_name, self.group_by_column)
 
                 # 2. Insert rows if necessary
                 skipped_rows = parse_skip_rows_string(self.dest_skip_rows_str)
@@ -233,10 +209,8 @@ class ExcelTransferEngine:
                 rows_to_write = len(data_rows)
                 if self.dest_write_end_row > 0 and rows_to_write > available_rows:
                     rows_to_insert = rows_to_write - available_rows
-                    # Insert rows just before the end write row to preserve any footers
                     new_sheet.insert_rows(self.dest_write_end_row, amount=rows_to_insert)
                     logging.info(f"Inserted {rows_to_insert} rows into sheet '{new_sheet_name}'.")
-                    # Adjust the end write row for the current sheet processing
                     current_end_row = self.dest_write_end_row + rows_to_insert
                 else:
                     current_end_row = self.dest_write_end_row
