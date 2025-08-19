@@ -8,23 +8,29 @@ from pathlib import Path
 import logging
 from typing import List, Dict, Any, Optional, Callable, Set
 from openpyxl.cell.cell import MergedCell
+from openpyxl.utils import get_column_letter
 import re
 from copy import copy
+
+# Dedicated logger for transfer debugging
+transfer_logger = logging.getLogger('transfer_debug')
+if not transfer_logger.handlers:
+    transfer_logger.setLevel(logging.DEBUG)
+    fh = logging.FileHandler('log.txt', mode='w', encoding='utf-8')
+    fh.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    fh.setFormatter(formatter)
+    transfer_logger.addHandler(fh)
 
 def _sanitize_sheet_name(name: str) -> str:
     """Sanitizes a string to be a valid Excel sheet name."""
     if not name:
         return "Untitled"
-    name = str(name) # Ensure name is a string
-    # Remove invalid characters
-    name = re.sub(r'[\\/*?:[\\]', '', name)
-    # Truncate to 31 characters (Excel's limit)
+    name = str(name)
+    name = re.sub(r'[\\/*?:[\\]]', '', name)
     return name[:31]
 
 def parse_skip_rows_string(skip_rows_str: str) -> Set[int]:
-    """
-    Parses a user-provided string of rows to skip into a set of integers.
-    """
     skipped_rows = set()
     if not skip_rows_str:
         return skipped_rows
@@ -47,9 +53,6 @@ def parse_skip_rows_string(skip_rows_str: str) -> Set[int]:
     return skipped_rows
 
 class ExcelTransferEngine:
-    """
-    Handles the entire data transfer process from a source to a destination Excel file.
-    """
     def __init__(self, settings: Dict[str, Any], progress_callback: Optional[Callable[[int, str], None]] = None):
         self.source_path = Path(settings["source_file"])
         self.dest_path = Path(settings["dest_file"])
@@ -73,7 +76,6 @@ class ExcelTransferEngine:
             self.progress_callback(value, message)
 
     def _get_writable_cell(self, worksheet, row_idx, col_idx):
-        """Gets the top-left cell of a potentially merged range."""
         cell = worksheet.cell(row=row_idx, column=col_idx)
         if isinstance(cell, MergedCell):
             for merged_range in worksheet.merged_cells.ranges:
@@ -82,6 +84,7 @@ class ExcelTransferEngine:
         return cell
 
     def run_transfer(self):
+        transfer_logger.info("--- Starting new transfer process ---")
         if not self.group_by_column:
             raise ValueError("'Group by Column' must be selected for this operation.")
         if not self.master_sheet_name:
@@ -90,7 +93,7 @@ class ExcelTransferEngine:
         self.backup_path = self.dest_path.with_suffix(f'.{self.dest_path.suffix}.backup')
         try:
             shutil.copy2(self.dest_path, self.backup_path)
-            logging.info(f"Backup created at {self.backup_path}")
+            transfer_logger.info(f"Backup created at {self.backup_path}")
 
             self._update_progress(5, "Reading source data...")
             source_data = self._read_source_data()
@@ -106,37 +109,54 @@ class ExcelTransferEngine:
             if self.backup_path.exists():
                 self.backup_path.unlink()
             self._update_progress(100, "Transfer completed successfully")
-            logging.info("Grouped data transfer completed successfully")
+            transfer_logger.info("--- Transfer completed successfully ---")
 
         except Exception as e:
-            logging.error(f"Transfer failed: {e}", exc_info=True)
+            transfer_logger.error(f"Transfer failed: {e}", exc_info=True)
             if self.backup_path and self.backup_path.exists():
                 try:
                     shutil.copy2(self.backup_path, self.dest_path)
                     self.backup_path.unlink()
-                    logging.info("Restored destination file from backup.")
+                    transfer_logger.info("Restored destination file from backup.")
                 except Exception as backup_e:
-                    logging.error(f"CRITICAL: Failed to restore backup: {backup_e}", exc_info=True)
+                    transfer_logger.error(f"CRITICAL: Failed to restore backup: {backup_e}", exc_info=True)
             raise e
 
     def _read_source_data(self) -> List[Dict[str, Any]]:
+        transfer_logger.debug("--- Attempting to read source data ---")
         workbook = None
         try:
+            transfer_logger.debug(f"Source file path: {self.source_path}")
             workbook = openpyxl.load_workbook(self.source_path, data_only=True)
             worksheet = workbook.active
+            transfer_logger.debug(f"Reading from active sheet: '{worksheet.title}'")
+
             start_data_row = self.source_header_end_row + 1
+            max_row = worksheet.max_row
+            
+            transfer_logger.debug(f"Header ends at row: {self.source_header_end_row}")
+            transfer_logger.debug(f"Calculated start data row: {start_data_row}")
+            transfer_logger.debug(f"Max row found by openpyxl: {max_row}")
+
+            if start_data_row > max_row:
+                transfer_logger.warning("Start data row is greater than max row. No data will be read.")
+                return []
+
             data = []
-            for row_index in range(start_data_row, worksheet.max_row + 1):
+            transfer_logger.debug(f"Starting loop to read rows from {start_data_row} to {max_row}.")
+            for row_index in range(start_data_row, max_row + 1):
                 row_data, has_data = {}, False
                 for header_name, col_index in self.source_columns.items():
                     value = worksheet.cell(row=row_index, column=col_index).value
                     if isinstance(value, str):
-                        value = value.strip() # ISSUE 1 FIX: Strip whitespace
-                    if value is not None and str(value).strip() != '':
+                        value = value.strip()
+                    if value is not None:
                         has_data = True
                     row_data[header_name] = value
                 if has_data:
                     data.append(row_data)
+            
+            transfer_logger.debug(f"Finished reading. Found {len(data)} rows with data.")
             return data
         finally:
             if workbook:
@@ -152,20 +172,33 @@ class ExcelTransferEngine:
         return grouped
 
     def _write_group_identifier(self, worksheet, group_name: str, group_by_header: str):
-        """Finds the cell with the group-by header and writes the group name next to it."""
-        # Search in a reasonable range
-        for row in worksheet.iter_rows(min_row=1, max_row=50, max_col=50):
+        transfer_logger.debug(f"Sheet '{worksheet.title}': Searching for group identifier header '{group_by_header}'")
+        for row in worksheet.iter_rows():
             for cell in row:
-                cell_value = str(cell.value).strip() if cell.value is not None else ""
+                anchor_cell = self._get_writable_cell(worksheet, cell.row, cell.column)
+                cell_value = str(anchor_cell.value).strip() if anchor_cell.value is not None else ""
+                
                 if cell_value.lower() == group_by_header.lower():
+                    transfer_logger.debug(f"Found header '{group_by_header}' at anchor cell {anchor_cell.coordinate}.")
+                    
+                    max_col = anchor_cell.column
+                    for merged_range in worksheet.merged_cells.ranges:
+                        if anchor_cell.coordinate in merged_range:
+                            max_col = merged_range.max_col
+                            transfer_logger.debug(f"Header cell is part of merged range {merged_range.coord}. Max column is {max_col}.")
+                            break
+                    
+                    target_col = max_col + 1
+                    target_row = anchor_cell.row
+
                     try:
-                        # ISSUE 3 FIX: Use _get_writable_cell to handle merged cells
-                        target_cell = self._get_writable_cell(worksheet, cell.row, cell.column + 1)
-                        target_cell.value = group_name
-                        logging.info(f"Wrote group name '{group_name}' to cell {target_cell.coordinate}")
+                        target_cell_anchor = self._get_writable_cell(worksheet, target_row, target_col)
+                        transfer_logger.debug(f"Attempting to write group name '{group_name}' to target anchor cell {target_cell_anchor.coordinate}")
+                        target_cell_anchor.value = group_name
+                        transfer_logger.debug(f"Successfully wrote group name to {target_cell_anchor.coordinate}.")
                         return
                     except Exception as e:
-                        logging.error(f"Error writing group identifier for '{group_name}': {e}")
+                        transfer_logger.error(f"FAILED to write group identifier. Error: {e}")
                         return
 
     def _write_grouped_data(self, grouped_data: Dict[str, List[Dict[str, Any]]]):
@@ -177,7 +210,6 @@ class ExcelTransferEngine:
                 raise ValueError(f"Master sheet '{self.master_sheet_name}' not found.")
             master_sheet = workbook[self.master_sheet_name]
 
-            # Remove default sheet if it exists and is not the master
             if "Sheet" in workbook.sheetnames and len(workbook.sheetnames) > 1 and workbook["Sheet"] != master_sheet:
                 workbook.remove(workbook["Sheet"])
 
@@ -194,6 +226,17 @@ class ExcelTransferEngine:
                 new_sheet.title = new_sheet_name
                 created_sheets.append(new_sheet_name)
 
+                # CORRECTED DEFINED NAME HANDLING
+                newly_created_sheet_index = workbook.sheetnames.index(new_sheet.title)
+                conflicting_names = []
+                for name, dn in workbook.defined_names.items():
+                    if dn.localSheetId == newly_created_sheet_index:
+                        conflicting_names.append(name)
+                
+                for name in conflicting_names:
+                    del workbook.defined_names[name]
+                    transfer_logger.info(f"Removed conflicting defined name '{name}' from new sheet '{new_sheet.title}'")
+
                 self._write_group_identifier(new_sheet, group_name, self.group_by_column)
 
                 skipped_rows = parse_skip_rows_string(self.dest_skip_rows_str)
@@ -206,29 +249,41 @@ class ExcelTransferEngine:
                         rows_to_insert = rows_to_write - available_rows
                         insertion_point = self.dest_write_end_row
                         new_sheet.insert_rows(insertion_point, amount=rows_to_insert)
-                        logging.info(f"Inserted {rows_to_insert} rows into '{new_sheet_name}'.")
+                        transfer_logger.info(f"Inserted {rows_to_insert} rows into '{new_sheet_name}'.")
                         current_end_row += rows_to_insert
 
-                        # ISSUE 2 FIX: Copy styles to new rows
-                        style_source_row = insertion_point - 1 if insertion_point > 1 else 1
-                        for row_idx in range(insertion_point, insertion_point + rows_to_insert):
-                            for col_idx in range(1, new_sheet.max_column + 1):
-                                source_cell = new_sheet.cell(row=style_source_row, column=col_idx)
-                                new_cell = new_sheet.cell(row=row_idx, column=col_idx)
-                                if source_cell.has_style:
+                        style_source_row_idx = insertion_point - 1 if insertion_point > 1 else 1
+                        transfer_logger.debug(f"Copying styles and merges from source row: {style_source_row_idx}")
+                        if style_source_row_idx in new_sheet.row_dimensions:
+                            source_rd = new_sheet.row_dimensions[style_source_row_idx]
+                            for j in range(rows_to_insert):
+                                new_sheet.row_dimensions[insertion_point + j].height = source_rd.height
+
+                        for col_idx in range(1, new_sheet.max_column + 1):
+                            source_cell = new_sheet.cell(row=style_source_row_idx, column=col_idx)
+                            if source_cell.has_style:
+                                for j in range(rows_to_insert):
+                                    new_cell = new_sheet.cell(row=insertion_point + j, column=col_idx)
                                     new_cell.font = copy(source_cell.font)
                                     new_cell.border = copy(source_cell.border)
                                     new_cell.fill = copy(source_cell.fill)
                                     new_cell.number_format = source_cell.number_format
                                     new_cell.protection = copy(source_cell.protection)
                                     new_cell.alignment = copy(source_cell.alignment)
+                        
+                        for mc_range in list(new_sheet.merged_cells.ranges):
+                            if mc_range.min_row <= style_source_row_idx and mc_range.max_row >= style_source_row_idx:
+                                for j in range(rows_to_insert):
+                                    new_row = insertion_point + j
+                                    new_range_coord = f"{get_column_letter(mc_range.min_col)}{new_row}:{get_column_letter(mc_range.max_col)}{new_row}"
+                                    transfer_logger.debug(f"Re-merging range {new_range_coord}")
+                                    new_sheet.merge_cells(new_range_coord)
                 
                 self._write_single_sheet(new_sheet, data_rows, skipped_rows, current_end_row)
 
             if self.master_sheet_name in workbook.sheetnames and len(workbook.sheetnames) > 1:
                 del workbook[self.master_sheet_name]
             
-            # ISSUE 4 FIX: Set active sheet before saving
             if created_sheets and created_sheets[0] in workbook.sheetnames:
                 workbook.active = workbook[created_sheets[0]]
 

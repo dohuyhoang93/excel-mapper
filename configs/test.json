@@ -4,7 +4,7 @@
   "dest_header_start_row": 9,
   "dest_header_end_row": 10,
   "dest_write_start_row": 11,
-  "dest_write_end_row": 32,
+  "dest_write_end_row": 15,
   "dest_skip_rows": "",
   "respect_cell_protection": true,
   "respect_formulas": true,
@@ -20,5 +20,5 @@
     "Amount": "VND or US$　or JPY - Amount",
     "Official invoice number": "Official invoice number"
   },
-  "created_date": "2025-08-18T15:47:35.540230"
+  "created_date": "2025-08-18T17:32:17.093995"
 }

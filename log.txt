@@ -1,0 +1,2824 @@
+2025-08-19 10:38:31,721 - INFO - --- Starting new transfer process ---
+2025-08-19 10:38:31,733 - INFO - Backup created at C:\Users\dohoang\Downloads\Documents\Destination..xlsx.backup
+2025-08-19 10:38:31,737 - DEBUG - --- Attempting to read source data ---
+2025-08-19 10:38:31,737 - DEBUG - Source file path: C:\Users\dohoang\Downloads\Documents\Copy of Approval payment- from 2025.07.24.xlsx
+2025-08-19 10:38:32,668 - DEBUG - Reading from active sheet: 'Payment List'
+2025-08-19 10:38:32,668 - DEBUG - Header ends at row: 4
+2025-08-19 10:38:32,668 - DEBUG - Calculated start data row: 5
+2025-08-19 10:38:32,668 - DEBUG - Max row found by openpyxl: 366
+2025-08-19 10:38:32,668 - DEBUG - Starting loop to read rows from 5 to 366.
+2025-08-19 10:38:32,668 - DEBUG - Finished reading. Found 362 rows with data.
+2025-08-19 10:38:33,094 - DEBUG - Sheet 'Abe Bright-shaft Engineering Co': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:33,094 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:33,094 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:33,094 - DEBUG - Attempting to write group name 'Abe Bright-shaft Engineering Corporation' to target anchor cell L18
+2025-08-19 10:38:33,094 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:33,184 - DEBUG - Sheet 'FUJIKIN INCORPORATED': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:33,184 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:33,184 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:33,184 - DEBUG - Attempting to write group name 'FUJIKIN INCORPORATED' to target anchor cell L18
+2025-08-19 10:38:33,184 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:33,199 - INFO - Inserted 15 rows into 'FUJIKIN INCORPORATED'.
+2025-08-19 10:38:33,199 - DEBUG - Copying styles and merges from source row: 14
+2025-08-19 10:38:33,746 - DEBUG - Re-merging range AI15:AL15
+2025-08-19 10:38:33,746 - DEBUG - Re-merging range AI16:AL16
+2025-08-19 10:38:33,746 - DEBUG - Re-merging range AI17:AL17
+2025-08-19 10:38:33,746 - DEBUG - Re-merging range AI18:AL18
+2025-08-19 10:38:33,746 - DEBUG - Re-merging range AI19:AL19
+2025-08-19 10:38:33,746 - DEBUG - Re-merging range AI20:AL20
+2025-08-19 10:38:33,761 - DEBUG - Re-merging range AI21:AL21
+2025-08-19 10:38:33,761 - DEBUG - Re-merging range AI22:AL22
+2025-08-19 10:38:33,761 - DEBUG - Re-merging range AI23:AL23
+2025-08-19 10:38:33,761 - DEBUG - Re-merging range AI24:AL24
+2025-08-19 10:38:33,761 - DEBUG - Re-merging range AI25:AL25
+2025-08-19 10:38:33,761 - DEBUG - Re-merging range AI26:AL26
+2025-08-19 10:38:33,761 - DEBUG - Re-merging range AI27:AL27
+2025-08-19 10:38:33,761 - DEBUG - Re-merging range AI28:AL28
+2025-08-19 10:38:33,761 - DEBUG - Re-merging range AI29:AL29
+2025-08-19 10:38:33,761 - DEBUG - Re-merging range BB15:BE15
+2025-08-19 10:38:33,761 - DEBUG - Re-merging range BB16:BE16
+2025-08-19 10:38:33,761 - DEBUG - Re-merging range BB17:BE17
+2025-08-19 10:38:33,761 - DEBUG - Re-merging range BB18:BE18
+2025-08-19 10:38:33,761 - DEBUG - Re-merging range BB19:BE19
+2025-08-19 10:38:33,761 - DEBUG - Re-merging range BB20:BE20
+2025-08-19 10:38:33,777 - DEBUG - Re-merging range BB21:BE21
+2025-08-19 10:38:33,777 - DEBUG - Re-merging range BB22:BE22
+2025-08-19 10:38:33,777 - DEBUG - Re-merging range BB23:BE23
+2025-08-19 10:38:33,777 - DEBUG - Re-merging range BB24:BE24
+2025-08-19 10:38:33,777 - DEBUG - Re-merging range BB25:BE25
+2025-08-19 10:38:33,777 - DEBUG - Re-merging range BB26:BE26
+2025-08-19 10:38:33,777 - DEBUG - Re-merging range BB27:BE27
+2025-08-19 10:38:33,777 - DEBUG - Re-merging range BB28:BE28
+2025-08-19 10:38:33,777 - DEBUG - Re-merging range BB29:BE29
+2025-08-19 10:38:33,777 - DEBUG - Re-merging range BN15:BQ15
+2025-08-19 10:38:33,777 - DEBUG - Re-merging range BN16:BQ16
+2025-08-19 10:38:33,777 - DEBUG - Re-merging range BN17:BQ17
+2025-08-19 10:38:33,777 - DEBUG - Re-merging range BN18:BQ18
+2025-08-19 10:38:33,777 - DEBUG - Re-merging range BN19:BQ19
+2025-08-19 10:38:33,777 - DEBUG - Re-merging range BN20:BQ20
+2025-08-19 10:38:33,793 - DEBUG - Re-merging range BN21:BQ21
+2025-08-19 10:38:33,793 - DEBUG - Re-merging range BN22:BQ22
+2025-08-19 10:38:33,793 - DEBUG - Re-merging range BN23:BQ23
+2025-08-19 10:38:33,793 - DEBUG - Re-merging range BN24:BQ24
+2025-08-19 10:38:33,793 - DEBUG - Re-merging range BN25:BQ25
+2025-08-19 10:38:33,793 - DEBUG - Re-merging range BN26:BQ26
+2025-08-19 10:38:33,793 - DEBUG - Re-merging range BN27:BQ27
+2025-08-19 10:38:33,793 - DEBUG - Re-merging range BN28:BQ28
+2025-08-19 10:38:33,793 - DEBUG - Re-merging range BN29:BQ29
+2025-08-19 10:38:33,793 - DEBUG - Re-merging range BV15:BX15
+2025-08-19 10:38:33,793 - DEBUG - Re-merging range BV16:BX16
+2025-08-19 10:38:33,793 - DEBUG - Re-merging range BV17:BX17
+2025-08-19 10:38:33,793 - DEBUG - Re-merging range BV18:BX18
+2025-08-19 10:38:33,793 - DEBUG - Re-merging range BV19:BX19
+2025-08-19 10:38:33,793 - DEBUG - Re-merging range BV20:BX20
+2025-08-19 10:38:33,808 - DEBUG - Re-merging range BV21:BX21
+2025-08-19 10:38:33,808 - DEBUG - Re-merging range BV22:BX22
+2025-08-19 10:38:33,808 - DEBUG - Re-merging range BV23:BX23
+2025-08-19 10:38:33,808 - DEBUG - Re-merging range BV24:BX24
+2025-08-19 10:38:33,808 - DEBUG - Re-merging range BV25:BX25
+2025-08-19 10:38:33,808 - DEBUG - Re-merging range BV26:BX26
+2025-08-19 10:38:33,808 - DEBUG - Re-merging range BV27:BX27
+2025-08-19 10:38:33,808 - DEBUG - Re-merging range BV28:BX28
+2025-08-19 10:38:33,808 - DEBUG - Re-merging range BV29:BX29
+2025-08-19 10:38:33,808 - DEBUG - Re-merging range BY15:CA15
+2025-08-19 10:38:33,808 - DEBUG - Re-merging range BY16:CA16
+2025-08-19 10:38:33,808 - DEBUG - Re-merging range BY17:CA17
+2025-08-19 10:38:33,808 - DEBUG - Re-merging range BY18:CA18
+2025-08-19 10:38:33,808 - DEBUG - Re-merging range BY19:CA19
+2025-08-19 10:38:33,808 - DEBUG - Re-merging range BY20:CA20
+2025-08-19 10:38:33,824 - DEBUG - Re-merging range BY21:CA21
+2025-08-19 10:38:33,824 - DEBUG - Re-merging range BY22:CA22
+2025-08-19 10:38:33,824 - DEBUG - Re-merging range BY23:CA23
+2025-08-19 10:38:33,824 - DEBUG - Re-merging range BY24:CA24
+2025-08-19 10:38:33,824 - DEBUG - Re-merging range BY25:CA25
+2025-08-19 10:38:33,824 - DEBUG - Re-merging range BY26:CA26
+2025-08-19 10:38:33,824 - DEBUG - Re-merging range BY27:CA27
+2025-08-19 10:38:33,824 - DEBUG - Re-merging range BY28:CA28
+2025-08-19 10:38:33,824 - DEBUG - Re-merging range BY29:CA29
+2025-08-19 10:38:33,824 - DEBUG - Re-merging range N15:W15
+2025-08-19 10:38:33,824 - DEBUG - Re-merging range N16:W16
+2025-08-19 10:38:33,824 - DEBUG - Re-merging range N17:W17
+2025-08-19 10:38:33,824 - DEBUG - Re-merging range N18:W18
+2025-08-19 10:38:33,839 - DEBUG - Re-merging range N19:W19
+2025-08-19 10:38:33,839 - DEBUG - Re-merging range N20:W20
+2025-08-19 10:38:33,839 - DEBUG - Re-merging range N21:W21
+2025-08-19 10:38:33,839 - DEBUG - Re-merging range N22:W22
+2025-08-19 10:38:33,839 - DEBUG - Re-merging range N23:W23
+2025-08-19 10:38:33,839 - DEBUG - Re-merging range N24:W24
+2025-08-19 10:38:33,839 - DEBUG - Re-merging range N25:W25
+2025-08-19 10:38:33,839 - DEBUG - Re-merging range N26:W26
+2025-08-19 10:38:33,839 - DEBUG - Re-merging range N27:W27
+2025-08-19 10:38:33,855 - DEBUG - Re-merging range N28:W28
+2025-08-19 10:38:33,855 - DEBUG - Re-merging range N29:W29
+2025-08-19 10:38:33,855 - DEBUG - Re-merging range AX15:BA15
+2025-08-19 10:38:33,855 - DEBUG - Re-merging range AX16:BA16
+2025-08-19 10:38:33,855 - DEBUG - Re-merging range AX17:BA17
+2025-08-19 10:38:33,855 - DEBUG - Re-merging range AX18:BA18
+2025-08-19 10:38:33,855 - DEBUG - Re-merging range AX19:BA19
+2025-08-19 10:38:33,855 - DEBUG - Re-merging range AX20:BA20
+2025-08-19 10:38:33,855 - DEBUG - Re-merging range AX21:BA21
+2025-08-19 10:38:33,855 - DEBUG - Re-merging range AX22:BA22
+2025-08-19 10:38:33,855 - DEBUG - Re-merging range AX23:BA23
+2025-08-19 10:38:33,855 - DEBUG - Re-merging range AX24:BA24
+2025-08-19 10:38:33,855 - DEBUG - Re-merging range AX25:BA25
+2025-08-19 10:38:33,871 - DEBUG - Re-merging range AX26:BA26
+2025-08-19 10:38:33,871 - DEBUG - Re-merging range AX27:BA27
+2025-08-19 10:38:33,871 - DEBUG - Re-merging range AX28:BA28
+2025-08-19 10:38:33,871 - DEBUG - Re-merging range AX29:BA29
+2025-08-19 10:38:33,871 - DEBUG - Re-merging range BJ15:BM15
+2025-08-19 10:38:33,871 - DEBUG - Re-merging range BJ16:BM16
+2025-08-19 10:38:33,871 - DEBUG - Re-merging range BJ17:BM17
+2025-08-19 10:38:33,871 - DEBUG - Re-merging range BJ18:BM18
+2025-08-19 10:38:33,871 - DEBUG - Re-merging range BJ19:BM19
+2025-08-19 10:38:33,871 - DEBUG - Re-merging range BJ20:BM20
+2025-08-19 10:38:33,871 - DEBUG - Re-merging range BJ21:BM21
+2025-08-19 10:38:33,871 - DEBUG - Re-merging range BJ22:BM22
+2025-08-19 10:38:33,871 - DEBUG - Re-merging range BJ23:BM23
+2025-08-19 10:38:33,871 - DEBUG - Re-merging range BJ24:BM24
+2025-08-19 10:38:33,871 - DEBUG - Re-merging range BJ25:BM25
+2025-08-19 10:38:33,886 - DEBUG - Re-merging range BJ26:BM26
+2025-08-19 10:38:33,886 - DEBUG - Re-merging range BJ27:BM27
+2025-08-19 10:38:33,886 - DEBUG - Re-merging range BJ28:BM28
+2025-08-19 10:38:33,886 - DEBUG - Re-merging range BJ29:BM29
+2025-08-19 10:38:33,886 - DEBUG - Re-merging range C15:E15
+2025-08-19 10:38:33,886 - DEBUG - Re-merging range C16:E16
+2025-08-19 10:38:33,886 - DEBUG - Re-merging range C17:E17
+2025-08-19 10:38:33,886 - DEBUG - Re-merging range C18:E18
+2025-08-19 10:38:33,886 - DEBUG - Re-merging range C19:E19
+2025-08-19 10:38:33,886 - DEBUG - Re-merging range C20:E20
+2025-08-19 10:38:33,886 - DEBUG - Re-merging range C21:E21
+2025-08-19 10:38:33,886 - DEBUG - Re-merging range C22:E22
+2025-08-19 10:38:33,886 - DEBUG - Re-merging range C23:E23
+2025-08-19 10:38:33,886 - DEBUG - Re-merging range C24:E24
+2025-08-19 10:38:33,886 - DEBUG - Re-merging range C25:E25
+2025-08-19 10:38:33,902 - DEBUG - Re-merging range C26:E26
+2025-08-19 10:38:33,902 - DEBUG - Re-merging range C27:E27
+2025-08-19 10:38:33,902 - DEBUG - Re-merging range C28:E28
+2025-08-19 10:38:33,902 - DEBUG - Re-merging range C29:E29
+2025-08-19 10:38:33,902 - DEBUG - Re-merging range AM15:AO15
+2025-08-19 10:38:33,902 - DEBUG - Re-merging range AM16:AO16
+2025-08-19 10:38:33,902 - DEBUG - Re-merging range AM17:AO17
+2025-08-19 10:38:33,902 - DEBUG - Re-merging range AM18:AO18
+2025-08-19 10:38:33,902 - DEBUG - Re-merging range AM19:AO19
+2025-08-19 10:38:33,902 - DEBUG - Re-merging range AM20:AO20
+2025-08-19 10:38:33,902 - DEBUG - Re-merging range AM21:AO21
+2025-08-19 10:38:33,902 - DEBUG - Re-merging range AM22:AO22
+2025-08-19 10:38:33,902 - DEBUG - Re-merging range AM23:AO23
+2025-08-19 10:38:33,902 - DEBUG - Re-merging range AM24:AO24
+2025-08-19 10:38:33,902 - DEBUG - Re-merging range AM25:AO25
+2025-08-19 10:38:33,902 - DEBUG - Re-merging range AM26:AO26
+2025-08-19 10:38:33,918 - DEBUG - Re-merging range AM27:AO27
+2025-08-19 10:38:33,918 - DEBUG - Re-merging range AM28:AO28
+2025-08-19 10:38:33,918 - DEBUG - Re-merging range AM29:AO29
+2025-08-19 10:38:33,918 - DEBUG - Re-merging range X15:AG15
+2025-08-19 10:38:33,918 - DEBUG - Re-merging range X16:AG16
+2025-08-19 10:38:33,918 - DEBUG - Re-merging range X17:AG17
+2025-08-19 10:38:33,918 - DEBUG - Re-merging range X18:AG18
+2025-08-19 10:38:33,918 - DEBUG - Re-merging range X19:AG19
+2025-08-19 10:38:33,918 - DEBUG - Re-merging range X20:AG20
+2025-08-19 10:38:33,918 - DEBUG - Re-merging range X21:AG21
+2025-08-19 10:38:33,933 - DEBUG - Re-merging range X22:AG22
+2025-08-19 10:38:33,933 - DEBUG - Re-merging range X23:AG23
+2025-08-19 10:38:33,933 - DEBUG - Re-merging range X24:AG24
+2025-08-19 10:38:33,933 - DEBUG - Re-merging range X25:AG25
+2025-08-19 10:38:33,933 - DEBUG - Re-merging range X26:AG26
+2025-08-19 10:38:33,933 - DEBUG - Re-merging range X27:AG27
+2025-08-19 10:38:33,933 - DEBUG - Re-merging range X28:AG28
+2025-08-19 10:38:33,933 - DEBUG - Re-merging range X29:AG29
+2025-08-19 10:38:33,933 - DEBUG - Re-merging range F15:I15
+2025-08-19 10:38:33,949 - DEBUG - Re-merging range F16:I16
+2025-08-19 10:38:33,949 - DEBUG - Re-merging range F17:I17
+2025-08-19 10:38:33,949 - DEBUG - Re-merging range F18:I18
+2025-08-19 10:38:33,949 - DEBUG - Re-merging range F19:I19
+2025-08-19 10:38:33,949 - DEBUG - Re-merging range F20:I20
+2025-08-19 10:38:33,949 - DEBUG - Re-merging range F21:I21
+2025-08-19 10:38:33,949 - DEBUG - Re-merging range F22:I22
+2025-08-19 10:38:33,949 - DEBUG - Re-merging range F23:I23
+2025-08-19 10:38:33,949 - DEBUG - Re-merging range F24:I24
+2025-08-19 10:38:33,949 - DEBUG - Re-merging range F25:I25
+2025-08-19 10:38:33,949 - DEBUG - Re-merging range F26:I26
+2025-08-19 10:38:33,949 - DEBUG - Re-merging range F27:I27
+2025-08-19 10:38:33,949 - DEBUG - Re-merging range F28:I28
+2025-08-19 10:38:33,949 - DEBUG - Re-merging range F29:I29
+2025-08-19 10:38:33,965 - DEBUG - Re-merging range BR15:BU15
+2025-08-19 10:38:33,965 - DEBUG - Re-merging range BR16:BU16
+2025-08-19 10:38:33,965 - DEBUG - Re-merging range BR17:BU17
+2025-08-19 10:38:33,965 - DEBUG - Re-merging range BR18:BU18
+2025-08-19 10:38:33,965 - DEBUG - Re-merging range BR19:BU19
+2025-08-19 10:38:33,965 - DEBUG - Re-merging range BR20:BU20
+2025-08-19 10:38:33,965 - DEBUG - Re-merging range BR21:BU21
+2025-08-19 10:38:33,965 - DEBUG - Re-merging range BR22:BU22
+2025-08-19 10:38:33,965 - DEBUG - Re-merging range BR23:BU23
+2025-08-19 10:38:33,965 - DEBUG - Re-merging range BR24:BU24
+2025-08-19 10:38:33,965 - DEBUG - Re-merging range BR25:BU25
+2025-08-19 10:38:33,965 - DEBUG - Re-merging range BR26:BU26
+2025-08-19 10:38:33,965 - DEBUG - Re-merging range BR27:BU27
+2025-08-19 10:38:33,965 - DEBUG - Re-merging range BR28:BU28
+2025-08-19 10:38:33,980 - DEBUG - Re-merging range BR29:BU29
+2025-08-19 10:38:33,981 - DEBUG - Re-merging range J15:M15
+2025-08-19 10:38:33,982 - DEBUG - Re-merging range J16:M16
+2025-08-19 10:38:33,983 - DEBUG - Re-merging range J17:M17
+2025-08-19 10:38:33,984 - DEBUG - Re-merging range J18:M18
+2025-08-19 10:38:33,985 - DEBUG - Re-merging range J19:M19
+2025-08-19 10:38:33,987 - DEBUG - Re-merging range J20:M20
+2025-08-19 10:38:33,988 - DEBUG - Re-merging range J21:M21
+2025-08-19 10:38:33,989 - DEBUG - Re-merging range J22:M22
+2025-08-19 10:38:33,990 - DEBUG - Re-merging range J23:M23
+2025-08-19 10:38:33,991 - DEBUG - Re-merging range J24:M24
+2025-08-19 10:38:33,992 - DEBUG - Re-merging range J25:M25
+2025-08-19 10:38:33,993 - DEBUG - Re-merging range J26:M26
+2025-08-19 10:38:33,994 - DEBUG - Re-merging range J27:M27
+2025-08-19 10:38:33,996 - DEBUG - Re-merging range J28:M28
+2025-08-19 10:38:33,997 - DEBUG - Re-merging range J29:M29
+2025-08-19 10:38:33,998 - DEBUG - Re-merging range AP15:AS15
+2025-08-19 10:38:33,999 - DEBUG - Re-merging range AP16:AS16
+2025-08-19 10:38:34,000 - DEBUG - Re-merging range AP17:AS17
+2025-08-19 10:38:34,001 - DEBUG - Re-merging range AP18:AS18
+2025-08-19 10:38:34,002 - DEBUG - Re-merging range AP19:AS19
+2025-08-19 10:38:34,003 - DEBUG - Re-merging range AP20:AS20
+2025-08-19 10:38:34,004 - DEBUG - Re-merging range AP21:AS21
+2025-08-19 10:38:34,005 - DEBUG - Re-merging range AP22:AS22
+2025-08-19 10:38:34,006 - DEBUG - Re-merging range AP23:AS23
+2025-08-19 10:38:34,008 - DEBUG - Re-merging range AP24:AS24
+2025-08-19 10:38:34,009 - DEBUG - Re-merging range AP25:AS25
+2025-08-19 10:38:34,010 - DEBUG - Re-merging range AP26:AS26
+2025-08-19 10:38:34,012 - DEBUG - Re-merging range AP27:AS27
+2025-08-19 10:38:34,013 - DEBUG - Re-merging range AP28:AS28
+2025-08-19 10:38:34,014 - DEBUG - Re-merging range AP29:AS29
+2025-08-19 10:38:34,015 - DEBUG - Re-merging range AT15:AW15
+2025-08-19 10:38:34,016 - DEBUG - Re-merging range AT16:AW16
+2025-08-19 10:38:34,017 - DEBUG - Re-merging range AT17:AW17
+2025-08-19 10:38:34,019 - DEBUG - Re-merging range AT18:AW18
+2025-08-19 10:38:34,020 - DEBUG - Re-merging range AT19:AW19
+2025-08-19 10:38:34,021 - DEBUG - Re-merging range AT20:AW20
+2025-08-19 10:38:34,022 - DEBUG - Re-merging range AT21:AW21
+2025-08-19 10:38:34,023 - DEBUG - Re-merging range AT22:AW22
+2025-08-19 10:38:34,024 - DEBUG - Re-merging range AT23:AW23
+2025-08-19 10:38:34,025 - DEBUG - Re-merging range AT24:AW24
+2025-08-19 10:38:34,027 - DEBUG - Re-merging range AT25:AW25
+2025-08-19 10:38:34,028 - DEBUG - Re-merging range AT26:AW26
+2025-08-19 10:38:34,028 - DEBUG - Re-merging range AT27:AW27
+2025-08-19 10:38:34,028 - DEBUG - Re-merging range AT28:AW28
+2025-08-19 10:38:34,028 - DEBUG - Re-merging range AT29:AW29
+2025-08-19 10:38:34,028 - DEBUG - Re-merging range BF15:BI15
+2025-08-19 10:38:34,028 - DEBUG - Re-merging range BF16:BI16
+2025-08-19 10:38:34,028 - DEBUG - Re-merging range BF17:BI17
+2025-08-19 10:38:34,028 - DEBUG - Re-merging range BF18:BI18
+2025-08-19 10:38:34,028 - DEBUG - Re-merging range BF19:BI19
+2025-08-19 10:38:34,028 - DEBUG - Re-merging range BF20:BI20
+2025-08-19 10:38:34,028 - DEBUG - Re-merging range BF21:BI21
+2025-08-19 10:38:34,028 - DEBUG - Re-merging range BF22:BI22
+2025-08-19 10:38:34,028 - DEBUG - Re-merging range BF23:BI23
+2025-08-19 10:38:34,028 - DEBUG - Re-merging range BF24:BI24
+2025-08-19 10:38:34,043 - DEBUG - Re-merging range BF25:BI25
+2025-08-19 10:38:34,043 - DEBUG - Re-merging range BF26:BI26
+2025-08-19 10:38:34,043 - DEBUG - Re-merging range BF27:BI27
+2025-08-19 10:38:34,043 - DEBUG - Re-merging range BF28:BI28
+2025-08-19 10:38:34,043 - DEBUG - Re-merging range BF29:BI29
+2025-08-19 10:38:34,086 - DEBUG - Sheet 'Uyemura International (Singapor': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:34,086 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:34,102 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:34,102 - DEBUG - Attempting to write group name 'Uyemura International (Singapore) Pte Ltd' to target anchor cell L18
+2025-08-19 10:38:34,102 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:34,143 - DEBUG - Sheet 'Fujikin of America, Inc.': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:34,143 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:34,143 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:34,143 - DEBUG - Attempting to write group name 'Fujikin of America, Inc.' to target anchor cell L18
+2025-08-19 10:38:34,143 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:34,197 - DEBUG - Sheet 'JFE Shoji Electronics Corporati': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:34,197 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:34,197 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:34,197 - DEBUG - Attempting to write group name 'JFE Shoji Electronics Corporation Singapore Branch' to target anchor cell L18
+2025-08-19 10:38:34,197 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:34,246 - DEBUG - Sheet 'Ham-let (Israel-Canada) LTD': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:34,246 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:34,246 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:34,246 - DEBUG - Attempting to write group name 'Ham-let (Israel-Canada) LTD' to target anchor cell L18
+2025-08-19 10:38:34,246 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:34,328 - DEBUG - Sheet 'TK-FUJIKIN CORPORATION': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:34,330 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:34,333 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:34,333 - DEBUG - Attempting to write group name 'TK-FUJIKIN CORPORATION' to target anchor cell L18
+2025-08-19 10:38:34,333 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:34,344 - INFO - Inserted 1 rows into 'TK-FUJIKIN CORPORATION'.
+2025-08-19 10:38:34,344 - DEBUG - Copying styles and merges from source row: 14
+2025-08-19 10:38:34,371 - DEBUG - Re-merging range AI15:AL15
+2025-08-19 10:38:34,371 - DEBUG - Re-merging range BB15:BE15
+2025-08-19 10:38:34,371 - DEBUG - Re-merging range BN15:BQ15
+2025-08-19 10:38:34,371 - DEBUG - Re-merging range BV15:BX15
+2025-08-19 10:38:34,387 - DEBUG - Re-merging range BY15:CA15
+2025-08-19 10:38:34,387 - DEBUG - Re-merging range N15:W15
+2025-08-19 10:38:34,387 - DEBUG - Re-merging range AX15:BA15
+2025-08-19 10:38:34,387 - DEBUG - Re-merging range BJ15:BM15
+2025-08-19 10:38:34,387 - DEBUG - Re-merging range C15:E15
+2025-08-19 10:38:34,387 - DEBUG - Re-merging range AM15:AO15
+2025-08-19 10:38:34,387 - DEBUG - Re-merging range X15:AG15
+2025-08-19 10:38:34,387 - DEBUG - Re-merging range F15:I15
+2025-08-19 10:38:34,387 - DEBUG - Re-merging range BR15:BU15
+2025-08-19 10:38:34,387 - DEBUG - Re-merging range J15:M15
+2025-08-19 10:38:34,387 - DEBUG - Re-merging range AP15:AS15
+2025-08-19 10:38:34,387 - DEBUG - Re-merging range AT15:AW15
+2025-08-19 10:38:34,387 - DEBUG - Re-merging range BF15:BI15
+2025-08-19 10:38:34,437 - DEBUG - Sheet 'Công ty TNHH kỹ thuật Okamoto V': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:34,437 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:34,437 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:34,437 - DEBUG - Attempting to write group name 'Công ty TNHH kỹ thuật Okamoto Việt Nam' to target anchor cell L18
+2025-08-19 10:38:34,437 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:34,496 - DEBUG - Sheet 'McMaster-Carr Supply Company': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:34,496 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:34,496 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:34,496 - DEBUG - Attempting to write group name 'McMaster-Carr Supply Company' to target anchor cell L18
+2025-08-19 10:38:34,496 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:34,543 - DEBUG - Sheet 'MARUTAKA TECH CO. LTD.,': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:34,543 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:34,543 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:34,543 - DEBUG - Attempting to write group name 'MARUTAKA TECH CO. LTD.,' to target anchor cell L18
+2025-08-19 10:38:34,543 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:34,590 - DEBUG - Sheet 'Carten Controls Ltd': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:34,590 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:34,590 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:34,590 - DEBUG - Attempting to write group name 'Carten Controls Ltd' to target anchor cell L18
+2025-08-19 10:38:34,590 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:34,677 - DEBUG - Sheet 'WATANABE PIPE CO.，LTD': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:34,677 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:34,677 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:34,677 - DEBUG - Attempting to write group name 'WATANABE PIPE CO.，LTD' to target anchor cell L18
+2025-08-19 10:38:34,677 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:34,734 - DEBUG - Sheet 'CÔNG TY TNHH MAVICO TÍN PHÁT': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:34,734 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:34,734 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:34,734 - DEBUG - Attempting to write group name 'CÔNG TY TNHH MAVICO TÍN PHÁT' to target anchor cell L18
+2025-08-19 10:38:34,734 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:34,781 - DEBUG - Sheet 'CÔNG TY TNHH QUẢNG CÁO VÀ TRANG': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:34,781 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:34,781 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:34,781 - DEBUG - Attempting to write group name 'CÔNG TY TNHH QUẢNG CÁO VÀ TRANG TRÍ NỘI THẤT NGÔI SAO XANH' to target anchor cell L18
+2025-08-19 10:38:34,781 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:34,829 - DEBUG - Sheet 'CÔNG TY TNHH YAMAZEN VIỆT NAM': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:34,829 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:34,845 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:34,845 - DEBUG - Attempting to write group name 'CÔNG TY TNHH YAMAZEN VIỆT NAM' to target anchor cell L18
+2025-08-19 10:38:34,845 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:34,845 - INFO - Inserted 1 rows into 'CÔNG TY TNHH YAMAZEN VIỆT NAM'.
+2025-08-19 10:38:34,845 - DEBUG - Copying styles and merges from source row: 14
+2025-08-19 10:38:34,886 - DEBUG - Re-merging range AI15:AL15
+2025-08-19 10:38:34,886 - DEBUG - Re-merging range BB15:BE15
+2025-08-19 10:38:34,886 - DEBUG - Re-merging range BN15:BQ15
+2025-08-19 10:38:34,886 - DEBUG - Re-merging range BV15:BX15
+2025-08-19 10:38:34,886 - DEBUG - Re-merging range BY15:CA15
+2025-08-19 10:38:34,886 - DEBUG - Re-merging range N15:W15
+2025-08-19 10:38:34,902 - DEBUG - Re-merging range AX15:BA15
+2025-08-19 10:38:34,902 - DEBUG - Re-merging range BJ15:BM15
+2025-08-19 10:38:34,902 - DEBUG - Re-merging range C15:E15
+2025-08-19 10:38:34,902 - DEBUG - Re-merging range AM15:AO15
+2025-08-19 10:38:34,902 - DEBUG - Re-merging range X15:AG15
+2025-08-19 10:38:34,902 - DEBUG - Re-merging range F15:I15
+2025-08-19 10:38:34,902 - DEBUG - Re-merging range BR15:BU15
+2025-08-19 10:38:34,902 - DEBUG - Re-merging range J15:M15
+2025-08-19 10:38:34,902 - DEBUG - Re-merging range AP15:AS15
+2025-08-19 10:38:34,902 - DEBUG - Re-merging range AT15:AW15
+2025-08-19 10:38:34,902 - DEBUG - Re-merging range BF15:BI15
+2025-08-19 10:38:34,950 - DEBUG - Sheet 'CÔNG TY TNHH BRADY VIỆT NAM': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:34,950 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:34,950 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:34,950 - DEBUG - Attempting to write group name 'CÔNG TY TNHH BRADY VIỆT NAM' to target anchor cell L18
+2025-08-19 10:38:34,950 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:35,043 - DEBUG - Sheet 'NAGAI IRONWORKS INC': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:35,043 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:35,043 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:35,043 - DEBUG - Attempting to write group name 'NAGAI IRONWORKS INC' to target anchor cell L18
+2025-08-19 10:38:35,043 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:35,101 - DEBUG - Sheet 'Yamashin Industry Co., Inc.': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:35,104 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:35,105 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:35,105 - DEBUG - Attempting to write group name 'Yamashin Industry Co., Inc.' to target anchor cell L18
+2025-08-19 10:38:35,105 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:35,142 - DEBUG - Sheet 'CÔNG TY TNHH TODA VALVES & FITT': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:35,142 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:35,158 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:35,158 - DEBUG - Attempting to write group name 'CÔNG TY TNHH TODA VALVES & FITTINGS' to target anchor cell L18
+2025-08-19 10:38:35,158 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:35,199 - DEBUG - Sheet 'CÔNG TY CỔ PHẦN ĐẦU TƯ THƯƠNG M': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:35,199 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:35,199 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:35,199 - DEBUG - Attempting to write group name 'CÔNG TY CỔ PHẦN ĐẦU TƯ THƯƠNG MẠI MAI THỊ' to target anchor cell L18
+2025-08-19 10:38:35,199 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:35,254 - DEBUG - Sheet 'Công ty TNHH TUV Rheinland Việt': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:35,254 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:35,254 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:35,254 - DEBUG - Attempting to write group name 'Công ty TNHH TUV Rheinland Việt Nam' to target anchor cell L18
+2025-08-19 10:38:35,254 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:35,302 - DEBUG - Sheet 'CHI NHÁNH CÔNG TY TNHH MỘT THÀN': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:35,302 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:35,302 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:35,302 - DEBUG - Attempting to write group name 'CHI NHÁNH CÔNG TY TNHH MỘT THÀNH VIÊN THƯƠNG MẠI THỜI TRANG TỔNG HỢP TẠI HÀ NỘI' to target anchor cell L18
+2025-08-19 10:38:35,302 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:35,397 - DEBUG - Sheet 'CÔNG TY CP TỔNG HỢP VIỆT DƯƠNG': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:35,397 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:35,397 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:35,397 - DEBUG - Attempting to write group name 'CÔNG TY CP TỔNG HỢP VIỆT DƯƠNG' to target anchor cell L18
+2025-08-19 10:38:35,397 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:35,445 - DEBUG - Sheet 'Công ty TNHH Tomoe Vietnam': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:35,445 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:35,461 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:35,461 - DEBUG - Attempting to write group name 'Công ty TNHH Tomoe Vietnam' to target anchor cell L18
+2025-08-19 10:38:35,461 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:35,461 - INFO - Inserted 2 rows into 'Công ty TNHH Tomoe Vietnam'.
+2025-08-19 10:38:35,461 - DEBUG - Copying styles and merges from source row: 14
+2025-08-19 10:38:35,543 - DEBUG - Re-merging range AI15:AL15
+2025-08-19 10:38:35,543 - DEBUG - Re-merging range AI16:AL16
+2025-08-19 10:38:35,543 - DEBUG - Re-merging range BB15:BE15
+2025-08-19 10:38:35,543 - DEBUG - Re-merging range BB16:BE16
+2025-08-19 10:38:35,543 - DEBUG - Re-merging range BN15:BQ15
+2025-08-19 10:38:35,543 - DEBUG - Re-merging range BN16:BQ16
+2025-08-19 10:38:35,543 - DEBUG - Re-merging range BV15:BX15
+2025-08-19 10:38:35,559 - DEBUG - Re-merging range BV16:BX16
+2025-08-19 10:38:35,559 - DEBUG - Re-merging range BY15:CA15
+2025-08-19 10:38:35,559 - DEBUG - Re-merging range BY16:CA16
+2025-08-19 10:38:35,559 - DEBUG - Re-merging range N15:W15
+2025-08-19 10:38:35,559 - DEBUG - Re-merging range N16:W16
+2025-08-19 10:38:35,559 - DEBUG - Re-merging range AX15:BA15
+2025-08-19 10:38:35,559 - DEBUG - Re-merging range AX16:BA16
+2025-08-19 10:38:35,559 - DEBUG - Re-merging range BJ15:BM15
+2025-08-19 10:38:35,559 - DEBUG - Re-merging range BJ16:BM16
+2025-08-19 10:38:35,559 - DEBUG - Re-merging range C15:E15
+2025-08-19 10:38:35,559 - DEBUG - Re-merging range C16:E16
+2025-08-19 10:38:35,559 - DEBUG - Re-merging range AM15:AO15
+2025-08-19 10:38:35,559 - DEBUG - Re-merging range AM16:AO16
+2025-08-19 10:38:35,575 - DEBUG - Re-merging range X15:AG15
+2025-08-19 10:38:35,575 - DEBUG - Re-merging range X16:AG16
+2025-08-19 10:38:35,575 - DEBUG - Re-merging range F15:I15
+2025-08-19 10:38:35,575 - DEBUG - Re-merging range F16:I16
+2025-08-19 10:38:35,575 - DEBUG - Re-merging range BR15:BU15
+2025-08-19 10:38:35,575 - DEBUG - Re-merging range BR16:BU16
+2025-08-19 10:38:35,575 - DEBUG - Re-merging range J15:M15
+2025-08-19 10:38:35,575 - DEBUG - Re-merging range J16:M16
+2025-08-19 10:38:35,575 - DEBUG - Re-merging range AP15:AS15
+2025-08-19 10:38:35,575 - DEBUG - Re-merging range AP16:AS16
+2025-08-19 10:38:35,575 - DEBUG - Re-merging range AT15:AW15
+2025-08-19 10:38:35,575 - DEBUG - Re-merging range AT16:AW16
+2025-08-19 10:38:35,575 - DEBUG - Re-merging range BF15:BI15
+2025-08-19 10:38:35,590 - DEBUG - Re-merging range BF16:BI16
+2025-08-19 10:38:35,631 - DEBUG - Sheet 'Công ty TNHH Kanepackage Việt N': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:35,631 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:35,631 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:35,631 - DEBUG - Attempting to write group name 'Công ty TNHH Kanepackage Việt Nam' to target anchor cell L18
+2025-08-19 10:38:35,646 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:35,686 - DEBUG - Sheet 'CÔNG TY TNHH HTPACK VINA': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:35,686 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:35,686 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:35,686 - DEBUG - Attempting to write group name 'CÔNG TY TNHH HTPACK VINA' to target anchor cell L18
+2025-08-19 10:38:35,686 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:35,746 - DEBUG - Sheet 'CÔNG TY TNHH TK PRO VIETNAM': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:35,746 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:35,746 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:35,746 - DEBUG - Attempting to write group name 'CÔNG TY TNHH TK PRO VIETNAM' to target anchor cell L18
+2025-08-19 10:38:35,746 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:35,789 - DEBUG - Sheet 'CÔNG TY TNHH HASHIKAWA': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:35,789 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:35,805 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:35,805 - DEBUG - Attempting to write group name 'CÔNG TY TNHH HASHIKAWA' to target anchor cell L18
+2025-08-19 10:38:35,805 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:35,805 - INFO - Inserted 9 rows into 'CÔNG TY TNHH HASHIKAWA'.
+2025-08-19 10:38:35,805 - DEBUG - Copying styles and merges from source row: 14
+2025-08-19 10:38:36,164 - DEBUG - Re-merging range AI15:AL15
+2025-08-19 10:38:36,165 - DEBUG - Re-merging range AI16:AL16
+2025-08-19 10:38:36,166 - DEBUG - Re-merging range AI17:AL17
+2025-08-19 10:38:36,167 - DEBUG - Re-merging range AI18:AL18
+2025-08-19 10:38:36,168 - DEBUG - Re-merging range AI19:AL19
+2025-08-19 10:38:36,169 - DEBUG - Re-merging range AI20:AL20
+2025-08-19 10:38:36,170 - DEBUG - Re-merging range AI21:AL21
+2025-08-19 10:38:36,171 - DEBUG - Re-merging range AI22:AL22
+2025-08-19 10:38:36,173 - DEBUG - Re-merging range AI23:AL23
+2025-08-19 10:38:36,174 - DEBUG - Re-merging range BB15:BE15
+2025-08-19 10:38:36,175 - DEBUG - Re-merging range BB16:BE16
+2025-08-19 10:38:36,176 - DEBUG - Re-merging range BB17:BE17
+2025-08-19 10:38:36,177 - DEBUG - Re-merging range BB18:BE18
+2025-08-19 10:38:36,178 - DEBUG - Re-merging range BB19:BE19
+2025-08-19 10:38:36,179 - DEBUG - Re-merging range BB20:BE20
+2025-08-19 10:38:36,180 - DEBUG - Re-merging range BB21:BE21
+2025-08-19 10:38:36,181 - DEBUG - Re-merging range BB22:BE22
+2025-08-19 10:38:36,182 - DEBUG - Re-merging range BB23:BE23
+2025-08-19 10:38:36,183 - DEBUG - Re-merging range BN15:BQ15
+2025-08-19 10:38:36,183 - DEBUG - Re-merging range BN16:BQ16
+2025-08-19 10:38:36,183 - DEBUG - Re-merging range BN17:BQ17
+2025-08-19 10:38:36,183 - DEBUG - Re-merging range BN18:BQ18
+2025-08-19 10:38:36,183 - DEBUG - Re-merging range BN19:BQ19
+2025-08-19 10:38:36,183 - DEBUG - Re-merging range BN20:BQ20
+2025-08-19 10:38:36,183 - DEBUG - Re-merging range BN21:BQ21
+2025-08-19 10:38:36,183 - DEBUG - Re-merging range BN22:BQ22
+2025-08-19 10:38:36,183 - DEBUG - Re-merging range BN23:BQ23
+2025-08-19 10:38:36,183 - DEBUG - Re-merging range BV15:BX15
+2025-08-19 10:38:36,183 - DEBUG - Re-merging range BV16:BX16
+2025-08-19 10:38:36,183 - DEBUG - Re-merging range BV17:BX17
+2025-08-19 10:38:36,183 - DEBUG - Re-merging range BV18:BX18
+2025-08-19 10:38:36,183 - DEBUG - Re-merging range BV19:BX19
+2025-08-19 10:38:36,183 - DEBUG - Re-merging range BV20:BX20
+2025-08-19 10:38:36,183 - DEBUG - Re-merging range BV21:BX21
+2025-08-19 10:38:36,199 - DEBUG - Re-merging range BV22:BX22
+2025-08-19 10:38:36,199 - DEBUG - Re-merging range BV23:BX23
+2025-08-19 10:38:36,199 - DEBUG - Re-merging range BY15:CA15
+2025-08-19 10:38:36,199 - DEBUG - Re-merging range BY16:CA16
+2025-08-19 10:38:36,199 - DEBUG - Re-merging range BY17:CA17
+2025-08-19 10:38:36,199 - DEBUG - Re-merging range BY18:CA18
+2025-08-19 10:38:36,199 - DEBUG - Re-merging range BY19:CA19
+2025-08-19 10:38:36,199 - DEBUG - Re-merging range BY20:CA20
+2025-08-19 10:38:36,199 - DEBUG - Re-merging range BY21:CA21
+2025-08-19 10:38:36,199 - DEBUG - Re-merging range BY22:CA22
+2025-08-19 10:38:36,199 - DEBUG - Re-merging range BY23:CA23
+2025-08-19 10:38:36,199 - DEBUG - Re-merging range N15:W15
+2025-08-19 10:38:36,199 - DEBUG - Re-merging range N16:W16
+2025-08-19 10:38:36,199 - DEBUG - Re-merging range N17:W17
+2025-08-19 10:38:36,214 - DEBUG - Re-merging range N18:W18
+2025-08-19 10:38:36,214 - DEBUG - Re-merging range N19:W19
+2025-08-19 10:38:36,214 - DEBUG - Re-merging range N20:W20
+2025-08-19 10:38:36,214 - DEBUG - Re-merging range N21:W21
+2025-08-19 10:38:36,214 - DEBUG - Re-merging range N22:W22
+2025-08-19 10:38:36,214 - DEBUG - Re-merging range N23:W23
+2025-08-19 10:38:36,214 - DEBUG - Re-merging range AX15:BA15
+2025-08-19 10:38:36,214 - DEBUG - Re-merging range AX16:BA16
+2025-08-19 10:38:36,214 - DEBUG - Re-merging range AX17:BA17
+2025-08-19 10:38:36,214 - DEBUG - Re-merging range AX18:BA18
+2025-08-19 10:38:36,230 - DEBUG - Re-merging range AX19:BA19
+2025-08-19 10:38:36,230 - DEBUG - Re-merging range AX20:BA20
+2025-08-19 10:38:36,230 - DEBUG - Re-merging range AX21:BA21
+2025-08-19 10:38:36,230 - DEBUG - Re-merging range AX22:BA22
+2025-08-19 10:38:36,230 - DEBUG - Re-merging range AX23:BA23
+2025-08-19 10:38:36,230 - DEBUG - Re-merging range BJ15:BM15
+2025-08-19 10:38:36,230 - DEBUG - Re-merging range BJ16:BM16
+2025-08-19 10:38:36,230 - DEBUG - Re-merging range BJ17:BM17
+2025-08-19 10:38:36,230 - DEBUG - Re-merging range BJ18:BM18
+2025-08-19 10:38:36,230 - DEBUG - Re-merging range BJ19:BM19
+2025-08-19 10:38:36,230 - DEBUG - Re-merging range BJ20:BM20
+2025-08-19 10:38:36,230 - DEBUG - Re-merging range BJ21:BM21
+2025-08-19 10:38:36,230 - DEBUG - Re-merging range BJ22:BM22
+2025-08-19 10:38:36,230 - DEBUG - Re-merging range BJ23:BM23
+2025-08-19 10:38:36,230 - DEBUG - Re-merging range C15:E15
+2025-08-19 10:38:36,246 - DEBUG - Re-merging range C16:E16
+2025-08-19 10:38:36,246 - DEBUG - Re-merging range C17:E17
+2025-08-19 10:38:36,246 - DEBUG - Re-merging range C18:E18
+2025-08-19 10:38:36,246 - DEBUG - Re-merging range C19:E19
+2025-08-19 10:38:36,246 - DEBUG - Re-merging range C20:E20
+2025-08-19 10:38:36,246 - DEBUG - Re-merging range C21:E21
+2025-08-19 10:38:36,246 - DEBUG - Re-merging range C22:E22
+2025-08-19 10:38:36,246 - DEBUG - Re-merging range C23:E23
+2025-08-19 10:38:36,246 - DEBUG - Re-merging range AM15:AO15
+2025-08-19 10:38:36,246 - DEBUG - Re-merging range AM16:AO16
+2025-08-19 10:38:36,246 - DEBUG - Re-merging range AM17:AO17
+2025-08-19 10:38:36,246 - DEBUG - Re-merging range AM18:AO18
+2025-08-19 10:38:36,246 - DEBUG - Re-merging range AM19:AO19
+2025-08-19 10:38:36,246 - DEBUG - Re-merging range AM20:AO20
+2025-08-19 10:38:36,246 - DEBUG - Re-merging range AM21:AO21
+2025-08-19 10:38:36,246 - DEBUG - Re-merging range AM22:AO22
+2025-08-19 10:38:36,261 - DEBUG - Re-merging range AM23:AO23
+2025-08-19 10:38:36,261 - DEBUG - Re-merging range X15:AG15
+2025-08-19 10:38:36,261 - DEBUG - Re-merging range X16:AG16
+2025-08-19 10:38:36,261 - DEBUG - Re-merging range X17:AG17
+2025-08-19 10:38:36,261 - DEBUG - Re-merging range X18:AG18
+2025-08-19 10:38:36,261 - DEBUG - Re-merging range X19:AG19
+2025-08-19 10:38:36,261 - DEBUG - Re-merging range X20:AG20
+2025-08-19 10:38:36,261 - DEBUG - Re-merging range X21:AG21
+2025-08-19 10:38:36,261 - DEBUG - Re-merging range X22:AG22
+2025-08-19 10:38:36,277 - DEBUG - Re-merging range X23:AG23
+2025-08-19 10:38:36,277 - DEBUG - Re-merging range F15:I15
+2025-08-19 10:38:36,277 - DEBUG - Re-merging range F16:I16
+2025-08-19 10:38:36,277 - DEBUG - Re-merging range F17:I17
+2025-08-19 10:38:36,277 - DEBUG - Re-merging range F18:I18
+2025-08-19 10:38:36,277 - DEBUG - Re-merging range F19:I19
+2025-08-19 10:38:36,277 - DEBUG - Re-merging range F20:I20
+2025-08-19 10:38:36,277 - DEBUG - Re-merging range F21:I21
+2025-08-19 10:38:36,277 - DEBUG - Re-merging range F22:I22
+2025-08-19 10:38:36,277 - DEBUG - Re-merging range F23:I23
+2025-08-19 10:38:36,277 - DEBUG - Re-merging range BR15:BU15
+2025-08-19 10:38:36,277 - DEBUG - Re-merging range BR16:BU16
+2025-08-19 10:38:36,277 - DEBUG - Re-merging range BR17:BU17
+2025-08-19 10:38:36,277 - DEBUG - Re-merging range BR18:BU18
+2025-08-19 10:38:36,293 - DEBUG - Re-merging range BR19:BU19
+2025-08-19 10:38:36,293 - DEBUG - Re-merging range BR20:BU20
+2025-08-19 10:38:36,293 - DEBUG - Re-merging range BR21:BU21
+2025-08-19 10:38:36,293 - DEBUG - Re-merging range BR22:BU22
+2025-08-19 10:38:36,293 - DEBUG - Re-merging range BR23:BU23
+2025-08-19 10:38:36,293 - DEBUG - Re-merging range J15:M15
+2025-08-19 10:38:36,293 - DEBUG - Re-merging range J16:M16
+2025-08-19 10:38:36,293 - DEBUG - Re-merging range J17:M17
+2025-08-19 10:38:36,293 - DEBUG - Re-merging range J18:M18
+2025-08-19 10:38:36,293 - DEBUG - Re-merging range J19:M19
+2025-08-19 10:38:36,293 - DEBUG - Re-merging range J20:M20
+2025-08-19 10:38:36,293 - DEBUG - Re-merging range J21:M21
+2025-08-19 10:38:36,293 - DEBUG - Re-merging range J22:M22
+2025-08-19 10:38:36,293 - DEBUG - Re-merging range J23:M23
+2025-08-19 10:38:36,293 - DEBUG - Re-merging range AP15:AS15
+2025-08-19 10:38:36,308 - DEBUG - Re-merging range AP16:AS16
+2025-08-19 10:38:36,308 - DEBUG - Re-merging range AP17:AS17
+2025-08-19 10:38:36,308 - DEBUG - Re-merging range AP18:AS18
+2025-08-19 10:38:36,308 - DEBUG - Re-merging range AP19:AS19
+2025-08-19 10:38:36,308 - DEBUG - Re-merging range AP20:AS20
+2025-08-19 10:38:36,308 - DEBUG - Re-merging range AP21:AS21
+2025-08-19 10:38:36,308 - DEBUG - Re-merging range AP22:AS22
+2025-08-19 10:38:36,308 - DEBUG - Re-merging range AP23:AS23
+2025-08-19 10:38:36,308 - DEBUG - Re-merging range AT15:AW15
+2025-08-19 10:38:36,308 - DEBUG - Re-merging range AT16:AW16
+2025-08-19 10:38:36,308 - DEBUG - Re-merging range AT17:AW17
+2025-08-19 10:38:36,308 - DEBUG - Re-merging range AT18:AW18
+2025-08-19 10:38:36,308 - DEBUG - Re-merging range AT19:AW19
+2025-08-19 10:38:36,308 - DEBUG - Re-merging range AT20:AW20
+2025-08-19 10:38:36,324 - DEBUG - Re-merging range AT21:AW21
+2025-08-19 10:38:36,324 - DEBUG - Re-merging range AT22:AW22
+2025-08-19 10:38:36,324 - DEBUG - Re-merging range AT23:AW23
+2025-08-19 10:38:36,324 - DEBUG - Re-merging range BF15:BI15
+2025-08-19 10:38:36,324 - DEBUG - Re-merging range BF16:BI16
+2025-08-19 10:38:36,324 - DEBUG - Re-merging range BF17:BI17
+2025-08-19 10:38:36,324 - DEBUG - Re-merging range BF18:BI18
+2025-08-19 10:38:36,324 - DEBUG - Re-merging range BF19:BI19
+2025-08-19 10:38:36,324 - DEBUG - Re-merging range BF20:BI20
+2025-08-19 10:38:36,324 - DEBUG - Re-merging range BF21:BI21
+2025-08-19 10:38:36,324 - DEBUG - Re-merging range BF22:BI22
+2025-08-19 10:38:36,324 - DEBUG - Re-merging range BF23:BI23
+2025-08-19 10:38:36,384 - DEBUG - Sheet 'CÔNG TY TNHH GREEN': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:36,387 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:36,389 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:36,389 - DEBUG - Attempting to write group name 'CÔNG TY TNHH GREEN' to target anchor cell L18
+2025-08-19 10:38:36,389 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:36,477 - DEBUG - Sheet 'CÔNG TY CỔ PHẦN CÔNG NGHỆ CƠ KH': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:36,477 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:36,477 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:36,477 - DEBUG - Attempting to write group name 'CÔNG TY CỔ PHẦN CÔNG NGHỆ CƠ KHÍ XANH' to target anchor cell L18
+2025-08-19 10:38:36,477 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:36,534 - DEBUG - Sheet 'Công ty TNHH Kamogawa Việt Nam': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:36,534 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:36,534 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:36,534 - DEBUG - Attempting to write group name 'Công ty TNHH Kamogawa Việt Nam' to target anchor cell L18
+2025-08-19 10:38:36,534 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:36,549 - INFO - Inserted 9 rows into 'Công ty TNHH Kamogawa Việt Nam'.
+2025-08-19 10:38:36,549 - DEBUG - Copying styles and merges from source row: 14
+2025-08-19 10:38:36,886 - DEBUG - Re-merging range AI15:AL15
+2025-08-19 10:38:36,886 - DEBUG - Re-merging range AI16:AL16
+2025-08-19 10:38:36,886 - DEBUG - Re-merging range AI17:AL17
+2025-08-19 10:38:36,886 - DEBUG - Re-merging range AI18:AL18
+2025-08-19 10:38:36,886 - DEBUG - Re-merging range AI19:AL19
+2025-08-19 10:38:36,886 - DEBUG - Re-merging range AI20:AL20
+2025-08-19 10:38:36,886 - DEBUG - Re-merging range AI21:AL21
+2025-08-19 10:38:36,886 - DEBUG - Re-merging range AI22:AL22
+2025-08-19 10:38:36,886 - DEBUG - Re-merging range AI23:AL23
+2025-08-19 10:38:36,886 - DEBUG - Re-merging range BB15:BE15
+2025-08-19 10:38:36,886 - DEBUG - Re-merging range BB16:BE16
+2025-08-19 10:38:36,886 - DEBUG - Re-merging range BB17:BE17
+2025-08-19 10:38:36,886 - DEBUG - Re-merging range BB18:BE18
+2025-08-19 10:38:36,886 - DEBUG - Re-merging range BB19:BE19
+2025-08-19 10:38:36,902 - DEBUG - Re-merging range BB20:BE20
+2025-08-19 10:38:36,902 - DEBUG - Re-merging range BB21:BE21
+2025-08-19 10:38:36,902 - DEBUG - Re-merging range BB22:BE22
+2025-08-19 10:38:36,902 - DEBUG - Re-merging range BB23:BE23
+2025-08-19 10:38:36,902 - DEBUG - Re-merging range BN15:BQ15
+2025-08-19 10:38:36,902 - DEBUG - Re-merging range BN16:BQ16
+2025-08-19 10:38:36,902 - DEBUG - Re-merging range BN17:BQ17
+2025-08-19 10:38:36,902 - DEBUG - Re-merging range BN18:BQ18
+2025-08-19 10:38:36,902 - DEBUG - Re-merging range BN19:BQ19
+2025-08-19 10:38:36,902 - DEBUG - Re-merging range BN20:BQ20
+2025-08-19 10:38:36,902 - DEBUG - Re-merging range BN21:BQ21
+2025-08-19 10:38:36,902 - DEBUG - Re-merging range BN22:BQ22
+2025-08-19 10:38:36,902 - DEBUG - Re-merging range BN23:BQ23
+2025-08-19 10:38:36,902 - DEBUG - Re-merging range BV15:BX15
+2025-08-19 10:38:36,902 - DEBUG - Re-merging range BV16:BX16
+2025-08-19 10:38:36,918 - DEBUG - Re-merging range BV17:BX17
+2025-08-19 10:38:36,919 - DEBUG - Re-merging range BV18:BX18
+2025-08-19 10:38:36,920 - DEBUG - Re-merging range BV19:BX19
+2025-08-19 10:38:36,920 - DEBUG - Re-merging range BV20:BX20
+2025-08-19 10:38:36,921 - DEBUG - Re-merging range BV21:BX21
+2025-08-19 10:38:36,922 - DEBUG - Re-merging range BV22:BX22
+2025-08-19 10:38:36,923 - DEBUG - Re-merging range BV23:BX23
+2025-08-19 10:38:36,924 - DEBUG - Re-merging range BY15:CA15
+2025-08-19 10:38:36,925 - DEBUG - Re-merging range BY16:CA16
+2025-08-19 10:38:36,926 - DEBUG - Re-merging range BY17:CA17
+2025-08-19 10:38:36,927 - DEBUG - Re-merging range BY18:CA18
+2025-08-19 10:38:36,928 - DEBUG - Re-merging range BY19:CA19
+2025-08-19 10:38:36,929 - DEBUG - Re-merging range BY20:CA20
+2025-08-19 10:38:36,930 - DEBUG - Re-merging range BY21:CA21
+2025-08-19 10:38:36,931 - DEBUG - Re-merging range BY22:CA22
+2025-08-19 10:38:36,932 - DEBUG - Re-merging range BY23:CA23
+2025-08-19 10:38:36,933 - DEBUG - Re-merging range N15:W15
+2025-08-19 10:38:36,935 - DEBUG - Re-merging range N16:W16
+2025-08-19 10:38:36,937 - DEBUG - Re-merging range N17:W17
+2025-08-19 10:38:36,938 - DEBUG - Re-merging range N18:W18
+2025-08-19 10:38:36,940 - DEBUG - Re-merging range N19:W19
+2025-08-19 10:38:36,942 - DEBUG - Re-merging range N20:W20
+2025-08-19 10:38:36,944 - DEBUG - Re-merging range N21:W21
+2025-08-19 10:38:36,946 - DEBUG - Re-merging range N22:W22
+2025-08-19 10:38:36,947 - DEBUG - Re-merging range N23:W23
+2025-08-19 10:38:36,949 - DEBUG - Re-merging range AX15:BA15
+2025-08-19 10:38:36,949 - DEBUG - Re-merging range AX16:BA16
+2025-08-19 10:38:36,949 - DEBUG - Re-merging range AX17:BA17
+2025-08-19 10:38:36,949 - DEBUG - Re-merging range AX18:BA18
+2025-08-19 10:38:36,949 - DEBUG - Re-merging range AX19:BA19
+2025-08-19 10:38:36,949 - DEBUG - Re-merging range AX20:BA20
+2025-08-19 10:38:36,949 - DEBUG - Re-merging range AX21:BA21
+2025-08-19 10:38:36,949 - DEBUG - Re-merging range AX22:BA22
+2025-08-19 10:38:36,949 - DEBUG - Re-merging range AX23:BA23
+2025-08-19 10:38:36,949 - DEBUG - Re-merging range BJ15:BM15
+2025-08-19 10:38:36,949 - DEBUG - Re-merging range BJ16:BM16
+2025-08-19 10:38:36,949 - DEBUG - Re-merging range BJ17:BM17
+2025-08-19 10:38:36,949 - DEBUG - Re-merging range BJ18:BM18
+2025-08-19 10:38:36,949 - DEBUG - Re-merging range BJ19:BM19
+2025-08-19 10:38:36,949 - DEBUG - Re-merging range BJ20:BM20
+2025-08-19 10:38:36,965 - DEBUG - Re-merging range BJ21:BM21
+2025-08-19 10:38:36,965 - DEBUG - Re-merging range BJ22:BM22
+2025-08-19 10:38:36,965 - DEBUG - Re-merging range BJ23:BM23
+2025-08-19 10:38:36,965 - DEBUG - Re-merging range C15:E15
+2025-08-19 10:38:36,965 - DEBUG - Re-merging range C16:E16
+2025-08-19 10:38:36,965 - DEBUG - Re-merging range C17:E17
+2025-08-19 10:38:36,965 - DEBUG - Re-merging range C18:E18
+2025-08-19 10:38:36,965 - DEBUG - Re-merging range C19:E19
+2025-08-19 10:38:36,965 - DEBUG - Re-merging range C20:E20
+2025-08-19 10:38:36,965 - DEBUG - Re-merging range C21:E21
+2025-08-19 10:38:36,965 - DEBUG - Re-merging range C22:E22
+2025-08-19 10:38:36,965 - DEBUG - Re-merging range C23:E23
+2025-08-19 10:38:36,965 - DEBUG - Re-merging range AM15:AO15
+2025-08-19 10:38:36,965 - DEBUG - Re-merging range AM16:AO16
+2025-08-19 10:38:36,965 - DEBUG - Re-merging range AM17:AO17
+2025-08-19 10:38:36,980 - DEBUG - Re-merging range AM18:AO18
+2025-08-19 10:38:36,980 - DEBUG - Re-merging range AM19:AO19
+2025-08-19 10:38:36,980 - DEBUG - Re-merging range AM20:AO20
+2025-08-19 10:38:36,980 - DEBUG - Re-merging range AM21:AO21
+2025-08-19 10:38:36,980 - DEBUG - Re-merging range AM22:AO22
+2025-08-19 10:38:36,980 - DEBUG - Re-merging range AM23:AO23
+2025-08-19 10:38:36,980 - DEBUG - Re-merging range X15:AG15
+2025-08-19 10:38:36,980 - DEBUG - Re-merging range X16:AG16
+2025-08-19 10:38:36,980 - DEBUG - Re-merging range X17:AG17
+2025-08-19 10:38:36,980 - DEBUG - Re-merging range X18:AG18
+2025-08-19 10:38:36,980 - DEBUG - Re-merging range X19:AG19
+2025-08-19 10:38:36,980 - DEBUG - Re-merging range X20:AG20
+2025-08-19 10:38:36,996 - DEBUG - Re-merging range X21:AG21
+2025-08-19 10:38:36,996 - DEBUG - Re-merging range X22:AG22
+2025-08-19 10:38:36,996 - DEBUG - Re-merging range X23:AG23
+2025-08-19 10:38:36,996 - DEBUG - Re-merging range F15:I15
+2025-08-19 10:38:36,996 - DEBUG - Re-merging range F16:I16
+2025-08-19 10:38:36,996 - DEBUG - Re-merging range F17:I17
+2025-08-19 10:38:36,996 - DEBUG - Re-merging range F18:I18
+2025-08-19 10:38:36,996 - DEBUG - Re-merging range F19:I19
+2025-08-19 10:38:36,996 - DEBUG - Re-merging range F20:I20
+2025-08-19 10:38:36,996 - DEBUG - Re-merging range F21:I21
+2025-08-19 10:38:36,996 - DEBUG - Re-merging range F22:I22
+2025-08-19 10:38:36,996 - DEBUG - Re-merging range F23:I23
+2025-08-19 10:38:37,013 - DEBUG - Re-merging range BR15:BU15
+2025-08-19 10:38:37,014 - DEBUG - Re-merging range BR16:BU16
+2025-08-19 10:38:37,015 - DEBUG - Re-merging range BR17:BU17
+2025-08-19 10:38:37,016 - DEBUG - Re-merging range BR18:BU18
+2025-08-19 10:38:37,017 - DEBUG - Re-merging range BR19:BU19
+2025-08-19 10:38:37,018 - DEBUG - Re-merging range BR20:BU20
+2025-08-19 10:38:37,019 - DEBUG - Re-merging range BR21:BU21
+2025-08-19 10:38:37,020 - DEBUG - Re-merging range BR22:BU22
+2025-08-19 10:38:37,021 - DEBUG - Re-merging range BR23:BU23
+2025-08-19 10:38:37,022 - DEBUG - Re-merging range J15:M15
+2025-08-19 10:38:37,023 - DEBUG - Re-merging range J16:M16
+2025-08-19 10:38:37,024 - DEBUG - Re-merging range J17:M17
+2025-08-19 10:38:37,026 - DEBUG - Re-merging range J18:M18
+2025-08-19 10:38:37,027 - DEBUG - Re-merging range J19:M19
+2025-08-19 10:38:37,028 - DEBUG - Re-merging range J20:M20
+2025-08-19 10:38:37,029 - DEBUG - Re-merging range J21:M21
+2025-08-19 10:38:37,030 - DEBUG - Re-merging range J22:M22
+2025-08-19 10:38:37,031 - DEBUG - Re-merging range J23:M23
+2025-08-19 10:38:37,032 - DEBUG - Re-merging range AP15:AS15
+2025-08-19 10:38:37,033 - DEBUG - Re-merging range AP16:AS16
+2025-08-19 10:38:37,034 - DEBUG - Re-merging range AP17:AS17
+2025-08-19 10:38:37,035 - DEBUG - Re-merging range AP18:AS18
+2025-08-19 10:38:37,037 - DEBUG - Re-merging range AP19:AS19
+2025-08-19 10:38:37,038 - DEBUG - Re-merging range AP20:AS20
+2025-08-19 10:38:37,039 - DEBUG - Re-merging range AP21:AS21
+2025-08-19 10:38:37,040 - DEBUG - Re-merging range AP22:AS22
+2025-08-19 10:38:37,041 - DEBUG - Re-merging range AP23:AS23
+2025-08-19 10:38:37,042 - DEBUG - Re-merging range AT15:AW15
+2025-08-19 10:38:37,043 - DEBUG - Re-merging range AT16:AW16
+2025-08-19 10:38:37,044 - DEBUG - Re-merging range AT17:AW17
+2025-08-19 10:38:37,045 - DEBUG - Re-merging range AT18:AW18
+2025-08-19 10:38:37,046 - DEBUG - Re-merging range AT19:AW19
+2025-08-19 10:38:37,047 - DEBUG - Re-merging range AT20:AW20
+2025-08-19 10:38:37,049 - DEBUG - Re-merging range AT21:AW21
+2025-08-19 10:38:37,050 - DEBUG - Re-merging range AT22:AW22
+2025-08-19 10:38:37,051 - DEBUG - Re-merging range AT23:AW23
+2025-08-19 10:38:37,052 - DEBUG - Re-merging range BF15:BI15
+2025-08-19 10:38:37,053 - DEBUG - Re-merging range BF16:BI16
+2025-08-19 10:38:37,054 - DEBUG - Re-merging range BF17:BI17
+2025-08-19 10:38:37,055 - DEBUG - Re-merging range BF18:BI18
+2025-08-19 10:38:37,056 - DEBUG - Re-merging range BF19:BI19
+2025-08-19 10:38:37,057 - DEBUG - Re-merging range BF20:BI20
+2025-08-19 10:38:37,058 - DEBUG - Re-merging range BF21:BI21
+2025-08-19 10:38:37,059 - DEBUG - Re-merging range BF22:BI22
+2025-08-19 10:38:37,059 - DEBUG - Re-merging range BF23:BI23
+2025-08-19 10:38:37,101 - DEBUG - Sheet 'CÔNG TY TNHH GIẢI PHÁP KỸ THUẬT': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:37,101 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:37,101 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:37,101 - DEBUG - Attempting to write group name 'CÔNG TY TNHH GIẢI PHÁP KỸ THUẬT CÔNG NGHỆ ÁNH DƯƠNG' to target anchor cell L18
+2025-08-19 10:38:37,101 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:37,150 - DEBUG - Sheet 'CÔNG TY CỔ PHẦN DỊCH VỤ VÀ GIẢI': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:37,150 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:37,150 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:37,150 - DEBUG - Attempting to write group name 'CÔNG TY CỔ PHẦN DỊCH VỤ VÀ GIẢI PHÁP CÔNG NGHIỆP VIỆT NAM' to target anchor cell L18
+2025-08-19 10:38:37,150 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:37,205 - DEBUG - Sheet 'Công ty TNHH Nippon Paint Việt ': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:37,205 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:37,205 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:37,205 - DEBUG - Attempting to write group name 'Công ty TNHH Nippon Paint Việt Nam (Hà Nội)' to target anchor cell L18
+2025-08-19 10:38:37,205 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:37,261 - DEBUG - Sheet 'Công TY Cổ Phần Phát Triển Công': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:37,264 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:37,266 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:37,266 - DEBUG - Attempting to write group name 'Công TY Cổ Phần Phát Triển Công Nghệ Việt Mỹ' to target anchor cell L18
+2025-08-19 10:38:37,266 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:37,301 - DEBUG - Sheet 'CÔNG TY CỔ PHẦN VNA LINH DŨNG': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:37,301 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:37,317 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:37,317 - DEBUG - Attempting to write group name 'CÔNG TY CỔ PHẦN VNA LINH DŨNG' to target anchor cell L18
+2025-08-19 10:38:37,317 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:37,358 - DEBUG - Sheet 'CÔNG TY TNHH GIẢI PHÁP VÀ CÔNG ': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:37,358 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:37,358 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:37,358 - DEBUG - Attempting to write group name 'CÔNG TY TNHH GIẢI PHÁP VÀ CÔNG NGHỆ VPTECH VIỆT NAM' to target anchor cell L18
+2025-08-19 10:38:37,358 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:37,406 - DEBUG - Sheet 'CÔNG TY TNHH NNMSAFETY': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:37,406 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:37,406 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:37,406 - DEBUG - Attempting to write group name 'CÔNG TY TNHH NNMSAFETY' to target anchor cell L18
+2025-08-19 10:38:37,406 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:37,461 - DEBUG - Sheet 'CÔNG TY TNHH MỘT THÀNH VIÊN VIỆ': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:37,461 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:37,461 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:37,461 - DEBUG - Attempting to write group name 'CÔNG TY TNHH MỘT THÀNH VIÊN VIỆT NAM VẬT LIỆU & NGUỒN LỰC HANWA' to target anchor cell L18
+2025-08-19 10:38:37,461 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:37,574 - DEBUG - Sheet 'Công ty TNHH Netmarks Việt Nam': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:37,574 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:37,574 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:37,574 - DEBUG - Attempting to write group name 'Công ty TNHH Netmarks Việt Nam' to target anchor cell L18
+2025-08-19 10:38:37,574 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:37,597 - INFO - Inserted 1 rows into 'Công ty TNHH Netmarks Việt Nam'.
+2025-08-19 10:38:37,597 - DEBUG - Copying styles and merges from source row: 14
+2025-08-19 10:38:37,621 - DEBUG - Re-merging range AI15:AL15
+2025-08-19 10:38:37,621 - DEBUG - Re-merging range BB15:BE15
+2025-08-19 10:38:37,637 - DEBUG - Re-merging range BN15:BQ15
+2025-08-19 10:38:37,637 - DEBUG - Re-merging range BV15:BX15
+2025-08-19 10:38:37,637 - DEBUG - Re-merging range BY15:CA15
+2025-08-19 10:38:37,637 - DEBUG - Re-merging range N15:W15
+2025-08-19 10:38:37,637 - DEBUG - Re-merging range AX15:BA15
+2025-08-19 10:38:37,637 - DEBUG - Re-merging range BJ15:BM15
+2025-08-19 10:38:37,637 - DEBUG - Re-merging range C15:E15
+2025-08-19 10:38:37,637 - DEBUG - Re-merging range AM15:AO15
+2025-08-19 10:38:37,637 - DEBUG - Re-merging range X15:AG15
+2025-08-19 10:38:37,637 - DEBUG - Re-merging range F15:I15
+2025-08-19 10:38:37,637 - DEBUG - Re-merging range BR15:BU15
+2025-08-19 10:38:37,637 - DEBUG - Re-merging range J15:M15
+2025-08-19 10:38:37,637 - DEBUG - Re-merging range AP15:AS15
+2025-08-19 10:38:37,637 - DEBUG - Re-merging range AT15:AW15
+2025-08-19 10:38:37,652 - DEBUG - Re-merging range BF15:BI15
+2025-08-19 10:38:37,694 - DEBUG - Sheet 'Công ty Cổ phần Thương mại và D': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:37,694 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:37,694 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:37,694 - DEBUG - Attempting to write group name 'Công ty Cổ phần Thương mại và Dịch vụ CNO Việt Nam' to target anchor cell L18
+2025-08-19 10:38:37,694 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:37,742 - DEBUG - Sheet 'CÔNG TY TNHH HÓA CHẤT VÀ MÔI TR': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:37,742 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:37,742 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:37,742 - DEBUG - Attempting to write group name 'CÔNG TY TNHH HÓA CHẤT VÀ MÔI TRƯỜNG AUREOLE MITANI - CHI NHÁNH HẢI DƯƠNG' to target anchor cell L18
+2025-08-19 10:38:37,742 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:37,802 - DEBUG - Sheet 'Công ty TNHH Đầu tư Phát triển ': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:37,805 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:37,807 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:37,807 - DEBUG - Attempting to write group name 'Công ty TNHH Đầu tư Phát triển Công nghệ và Thương mại Việt Nam' to target anchor cell L18
+2025-08-19 10:38:37,807 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:37,845 - DEBUG - Sheet 'CÔNG TY TNHH TOÀN THỊNH': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:37,845 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:37,845 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:37,845 - DEBUG - Attempting to write group name 'CÔNG TY TNHH TOÀN THỊNH' to target anchor cell L18
+2025-08-19 10:38:37,845 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:37,894 - DEBUG - Sheet 'Công ty TNHH GK FINECHEM Việt N': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:37,894 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:37,910 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:37,910 - DEBUG - Attempting to write group name 'Công ty TNHH GK FINECHEM Việt Nam' to target anchor cell L18
+2025-08-19 10:38:37,910 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:37,949 - DEBUG - Sheet 'Công ty TNHH JP Corelex (Việt N': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:37,949 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:37,949 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:37,949 - DEBUG - Attempting to write group name 'Công ty TNHH JP Corelex (Việt Nam)' to target anchor cell L18
+2025-08-19 10:38:37,949 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:37,997 - DEBUG - Sheet 'CÔNG TY CỔ PHẦN DU LỊCH JV ASIA': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:37,997 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:38,013 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:38,013 - DEBUG - Attempting to write group name 'CÔNG TY CỔ PHẦN DU LỊCH JV ASIA' to target anchor cell L18
+2025-08-19 10:38:38,013 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:38,059 - DEBUG - Sheet 'CÔNG TY CỔ PHẦN KINH DOANH LPG ': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:38,059 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:38,059 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:38,059 - DEBUG - Attempting to write group name 'CÔNG TY CỔ PHẦN KINH DOANH LPG VIỆT NAM - CHI NHÁNH MIỀN BẮC' to target anchor cell L18
+2025-08-19 10:38:38,059 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:38,101 - DEBUG - Sheet 'Công ty TNHH đầu tư thương mại ': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:38,101 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:38,101 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:38,101 - DEBUG - Attempting to write group name 'Công ty TNHH đầu tư thương mại & xây dựng Ngôi Sao' to target anchor cell L18
+2025-08-19 10:38:38,101 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:38,157 - DEBUG - Sheet 'CHI NHÁNH CÔNG TY TNHH LA VIE T': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:38,157 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:38,157 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:38,157 - DEBUG - Attempting to write group name 'CHI NHÁNH CÔNG TY TNHH LA VIE TẠI HÀ NỘI' to target anchor cell L18
+2025-08-19 10:38:38,157 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:38,205 - DEBUG - Sheet 'Công ty TNHH AJ Rental': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:38,205 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:38,205 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:38,205 - DEBUG - Attempting to write group name 'Công ty TNHH AJ Rental' to target anchor cell L18
+2025-08-19 10:38:38,205 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:38,339 - DEBUG - Sheet 'Công ty cổ phần dịch vụ văn phò': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:38,339 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:38,339 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:38,339 - DEBUG - Attempting to write group name 'Công ty cổ phần dịch vụ văn phòng Bắc Hà' to target anchor cell L18
+2025-08-19 10:38:38,339 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:38,355 - INFO - Inserted 5 rows into 'Công ty cổ phần dịch vụ văn phò'.
+2025-08-19 10:38:38,355 - DEBUG - Copying styles and merges from source row: 14
+2025-08-19 10:38:38,543 - DEBUG - Re-merging range AI15:AL15
+2025-08-19 10:38:38,543 - DEBUG - Re-merging range AI16:AL16
+2025-08-19 10:38:38,543 - DEBUG - Re-merging range AI17:AL17
+2025-08-19 10:38:38,543 - DEBUG - Re-merging range AI18:AL18
+2025-08-19 10:38:38,543 - DEBUG - Re-merging range AI19:AL19
+2025-08-19 10:38:38,543 - DEBUG - Re-merging range BB15:BE15
+2025-08-19 10:38:38,543 - DEBUG - Re-merging range BB16:BE16
+2025-08-19 10:38:38,543 - DEBUG - Re-merging range BB17:BE17
+2025-08-19 10:38:38,543 - DEBUG - Re-merging range BB18:BE18
+2025-08-19 10:38:38,559 - DEBUG - Re-merging range BB19:BE19
+2025-08-19 10:38:38,559 - DEBUG - Re-merging range BN15:BQ15
+2025-08-19 10:38:38,559 - DEBUG - Re-merging range BN16:BQ16
+2025-08-19 10:38:38,559 - DEBUG - Re-merging range BN17:BQ17
+2025-08-19 10:38:38,559 - DEBUG - Re-merging range BN18:BQ18
+2025-08-19 10:38:38,559 - DEBUG - Re-merging range BN19:BQ19
+2025-08-19 10:38:38,559 - DEBUG - Re-merging range BV15:BX15
+2025-08-19 10:38:38,559 - DEBUG - Re-merging range BV16:BX16
+2025-08-19 10:38:38,559 - DEBUG - Re-merging range BV17:BX17
+2025-08-19 10:38:38,559 - DEBUG - Re-merging range BV18:BX18
+2025-08-19 10:38:38,559 - DEBUG - Re-merging range BV19:BX19
+2025-08-19 10:38:38,559 - DEBUG - Re-merging range BY15:CA15
+2025-08-19 10:38:38,559 - DEBUG - Re-merging range BY16:CA16
+2025-08-19 10:38:38,559 - DEBUG - Re-merging range BY17:CA17
+2025-08-19 10:38:38,559 - DEBUG - Re-merging range BY18:CA18
+2025-08-19 10:38:38,559 - DEBUG - Re-merging range BY19:CA19
+2025-08-19 10:38:38,575 - DEBUG - Re-merging range N15:W15
+2025-08-19 10:38:38,577 - DEBUG - Re-merging range N16:W16
+2025-08-19 10:38:38,579 - DEBUG - Re-merging range N17:W17
+2025-08-19 10:38:38,580 - DEBUG - Re-merging range N18:W18
+2025-08-19 10:38:38,582 - DEBUG - Re-merging range N19:W19
+2025-08-19 10:38:38,584 - DEBUG - Re-merging range AX15:BA15
+2025-08-19 10:38:38,585 - DEBUG - Re-merging range AX16:BA16
+2025-08-19 10:38:38,586 - DEBUG - Re-merging range AX17:BA17
+2025-08-19 10:38:38,587 - DEBUG - Re-merging range AX18:BA18
+2025-08-19 10:38:38,588 - DEBUG - Re-merging range AX19:BA19
+2025-08-19 10:38:38,589 - DEBUG - Re-merging range BJ15:BM15
+2025-08-19 10:38:38,590 - DEBUG - Re-merging range BJ16:BM16
+2025-08-19 10:38:38,590 - DEBUG - Re-merging range BJ17:BM17
+2025-08-19 10:38:38,590 - DEBUG - Re-merging range BJ18:BM18
+2025-08-19 10:38:38,590 - DEBUG - Re-merging range BJ19:BM19
+2025-08-19 10:38:38,590 - DEBUG - Re-merging range C15:E15
+2025-08-19 10:38:38,590 - DEBUG - Re-merging range C16:E16
+2025-08-19 10:38:38,590 - DEBUG - Re-merging range C17:E17
+2025-08-19 10:38:38,590 - DEBUG - Re-merging range C18:E18
+2025-08-19 10:38:38,590 - DEBUG - Re-merging range C19:E19
+2025-08-19 10:38:38,590 - DEBUG - Re-merging range AM15:AO15
+2025-08-19 10:38:38,590 - DEBUG - Re-merging range AM16:AO16
+2025-08-19 10:38:38,590 - DEBUG - Re-merging range AM17:AO17
+2025-08-19 10:38:38,590 - DEBUG - Re-merging range AM18:AO18
+2025-08-19 10:38:38,590 - DEBUG - Re-merging range AM19:AO19
+2025-08-19 10:38:38,590 - DEBUG - Re-merging range X15:AG15
+2025-08-19 10:38:38,605 - DEBUG - Re-merging range X16:AG16
+2025-08-19 10:38:38,605 - DEBUG - Re-merging range X17:AG17
+2025-08-19 10:38:38,605 - DEBUG - Re-merging range X18:AG18
+2025-08-19 10:38:38,605 - DEBUG - Re-merging range X19:AG19
+2025-08-19 10:38:38,605 - DEBUG - Re-merging range F15:I15
+2025-08-19 10:38:38,605 - DEBUG - Re-merging range F16:I16
+2025-08-19 10:38:38,605 - DEBUG - Re-merging range F17:I17
+2025-08-19 10:38:38,605 - DEBUG - Re-merging range F18:I18
+2025-08-19 10:38:38,605 - DEBUG - Re-merging range F19:I19
+2025-08-19 10:38:38,605 - DEBUG - Re-merging range BR15:BU15
+2025-08-19 10:38:38,605 - DEBUG - Re-merging range BR16:BU16
+2025-08-19 10:38:38,605 - DEBUG - Re-merging range BR17:BU17
+2025-08-19 10:38:38,621 - DEBUG - Re-merging range BR18:BU18
+2025-08-19 10:38:38,621 - DEBUG - Re-merging range BR19:BU19
+2025-08-19 10:38:38,621 - DEBUG - Re-merging range J15:M15
+2025-08-19 10:38:38,621 - DEBUG - Re-merging range J16:M16
+2025-08-19 10:38:38,621 - DEBUG - Re-merging range J17:M17
+2025-08-19 10:38:38,621 - DEBUG - Re-merging range J18:M18
+2025-08-19 10:38:38,621 - DEBUG - Re-merging range J19:M19
+2025-08-19 10:38:38,621 - DEBUG - Re-merging range AP15:AS15
+2025-08-19 10:38:38,621 - DEBUG - Re-merging range AP16:AS16
+2025-08-19 10:38:38,621 - DEBUG - Re-merging range AP17:AS17
+2025-08-19 10:38:38,621 - DEBUG - Re-merging range AP18:AS18
+2025-08-19 10:38:38,621 - DEBUG - Re-merging range AP19:AS19
+2025-08-19 10:38:38,621 - DEBUG - Re-merging range AT15:AW15
+2025-08-19 10:38:38,621 - DEBUG - Re-merging range AT16:AW16
+2025-08-19 10:38:38,637 - DEBUG - Re-merging range AT17:AW17
+2025-08-19 10:38:38,637 - DEBUG - Re-merging range AT18:AW18
+2025-08-19 10:38:38,637 - DEBUG - Re-merging range AT19:AW19
+2025-08-19 10:38:38,637 - DEBUG - Re-merging range BF15:BI15
+2025-08-19 10:38:38,637 - DEBUG - Re-merging range BF16:BI16
+2025-08-19 10:38:38,637 - DEBUG - Re-merging range BF17:BI17
+2025-08-19 10:38:38,637 - DEBUG - Re-merging range BF18:BI18
+2025-08-19 10:38:38,637 - DEBUG - Re-merging range BF19:BI19
+2025-08-19 10:38:38,691 - DEBUG - Sheet 'CÔNG TY TNHH KỸ THUẬT CÔNG NGHI': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:38,694 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:38,696 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:38,696 - DEBUG - Attempting to write group name 'CÔNG TY TNHH KỸ THUẬT CÔNG NGHIỆP BVH' to target anchor cell L18
+2025-08-19 10:38:38,696 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:38,734 - DEBUG - Sheet 'CÔNG TY CỔ PHẦN DỊCH VỤ BẢO VỆ ': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:38,734 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:38,734 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:38,734 - DEBUG - Attempting to write group name 'CÔNG TY CỔ PHẦN DỊCH VỤ BẢO VỆ SAO VÀNG FB' to target anchor cell L18
+2025-08-19 10:38:38,734 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:38,795 - DEBUG - Sheet 'Công Ty Cổ Phần thương mại và d1': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:38,798 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:38,800 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:38,800 - DEBUG - Attempting to write group name 'Công Ty Cổ Phần thương mại và dịch vụ D&T Việt Nam' to target anchor cell L18
+2025-08-19 10:38:38,800 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:38,837 - DEBUG - Sheet 'CÔNG TY TNHH CHUYỂN PHÁT NHANH ': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:38,837 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:38,837 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:38,837 - DEBUG - Attempting to write group name 'CÔNG TY TNHH CHUYỂN PHÁT NHANH DHL – VNPT' to target anchor cell L18
+2025-08-19 10:38:38,853 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:38,894 - DEBUG - Sheet 'CÔNG TY TNHH THƯƠNG MẠI XUẤT NH': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:38,894 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:38,894 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:38,894 - DEBUG - Attempting to write group name 'CÔNG TY TNHH THƯƠNG MẠI XUẤT NHẬP KHẨU, SẢN XUẤT VÀ ĐẦU TƯ XÂY DỰNG VIỆT ANH' to target anchor cell L18
+2025-08-19 10:38:38,894 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:38,910 - INFO - Inserted 9 rows into 'CÔNG TY TNHH THƯƠNG MẠI XUẤT NH'.
+2025-08-19 10:38:38,910 - DEBUG - Copying styles and merges from source row: 14
+2025-08-19 10:38:39,230 - DEBUG - Re-merging range AI15:AL15
+2025-08-19 10:38:39,230 - DEBUG - Re-merging range AI16:AL16
+2025-08-19 10:38:39,230 - DEBUG - Re-merging range AI17:AL17
+2025-08-19 10:38:39,246 - DEBUG - Re-merging range AI18:AL18
+2025-08-19 10:38:39,246 - DEBUG - Re-merging range AI19:AL19
+2025-08-19 10:38:39,246 - DEBUG - Re-merging range AI20:AL20
+2025-08-19 10:38:39,246 - DEBUG - Re-merging range AI21:AL21
+2025-08-19 10:38:39,246 - DEBUG - Re-merging range AI22:AL22
+2025-08-19 10:38:39,246 - DEBUG - Re-merging range AI23:AL23
+2025-08-19 10:38:39,246 - DEBUG - Re-merging range BB15:BE15
+2025-08-19 10:38:39,246 - DEBUG - Re-merging range BB16:BE16
+2025-08-19 10:38:39,246 - DEBUG - Re-merging range BB17:BE17
+2025-08-19 10:38:39,246 - DEBUG - Re-merging range BB18:BE18
+2025-08-19 10:38:39,246 - DEBUG - Re-merging range BB19:BE19
+2025-08-19 10:38:39,246 - DEBUG - Re-merging range BB20:BE20
+2025-08-19 10:38:39,246 - DEBUG - Re-merging range BB21:BE21
+2025-08-19 10:38:39,246 - DEBUG - Re-merging range BB22:BE22
+2025-08-19 10:38:39,246 - DEBUG - Re-merging range BB23:BE23
+2025-08-19 10:38:39,261 - DEBUG - Re-merging range BN15:BQ15
+2025-08-19 10:38:39,261 - DEBUG - Re-merging range BN16:BQ16
+2025-08-19 10:38:39,261 - DEBUG - Re-merging range BN17:BQ17
+2025-08-19 10:38:39,261 - DEBUG - Re-merging range BN18:BQ18
+2025-08-19 10:38:39,261 - DEBUG - Re-merging range BN19:BQ19
+2025-08-19 10:38:39,261 - DEBUG - Re-merging range BN20:BQ20
+2025-08-19 10:38:39,261 - DEBUG - Re-merging range BN21:BQ21
+2025-08-19 10:38:39,261 - DEBUG - Re-merging range BN22:BQ22
+2025-08-19 10:38:39,261 - DEBUG - Re-merging range BN23:BQ23
+2025-08-19 10:38:39,261 - DEBUG - Re-merging range BV15:BX15
+2025-08-19 10:38:39,261 - DEBUG - Re-merging range BV16:BX16
+2025-08-19 10:38:39,261 - DEBUG - Re-merging range BV17:BX17
+2025-08-19 10:38:39,261 - DEBUG - Re-merging range BV18:BX18
+2025-08-19 10:38:39,261 - DEBUG - Re-merging range BV19:BX19
+2025-08-19 10:38:39,261 - DEBUG - Re-merging range BV20:BX20
+2025-08-19 10:38:39,277 - DEBUG - Re-merging range BV21:BX21
+2025-08-19 10:38:39,277 - DEBUG - Re-merging range BV22:BX22
+2025-08-19 10:38:39,277 - DEBUG - Re-merging range BV23:BX23
+2025-08-19 10:38:39,277 - DEBUG - Re-merging range BY15:CA15
+2025-08-19 10:38:39,277 - DEBUG - Re-merging range BY16:CA16
+2025-08-19 10:38:39,277 - DEBUG - Re-merging range BY17:CA17
+2025-08-19 10:38:39,277 - DEBUG - Re-merging range BY18:CA18
+2025-08-19 10:38:39,277 - DEBUG - Re-merging range BY19:CA19
+2025-08-19 10:38:39,277 - DEBUG - Re-merging range BY20:CA20
+2025-08-19 10:38:39,277 - DEBUG - Re-merging range BY21:CA21
+2025-08-19 10:38:39,277 - DEBUG - Re-merging range BY22:CA22
+2025-08-19 10:38:39,277 - DEBUG - Re-merging range BY23:CA23
+2025-08-19 10:38:39,277 - DEBUG - Re-merging range N15:W15
+2025-08-19 10:38:39,277 - DEBUG - Re-merging range N16:W16
+2025-08-19 10:38:39,277 - DEBUG - Re-merging range N17:W17
+2025-08-19 10:38:39,293 - DEBUG - Re-merging range N18:W18
+2025-08-19 10:38:39,293 - DEBUG - Re-merging range N19:W19
+2025-08-19 10:38:39,293 - DEBUG - Re-merging range N20:W20
+2025-08-19 10:38:39,293 - DEBUG - Re-merging range N21:W21
+2025-08-19 10:38:39,293 - DEBUG - Re-merging range N22:W22
+2025-08-19 10:38:39,293 - DEBUG - Re-merging range N23:W23
+2025-08-19 10:38:39,293 - DEBUG - Re-merging range AX15:BA15
+2025-08-19 10:38:39,293 - DEBUG - Re-merging range AX16:BA16
+2025-08-19 10:38:39,293 - DEBUG - Re-merging range AX17:BA17
+2025-08-19 10:38:39,293 - DEBUG - Re-merging range AX18:BA18
+2025-08-19 10:38:39,308 - DEBUG - Re-merging range AX19:BA19
+2025-08-19 10:38:39,308 - DEBUG - Re-merging range AX20:BA20
+2025-08-19 10:38:39,308 - DEBUG - Re-merging range AX21:BA21
+2025-08-19 10:38:39,308 - DEBUG - Re-merging range AX22:BA22
+2025-08-19 10:38:39,308 - DEBUG - Re-merging range AX23:BA23
+2025-08-19 10:38:39,308 - DEBUG - Re-merging range BJ15:BM15
+2025-08-19 10:38:39,308 - DEBUG - Re-merging range BJ16:BM16
+2025-08-19 10:38:39,308 - DEBUG - Re-merging range BJ17:BM17
+2025-08-19 10:38:39,308 - DEBUG - Re-merging range BJ18:BM18
+2025-08-19 10:38:39,308 - DEBUG - Re-merging range BJ19:BM19
+2025-08-19 10:38:39,308 - DEBUG - Re-merging range BJ20:BM20
+2025-08-19 10:38:39,308 - DEBUG - Re-merging range BJ21:BM21
+2025-08-19 10:38:39,308 - DEBUG - Re-merging range BJ22:BM22
+2025-08-19 10:38:39,308 - DEBUG - Re-merging range BJ23:BM23
+2025-08-19 10:38:39,324 - DEBUG - Re-merging range C15:E15
+2025-08-19 10:38:39,324 - DEBUG - Re-merging range C16:E16
+2025-08-19 10:38:39,324 - DEBUG - Re-merging range C17:E17
+2025-08-19 10:38:39,324 - DEBUG - Re-merging range C18:E18
+2025-08-19 10:38:39,324 - DEBUG - Re-merging range C19:E19
+2025-08-19 10:38:39,324 - DEBUG - Re-merging range C20:E20
+2025-08-19 10:38:39,324 - DEBUG - Re-merging range C21:E21
+2025-08-19 10:38:39,324 - DEBUG - Re-merging range C22:E22
+2025-08-19 10:38:39,324 - DEBUG - Re-merging range C23:E23
+2025-08-19 10:38:39,324 - DEBUG - Re-merging range AM15:AO15
+2025-08-19 10:38:39,324 - DEBUG - Re-merging range AM16:AO16
+2025-08-19 10:38:39,324 - DEBUG - Re-merging range AM17:AO17
+2025-08-19 10:38:39,324 - DEBUG - Re-merging range AM18:AO18
+2025-08-19 10:38:39,324 - DEBUG - Re-merging range AM19:AO19
+2025-08-19 10:38:39,324 - DEBUG - Re-merging range AM20:AO20
+2025-08-19 10:38:39,324 - DEBUG - Re-merging range AM21:AO21
+2025-08-19 10:38:39,324 - DEBUG - Re-merging range AM22:AO22
+2025-08-19 10:38:39,339 - DEBUG - Re-merging range AM23:AO23
+2025-08-19 10:38:39,339 - DEBUG - Re-merging range X15:AG15
+2025-08-19 10:38:39,339 - DEBUG - Re-merging range X16:AG16
+2025-08-19 10:38:39,339 - DEBUG - Re-merging range X17:AG17
+2025-08-19 10:38:39,339 - DEBUG - Re-merging range X18:AG18
+2025-08-19 10:38:39,339 - DEBUG - Re-merging range X19:AG19
+2025-08-19 10:38:39,339 - DEBUG - Re-merging range X20:AG20
+2025-08-19 10:38:39,339 - DEBUG - Re-merging range X21:AG21
+2025-08-19 10:38:39,339 - DEBUG - Re-merging range X22:AG22
+2025-08-19 10:38:39,339 - DEBUG - Re-merging range X23:AG23
+2025-08-19 10:38:39,355 - DEBUG - Re-merging range F15:I15
+2025-08-19 10:38:39,355 - DEBUG - Re-merging range F16:I16
+2025-08-19 10:38:39,355 - DEBUG - Re-merging range F17:I17
+2025-08-19 10:38:39,355 - DEBUG - Re-merging range F18:I18
+2025-08-19 10:38:39,355 - DEBUG - Re-merging range F19:I19
+2025-08-19 10:38:39,355 - DEBUG - Re-merging range F20:I20
+2025-08-19 10:38:39,355 - DEBUG - Re-merging range F21:I21
+2025-08-19 10:38:39,355 - DEBUG - Re-merging range F22:I22
+2025-08-19 10:38:39,355 - DEBUG - Re-merging range F23:I23
+2025-08-19 10:38:39,355 - DEBUG - Re-merging range BR15:BU15
+2025-08-19 10:38:39,355 - DEBUG - Re-merging range BR16:BU16
+2025-08-19 10:38:39,355 - DEBUG - Re-merging range BR17:BU17
+2025-08-19 10:38:39,355 - DEBUG - Re-merging range BR18:BU18
+2025-08-19 10:38:39,355 - DEBUG - Re-merging range BR19:BU19
+2025-08-19 10:38:39,371 - DEBUG - Re-merging range BR20:BU20
+2025-08-19 10:38:39,371 - DEBUG - Re-merging range BR21:BU21
+2025-08-19 10:38:39,371 - DEBUG - Re-merging range BR22:BU22
+2025-08-19 10:38:39,371 - DEBUG - Re-merging range BR23:BU23
+2025-08-19 10:38:39,371 - DEBUG - Re-merging range J15:M15
+2025-08-19 10:38:39,371 - DEBUG - Re-merging range J16:M16
+2025-08-19 10:38:39,371 - DEBUG - Re-merging range J17:M17
+2025-08-19 10:38:39,371 - DEBUG - Re-merging range J18:M18
+2025-08-19 10:38:39,371 - DEBUG - Re-merging range J19:M19
+2025-08-19 10:38:39,371 - DEBUG - Re-merging range J20:M20
+2025-08-19 10:38:39,371 - DEBUG - Re-merging range J21:M21
+2025-08-19 10:38:39,371 - DEBUG - Re-merging range J22:M22
+2025-08-19 10:38:39,371 - DEBUG - Re-merging range J23:M23
+2025-08-19 10:38:39,371 - DEBUG - Re-merging range AP15:AS15
+2025-08-19 10:38:39,371 - DEBUG - Re-merging range AP16:AS16
+2025-08-19 10:38:39,386 - DEBUG - Re-merging range AP17:AS17
+2025-08-19 10:38:39,386 - DEBUG - Re-merging range AP18:AS18
+2025-08-19 10:38:39,386 - DEBUG - Re-merging range AP19:AS19
+2025-08-19 10:38:39,386 - DEBUG - Re-merging range AP20:AS20
+2025-08-19 10:38:39,386 - DEBUG - Re-merging range AP21:AS21
+2025-08-19 10:38:39,386 - DEBUG - Re-merging range AP22:AS22
+2025-08-19 10:38:39,386 - DEBUG - Re-merging range AP23:AS23
+2025-08-19 10:38:39,386 - DEBUG - Re-merging range AT15:AW15
+2025-08-19 10:38:39,386 - DEBUG - Re-merging range AT16:AW16
+2025-08-19 10:38:39,386 - DEBUG - Re-merging range AT17:AW17
+2025-08-19 10:38:39,386 - DEBUG - Re-merging range AT18:AW18
+2025-08-19 10:38:39,386 - DEBUG - Re-merging range AT19:AW19
+2025-08-19 10:38:39,386 - DEBUG - Re-merging range AT20:AW20
+2025-08-19 10:38:39,386 - DEBUG - Re-merging range AT21:AW21
+2025-08-19 10:38:39,386 - DEBUG - Re-merging range AT22:AW22
+2025-08-19 10:38:39,402 - DEBUG - Re-merging range AT23:AW23
+2025-08-19 10:38:39,402 - DEBUG - Re-merging range BF15:BI15
+2025-08-19 10:38:39,402 - DEBUG - Re-merging range BF16:BI16
+2025-08-19 10:38:39,402 - DEBUG - Re-merging range BF17:BI17
+2025-08-19 10:38:39,402 - DEBUG - Re-merging range BF18:BI18
+2025-08-19 10:38:39,402 - DEBUG - Re-merging range BF19:BI19
+2025-08-19 10:38:39,402 - DEBUG - Re-merging range BF20:BI20
+2025-08-19 10:38:39,402 - DEBUG - Re-merging range BF21:BI21
+2025-08-19 10:38:39,402 - DEBUG - Re-merging range BF22:BI22
+2025-08-19 10:38:39,402 - DEBUG - Re-merging range BF23:BI23
+2025-08-19 10:38:39,449 - DEBUG - Sheet 'CÔNG TY TNHH FUJIFILM BUSINESS ': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:39,449 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:39,465 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:39,465 - DEBUG - Attempting to write group name 'CÔNG TY TNHH FUJIFILM BUSINESS INNOVATION VIỆT NAM - CHI NHÁNH HÀ NỘI' to target anchor cell L18
+2025-08-19 10:38:39,465 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:39,502 - DEBUG - Sheet 'Công ty TNHH Takasago Việt Nam': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:39,502 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:39,502 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:39,502 - DEBUG - Attempting to write group name 'Công ty TNHH Takasago Việt Nam' to target anchor cell L18
+2025-08-19 10:38:39,502 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:39,559 - DEBUG - Sheet 'CÔNG TY TNHH SẢN XUẤT - THƯƠNG ': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:39,559 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:39,559 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:39,559 - DEBUG - Attempting to write group name 'CÔNG TY TNHH SẢN XUẤT - THƯƠNG MẠI - DỊCH VỤ SA PAI - CHI NHÁNH BẮC NINH' to target anchor cell L18
+2025-08-19 10:38:39,559 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:39,605 - DEBUG - Sheet 'CÔNG TY TNHH DỊCH VỤ VÀ THƯƠNG ': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:39,605 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:39,605 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:39,605 - DEBUG - Attempting to write group name 'CÔNG TY TNHH DỊCH VỤ VÀ THƯƠNG MẠI GIẢI PHÁP KỸ THUẬT CÔNG NGHIỆP VIỆT NAM' to target anchor cell L18
+2025-08-19 10:38:39,605 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:39,665 - DEBUG - Sheet 'Công ty TNHH Phát triển Ngọc Th': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:39,667 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:39,668 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:39,668 - DEBUG - Attempting to write group name 'Công ty TNHH Phát triển Ngọc Thúy' to target anchor cell L18
+2025-08-19 10:38:39,668 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:39,668 - INFO - Inserted 8 rows into 'Công ty TNHH Phát triển Ngọc Th'.
+2025-08-19 10:38:39,668 - DEBUG - Copying styles and merges from source row: 14
+2025-08-19 10:38:39,988 - DEBUG - Re-merging range AI15:AL15
+2025-08-19 10:38:39,990 - DEBUG - Re-merging range AI16:AL16
+2025-08-19 10:38:39,991 - DEBUG - Re-merging range AI17:AL17
+2025-08-19 10:38:39,992 - DEBUG - Re-merging range AI18:AL18
+2025-08-19 10:38:39,993 - DEBUG - Re-merging range AI19:AL19
+2025-08-19 10:38:39,994 - DEBUG - Re-merging range AI20:AL20
+2025-08-19 10:38:39,995 - DEBUG - Re-merging range AI21:AL21
+2025-08-19 10:38:39,996 - DEBUG - Re-merging range AI22:AL22
+2025-08-19 10:38:39,997 - DEBUG - Re-merging range BB15:BE15
+2025-08-19 10:38:39,998 - DEBUG - Re-merging range BB16:BE16
+2025-08-19 10:38:39,999 - DEBUG - Re-merging range BB17:BE17
+2025-08-19 10:38:40,000 - DEBUG - Re-merging range BB18:BE18
+2025-08-19 10:38:40,001 - DEBUG - Re-merging range BB19:BE19
+2025-08-19 10:38:40,002 - DEBUG - Re-merging range BB20:BE20
+2025-08-19 10:38:40,003 - DEBUG - Re-merging range BB21:BE21
+2025-08-19 10:38:40,004 - DEBUG - Re-merging range BB22:BE22
+2025-08-19 10:38:40,005 - DEBUG - Re-merging range BN15:BQ15
+2025-08-19 10:38:40,006 - DEBUG - Re-merging range BN16:BQ16
+2025-08-19 10:38:40,007 - DEBUG - Re-merging range BN17:BQ17
+2025-08-19 10:38:40,009 - DEBUG - Re-merging range BN18:BQ18
+2025-08-19 10:38:40,010 - DEBUG - Re-merging range BN19:BQ19
+2025-08-19 10:38:40,011 - DEBUG - Re-merging range BN20:BQ20
+2025-08-19 10:38:40,012 - DEBUG - Re-merging range BN21:BQ21
+2025-08-19 10:38:40,013 - DEBUG - Re-merging range BN22:BQ22
+2025-08-19 10:38:40,014 - DEBUG - Re-merging range BV15:BX15
+2025-08-19 10:38:40,015 - DEBUG - Re-merging range BV16:BX16
+2025-08-19 10:38:40,016 - DEBUG - Re-merging range BV17:BX17
+2025-08-19 10:38:40,017 - DEBUG - Re-merging range BV18:BX18
+2025-08-19 10:38:40,018 - DEBUG - Re-merging range BV19:BX19
+2025-08-19 10:38:40,019 - DEBUG - Re-merging range BV20:BX20
+2025-08-19 10:38:40,020 - DEBUG - Re-merging range BV21:BX21
+2025-08-19 10:38:40,020 - DEBUG - Re-merging range BV22:BX22
+2025-08-19 10:38:40,021 - DEBUG - Re-merging range BY15:CA15
+2025-08-19 10:38:40,022 - DEBUG - Re-merging range BY16:CA16
+2025-08-19 10:38:40,023 - DEBUG - Re-merging range BY17:CA17
+2025-08-19 10:38:40,024 - DEBUG - Re-merging range BY18:CA18
+2025-08-19 10:38:40,025 - DEBUG - Re-merging range BY19:CA19
+2025-08-19 10:38:40,026 - DEBUG - Re-merging range BY20:CA20
+2025-08-19 10:38:40,027 - DEBUG - Re-merging range BY21:CA21
+2025-08-19 10:38:40,027 - DEBUG - Re-merging range BY22:CA22
+2025-08-19 10:38:40,027 - DEBUG - Re-merging range N15:W15
+2025-08-19 10:38:40,027 - DEBUG - Re-merging range N16:W16
+2025-08-19 10:38:40,027 - DEBUG - Re-merging range N17:W17
+2025-08-19 10:38:40,027 - DEBUG - Re-merging range N18:W18
+2025-08-19 10:38:40,027 - DEBUG - Re-merging range N19:W19
+2025-08-19 10:38:40,027 - DEBUG - Re-merging range N20:W20
+2025-08-19 10:38:40,027 - DEBUG - Re-merging range N21:W21
+2025-08-19 10:38:40,027 - DEBUG - Re-merging range N22:W22
+2025-08-19 10:38:40,043 - DEBUG - Re-merging range AX15:BA15
+2025-08-19 10:38:40,043 - DEBUG - Re-merging range AX16:BA16
+2025-08-19 10:38:40,043 - DEBUG - Re-merging range AX17:BA17
+2025-08-19 10:38:40,043 - DEBUG - Re-merging range AX18:BA18
+2025-08-19 10:38:40,043 - DEBUG - Re-merging range AX19:BA19
+2025-08-19 10:38:40,043 - DEBUG - Re-merging range AX20:BA20
+2025-08-19 10:38:40,043 - DEBUG - Re-merging range AX21:BA21
+2025-08-19 10:38:40,043 - DEBUG - Re-merging range AX22:BA22
+2025-08-19 10:38:40,043 - DEBUG - Re-merging range BJ15:BM15
+2025-08-19 10:38:40,043 - DEBUG - Re-merging range BJ16:BM16
+2025-08-19 10:38:40,043 - DEBUG - Re-merging range BJ17:BM17
+2025-08-19 10:38:40,043 - DEBUG - Re-merging range BJ18:BM18
+2025-08-19 10:38:40,043 - DEBUG - Re-merging range BJ19:BM19
+2025-08-19 10:38:40,043 - DEBUG - Re-merging range BJ20:BM20
+2025-08-19 10:38:40,058 - DEBUG - Re-merging range BJ21:BM21
+2025-08-19 10:38:40,058 - DEBUG - Re-merging range BJ22:BM22
+2025-08-19 10:38:40,058 - DEBUG - Re-merging range C15:E15
+2025-08-19 10:38:40,058 - DEBUG - Re-merging range C16:E16
+2025-08-19 10:38:40,058 - DEBUG - Re-merging range C17:E17
+2025-08-19 10:38:40,058 - DEBUG - Re-merging range C18:E18
+2025-08-19 10:38:40,058 - DEBUG - Re-merging range C19:E19
+2025-08-19 10:38:40,058 - DEBUG - Re-merging range C20:E20
+2025-08-19 10:38:40,058 - DEBUG - Re-merging range C21:E21
+2025-08-19 10:38:40,058 - DEBUG - Re-merging range C22:E22
+2025-08-19 10:38:40,058 - DEBUG - Re-merging range AM15:AO15
+2025-08-19 10:38:40,058 - DEBUG - Re-merging range AM16:AO16
+2025-08-19 10:38:40,058 - DEBUG - Re-merging range AM17:AO17
+2025-08-19 10:38:40,058 - DEBUG - Re-merging range AM18:AO18
+2025-08-19 10:38:40,058 - DEBUG - Re-merging range AM19:AO19
+2025-08-19 10:38:40,058 - DEBUG - Re-merging range AM20:AO20
+2025-08-19 10:38:40,074 - DEBUG - Re-merging range AM21:AO21
+2025-08-19 10:38:40,074 - DEBUG - Re-merging range AM22:AO22
+2025-08-19 10:38:40,074 - DEBUG - Re-merging range X15:AG15
+2025-08-19 10:38:40,074 - DEBUG - Re-merging range X16:AG16
+2025-08-19 10:38:40,074 - DEBUG - Re-merging range X17:AG17
+2025-08-19 10:38:40,074 - DEBUG - Re-merging range X18:AG18
+2025-08-19 10:38:40,074 - DEBUG - Re-merging range X19:AG19
+2025-08-19 10:38:40,074 - DEBUG - Re-merging range X20:AG20
+2025-08-19 10:38:40,074 - DEBUG - Re-merging range X21:AG21
+2025-08-19 10:38:40,074 - DEBUG - Re-merging range X22:AG22
+2025-08-19 10:38:40,090 - DEBUG - Re-merging range F15:I15
+2025-08-19 10:38:40,090 - DEBUG - Re-merging range F16:I16
+2025-08-19 10:38:40,090 - DEBUG - Re-merging range F17:I17
+2025-08-19 10:38:40,090 - DEBUG - Re-merging range F18:I18
+2025-08-19 10:38:40,090 - DEBUG - Re-merging range F19:I19
+2025-08-19 10:38:40,090 - DEBUG - Re-merging range F20:I20
+2025-08-19 10:38:40,090 - DEBUG - Re-merging range F21:I21
+2025-08-19 10:38:40,090 - DEBUG - Re-merging range F22:I22
+2025-08-19 10:38:40,090 - DEBUG - Re-merging range BR15:BU15
+2025-08-19 10:38:40,090 - DEBUG - Re-merging range BR16:BU16
+2025-08-19 10:38:40,090 - DEBUG - Re-merging range BR17:BU17
+2025-08-19 10:38:40,090 - DEBUG - Re-merging range BR18:BU18
+2025-08-19 10:38:40,090 - DEBUG - Re-merging range BR19:BU19
+2025-08-19 10:38:40,090 - DEBUG - Re-merging range BR20:BU20
+2025-08-19 10:38:40,105 - DEBUG - Re-merging range BR21:BU21
+2025-08-19 10:38:40,105 - DEBUG - Re-merging range BR22:BU22
+2025-08-19 10:38:40,105 - DEBUG - Re-merging range J15:M15
+2025-08-19 10:38:40,105 - DEBUG - Re-merging range J16:M16
+2025-08-19 10:38:40,105 - DEBUG - Re-merging range J17:M17
+2025-08-19 10:38:40,105 - DEBUG - Re-merging range J18:M18
+2025-08-19 10:38:40,105 - DEBUG - Re-merging range J19:M19
+2025-08-19 10:38:40,105 - DEBUG - Re-merging range J20:M20
+2025-08-19 10:38:40,105 - DEBUG - Re-merging range J21:M21
+2025-08-19 10:38:40,105 - DEBUG - Re-merging range J22:M22
+2025-08-19 10:38:40,105 - DEBUG - Re-merging range AP15:AS15
+2025-08-19 10:38:40,105 - DEBUG - Re-merging range AP16:AS16
+2025-08-19 10:38:40,105 - DEBUG - Re-merging range AP17:AS17
+2025-08-19 10:38:40,105 - DEBUG - Re-merging range AP18:AS18
+2025-08-19 10:38:40,105 - DEBUG - Re-merging range AP19:AS19
+2025-08-19 10:38:40,121 - DEBUG - Re-merging range AP20:AS20
+2025-08-19 10:38:40,121 - DEBUG - Re-merging range AP21:AS21
+2025-08-19 10:38:40,121 - DEBUG - Re-merging range AP22:AS22
+2025-08-19 10:38:40,121 - DEBUG - Re-merging range AT15:AW15
+2025-08-19 10:38:40,121 - DEBUG - Re-merging range AT16:AW16
+2025-08-19 10:38:40,121 - DEBUG - Re-merging range AT17:AW17
+2025-08-19 10:38:40,121 - DEBUG - Re-merging range AT18:AW18
+2025-08-19 10:38:40,121 - DEBUG - Re-merging range AT19:AW19
+2025-08-19 10:38:40,121 - DEBUG - Re-merging range AT20:AW20
+2025-08-19 10:38:40,121 - DEBUG - Re-merging range AT21:AW21
+2025-08-19 10:38:40,121 - DEBUG - Re-merging range AT22:AW22
+2025-08-19 10:38:40,121 - DEBUG - Re-merging range BF15:BI15
+2025-08-19 10:38:40,121 - DEBUG - Re-merging range BF16:BI16
+2025-08-19 10:38:40,121 - DEBUG - Re-merging range BF17:BI17
+2025-08-19 10:38:40,136 - DEBUG - Re-merging range BF18:BI18
+2025-08-19 10:38:40,136 - DEBUG - Re-merging range BF19:BI19
+2025-08-19 10:38:40,136 - DEBUG - Re-merging range BF20:BI20
+2025-08-19 10:38:40,136 - DEBUG - Re-merging range BF21:BI21
+2025-08-19 10:38:40,136 - DEBUG - Re-merging range BF22:BI22
+2025-08-19 10:38:40,181 - DEBUG - Sheet 'CÔNG TY CỔ PHẦN K. HỆ THỐNG': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:40,181 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:40,181 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:40,181 - DEBUG - Attempting to write group name 'CÔNG TY CỔ PHẦN K. HỆ THỐNG' to target anchor cell L18
+2025-08-19 10:38:40,181 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:40,229 - DEBUG - Sheet 'CÔNG TY CỔ PHẦN DI CHUYỂN XANH ': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:40,229 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:40,229 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:40,229 - DEBUG - Attempting to write group name 'CÔNG TY CỔ PHẦN DI CHUYỂN XANH VÀ THÔNG MINH GSM' to target anchor cell L18
+2025-08-19 10:38:40,229 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:40,286 - DEBUG - Sheet 'CÔNG TY TNHH DỊCH VỤ CÔNG NGHIỆ': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:40,286 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:40,286 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:40,286 - DEBUG - Attempting to write group name 'CÔNG TY TNHH DỊCH VỤ CÔNG NGHIỆP HUY HOÀNG' to target anchor cell L18
+2025-08-19 10:38:40,286 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:40,434 - DEBUG - Sheet 'Công ty TNHH Thuế và Tư vấn KPM': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:40,434 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:40,434 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:40,434 - DEBUG - Attempting to write group name 'Công ty TNHH Thuế và Tư vấn KPMG' to target anchor cell L18
+2025-08-19 10:38:40,434 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:40,477 - DEBUG - Sheet 'Công ty cổ phần chuyển phát nha': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:40,477 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:40,477 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:40,477 - DEBUG - Attempting to write group name 'Công ty cổ phần chuyển phát nhanh New Post' to target anchor cell L18
+2025-08-19 10:38:40,477 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:40,538 - DEBUG - Sheet 'Công ty cổ phần dụng cụ HSTC Vi': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:40,541 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:40,543 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:40,543 - DEBUG - Attempting to write group name 'Công ty cổ phần dụng cụ HSTC Việt Nam' to target anchor cell L18
+2025-08-19 10:38:40,543 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:40,581 - DEBUG - Sheet 'CHI NHÁNH CÔNG TY CỔ PHẦN THƯƠN': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:40,581 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:40,581 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:40,581 - DEBUG - Attempting to write group name 'CHI NHÁNH CÔNG TY CỔ PHẦN THƯƠNG MẠI VÀ DỊCH VỤ NGỌC HÀ TẠI BẮC NINH' to target anchor cell L18
+2025-08-19 10:38:40,581 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:40,630 - DEBUG - Sheet 'CÔNG TY TNHH ĐẦU TƯ THƯƠNG MẠI 1': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:40,630 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:40,645 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:40,645 - DEBUG - Attempting to write group name 'CÔNG TY TNHH ĐẦU TƯ THƯƠNG MẠI VÀ DỊCH VỤ ĐỨC PHƯƠNG NHI' to target anchor cell L18
+2025-08-19 10:38:40,645 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:40,686 - DEBUG - Sheet 'CÔNG TY TNHH RADSAFE': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:40,686 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:40,686 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:40,686 - DEBUG - Attempting to write group name 'CÔNG TY TNHH RADSAFE' to target anchor cell L18
+2025-08-19 10:38:40,686 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:40,734 - DEBUG - Sheet 'CÔNG TY TNHH THƯƠNG MẠI VÀ DỊCH': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:40,734 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:40,734 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:40,734 - DEBUG - Attempting to write group name 'CÔNG TY TNHH THƯƠNG MẠI VÀ DỊCH VỤ ÁNH VY' to target anchor cell L18
+2025-08-19 10:38:40,734 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:40,782 - DEBUG - Sheet 'CÔNG TY TNHH TNT MOLD TECH VINA': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:40,782 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:40,798 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:40,798 - DEBUG - Attempting to write group name 'CÔNG TY TNHH TNT MOLD TECH VINA' to target anchor cell L18
+2025-08-19 10:38:40,798 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:40,838 - DEBUG - Sheet 'CÔNG TY TNHH KDDI VIỆT NAM': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:40,838 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:40,838 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:40,838 - DEBUG - Attempting to write group name 'CÔNG TY TNHH KDDI VIỆT NAM' to target anchor cell L18
+2025-08-19 10:38:40,838 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:40,886 - DEBUG - Sheet 'Công ty TNHH Nhật Ninh': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:40,886 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:40,901 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:40,901 - DEBUG - Attempting to write group name 'Công ty TNHH Nhật Ninh' to target anchor cell L18
+2025-08-19 10:38:40,901 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:40,941 - DEBUG - Sheet 'CÔNG TY TNHH MTV CÔNG NGHỆ MÔI ': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:40,941 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:40,941 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:40,941 - DEBUG - Attempting to write group name 'CÔNG TY TNHH MTV CÔNG NGHỆ MÔI TRƯỜNG ORENTECH VN' to target anchor cell L18
+2025-08-19 10:38:40,941 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:40,990 - DEBUG - Sheet 'CÔNG TY LUẬT TRÁCH NHIỆM HỮU HẠ': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:40,990 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:40,990 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:40,990 - DEBUG - Attempting to write group name 'CÔNG TY LUẬT TRÁCH NHIỆM HỮU HẠN SB LAW' to target anchor cell L18
+2025-08-19 10:38:40,990 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:41,051 - DEBUG - Sheet 'CÔNG TY CỔ PHẦN MÔI TRƯỜNG THUẬ': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:41,054 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:41,056 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:41,056 - DEBUG - Attempting to write group name 'CÔNG TY CỔ PHẦN MÔI TRƯỜNG THUẬN THÀNH' to target anchor cell L18
+2025-08-19 10:38:41,056 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:41,094 - DEBUG - Sheet 'Công ty TNHH Phát triển thương ': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:41,094 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:41,094 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:41,094 - DEBUG - Attempting to write group name 'Công ty TNHH Phát triển thương mại và tư vấn đầu tư TNC' to target anchor cell L18
+2025-08-19 10:38:41,094 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:41,154 - DEBUG - Sheet 'CÔNG TY CỔ PHẦN V-PROUD': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:41,157 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:41,159 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:41,159 - DEBUG - Attempting to write group name 'CÔNG TY CỔ PHẦN V-PROUD' to target anchor cell L18
+2025-08-19 10:38:41,159 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:41,197 - DEBUG - Sheet 'CHI NHÁNH CÔNG TY CỔ PHẦN VINH ': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:41,197 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:41,197 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:41,197 - DEBUG - Attempting to write group name 'CHI NHÁNH CÔNG TY CỔ PHẦN VINH VÂN MINH VÂN TẠI HÀ NỘI' to target anchor cell L18
+2025-08-19 10:38:41,197 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:41,213 - INFO - Inserted 21 rows into 'CHI NHÁNH CÔNG TY CỔ PHẦN VINH '.
+2025-08-19 10:38:41,213 - DEBUG - Copying styles and merges from source row: 14
+2025-08-19 10:38:41,996 - DEBUG - Re-merging range AI15:AL15
+2025-08-19 10:38:41,996 - DEBUG - Re-merging range AI16:AL16
+2025-08-19 10:38:41,996 - DEBUG - Re-merging range AI17:AL17
+2025-08-19 10:38:41,996 - DEBUG - Re-merging range AI18:AL18
+2025-08-19 10:38:41,996 - DEBUG - Re-merging range AI19:AL19
+2025-08-19 10:38:41,996 - DEBUG - Re-merging range AI20:AL20
+2025-08-19 10:38:41,996 - DEBUG - Re-merging range AI21:AL21
+2025-08-19 10:38:41,996 - DEBUG - Re-merging range AI22:AL22
+2025-08-19 10:38:41,996 - DEBUG - Re-merging range AI23:AL23
+2025-08-19 10:38:41,996 - DEBUG - Re-merging range AI24:AL24
+2025-08-19 10:38:42,011 - DEBUG - Re-merging range AI25:AL25
+2025-08-19 10:38:42,011 - DEBUG - Re-merging range AI26:AL26
+2025-08-19 10:38:42,011 - DEBUG - Re-merging range AI27:AL27
+2025-08-19 10:38:42,011 - DEBUG - Re-merging range AI28:AL28
+2025-08-19 10:38:42,011 - DEBUG - Re-merging range AI29:AL29
+2025-08-19 10:38:42,011 - DEBUG - Re-merging range AI30:AL30
+2025-08-19 10:38:42,011 - DEBUG - Re-merging range AI31:AL31
+2025-08-19 10:38:42,011 - DEBUG - Re-merging range AI32:AL32
+2025-08-19 10:38:42,011 - DEBUG - Re-merging range AI33:AL33
+2025-08-19 10:38:42,011 - DEBUG - Re-merging range AI34:AL34
+2025-08-19 10:38:42,011 - DEBUG - Re-merging range AI35:AL35
+2025-08-19 10:38:42,011 - DEBUG - Re-merging range BB15:BE15
+2025-08-19 10:38:42,011 - DEBUG - Re-merging range BB16:BE16
+2025-08-19 10:38:42,011 - DEBUG - Re-merging range BB17:BE17
+2025-08-19 10:38:42,011 - DEBUG - Re-merging range BB18:BE18
+2025-08-19 10:38:42,027 - DEBUG - Re-merging range BB19:BE19
+2025-08-19 10:38:42,027 - DEBUG - Re-merging range BB20:BE20
+2025-08-19 10:38:42,027 - DEBUG - Re-merging range BB21:BE21
+2025-08-19 10:38:42,027 - DEBUG - Re-merging range BB22:BE22
+2025-08-19 10:38:42,027 - DEBUG - Re-merging range BB23:BE23
+2025-08-19 10:38:42,027 - DEBUG - Re-merging range BB24:BE24
+2025-08-19 10:38:42,027 - DEBUG - Re-merging range BB25:BE25
+2025-08-19 10:38:42,027 - DEBUG - Re-merging range BB26:BE26
+2025-08-19 10:38:42,027 - DEBUG - Re-merging range BB27:BE27
+2025-08-19 10:38:42,027 - DEBUG - Re-merging range BB28:BE28
+2025-08-19 10:38:42,027 - DEBUG - Re-merging range BB29:BE29
+2025-08-19 10:38:42,027 - DEBUG - Re-merging range BB30:BE30
+2025-08-19 10:38:42,027 - DEBUG - Re-merging range BB31:BE31
+2025-08-19 10:38:42,027 - DEBUG - Re-merging range BB32:BE32
+2025-08-19 10:38:42,027 - DEBUG - Re-merging range BB33:BE33
+2025-08-19 10:38:42,043 - DEBUG - Re-merging range BB34:BE34
+2025-08-19 10:38:42,044 - DEBUG - Re-merging range BB35:BE35
+2025-08-19 10:38:42,046 - DEBUG - Re-merging range BN15:BQ15
+2025-08-19 10:38:42,047 - DEBUG - Re-merging range BN16:BQ16
+2025-08-19 10:38:42,048 - DEBUG - Re-merging range BN17:BQ17
+2025-08-19 10:38:42,049 - DEBUG - Re-merging range BN18:BQ18
+2025-08-19 10:38:42,050 - DEBUG - Re-merging range BN19:BQ19
+2025-08-19 10:38:42,051 - DEBUG - Re-merging range BN20:BQ20
+2025-08-19 10:38:42,052 - DEBUG - Re-merging range BN21:BQ21
+2025-08-19 10:38:42,053 - DEBUG - Re-merging range BN22:BQ22
+2025-08-19 10:38:42,054 - DEBUG - Re-merging range BN23:BQ23
+2025-08-19 10:38:42,055 - DEBUG - Re-merging range BN24:BQ24
+2025-08-19 10:38:42,056 - DEBUG - Re-merging range BN25:BQ25
+2025-08-19 10:38:42,058 - DEBUG - Re-merging range BN26:BQ26
+2025-08-19 10:38:42,059 - DEBUG - Re-merging range BN27:BQ27
+2025-08-19 10:38:42,059 - DEBUG - Re-merging range BN28:BQ28
+2025-08-19 10:38:42,059 - DEBUG - Re-merging range BN29:BQ29
+2025-08-19 10:38:42,059 - DEBUG - Re-merging range BN30:BQ30
+2025-08-19 10:38:42,059 - DEBUG - Re-merging range BN31:BQ31
+2025-08-19 10:38:42,059 - DEBUG - Re-merging range BN32:BQ32
+2025-08-19 10:38:42,059 - DEBUG - Re-merging range BN33:BQ33
+2025-08-19 10:38:42,059 - DEBUG - Re-merging range BN34:BQ34
+2025-08-19 10:38:42,059 - DEBUG - Re-merging range BN35:BQ35
+2025-08-19 10:38:42,059 - DEBUG - Re-merging range BV15:BX15
+2025-08-19 10:38:42,059 - DEBUG - Re-merging range BV16:BX16
+2025-08-19 10:38:42,059 - DEBUG - Re-merging range BV17:BX17
+2025-08-19 10:38:42,059 - DEBUG - Re-merging range BV18:BX18
+2025-08-19 10:38:42,059 - DEBUG - Re-merging range BV19:BX19
+2025-08-19 10:38:42,059 - DEBUG - Re-merging range BV20:BX20
+2025-08-19 10:38:42,059 - DEBUG - Re-merging range BV21:BX21
+2025-08-19 10:38:42,074 - DEBUG - Re-merging range BV22:BX22
+2025-08-19 10:38:42,074 - DEBUG - Re-merging range BV23:BX23
+2025-08-19 10:38:42,074 - DEBUG - Re-merging range BV24:BX24
+2025-08-19 10:38:42,074 - DEBUG - Re-merging range BV25:BX25
+2025-08-19 10:38:42,074 - DEBUG - Re-merging range BV26:BX26
+2025-08-19 10:38:42,074 - DEBUG - Re-merging range BV27:BX27
+2025-08-19 10:38:42,074 - DEBUG - Re-merging range BV28:BX28
+2025-08-19 10:38:42,074 - DEBUG - Re-merging range BV29:BX29
+2025-08-19 10:38:42,074 - DEBUG - Re-merging range BV30:BX30
+2025-08-19 10:38:42,074 - DEBUG - Re-merging range BV31:BX31
+2025-08-19 10:38:42,074 - DEBUG - Re-merging range BV32:BX32
+2025-08-19 10:38:42,074 - DEBUG - Re-merging range BV33:BX33
+2025-08-19 10:38:42,074 - DEBUG - Re-merging range BV34:BX34
+2025-08-19 10:38:42,074 - DEBUG - Re-merging range BV35:BX35
+2025-08-19 10:38:42,074 - DEBUG - Re-merging range BY15:CA15
+2025-08-19 10:38:42,074 - DEBUG - Re-merging range BY16:CA16
+2025-08-19 10:38:42,090 - DEBUG - Re-merging range BY17:CA17
+2025-08-19 10:38:42,090 - DEBUG - Re-merging range BY18:CA18
+2025-08-19 10:38:42,090 - DEBUG - Re-merging range BY19:CA19
+2025-08-19 10:38:42,090 - DEBUG - Re-merging range BY20:CA20
+2025-08-19 10:38:42,090 - DEBUG - Re-merging range BY21:CA21
+2025-08-19 10:38:42,090 - DEBUG - Re-merging range BY22:CA22
+2025-08-19 10:38:42,090 - DEBUG - Re-merging range BY23:CA23
+2025-08-19 10:38:42,090 - DEBUG - Re-merging range BY24:CA24
+2025-08-19 10:38:42,090 - DEBUG - Re-merging range BY25:CA25
+2025-08-19 10:38:42,090 - DEBUG - Re-merging range BY26:CA26
+2025-08-19 10:38:42,090 - DEBUG - Re-merging range BY27:CA27
+2025-08-19 10:38:42,090 - DEBUG - Re-merging range BY28:CA28
+2025-08-19 10:38:42,090 - DEBUG - Re-merging range BY29:CA29
+2025-08-19 10:38:42,090 - DEBUG - Re-merging range BY30:CA30
+2025-08-19 10:38:42,090 - DEBUG - Re-merging range BY31:CA31
+2025-08-19 10:38:42,090 - DEBUG - Re-merging range BY32:CA32
+2025-08-19 10:38:42,106 - DEBUG - Re-merging range BY33:CA33
+2025-08-19 10:38:42,106 - DEBUG - Re-merging range BY34:CA34
+2025-08-19 10:38:42,106 - DEBUG - Re-merging range BY35:CA35
+2025-08-19 10:38:42,106 - DEBUG - Re-merging range N15:W15
+2025-08-19 10:38:42,106 - DEBUG - Re-merging range N16:W16
+2025-08-19 10:38:42,106 - DEBUG - Re-merging range N17:W17
+2025-08-19 10:38:42,106 - DEBUG - Re-merging range N18:W18
+2025-08-19 10:38:42,106 - DEBUG - Re-merging range N19:W19
+2025-08-19 10:38:42,106 - DEBUG - Re-merging range N20:W20
+2025-08-19 10:38:42,106 - DEBUG - Re-merging range N21:W21
+2025-08-19 10:38:42,121 - DEBUG - Re-merging range N22:W22
+2025-08-19 10:38:42,122 - DEBUG - Re-merging range N23:W23
+2025-08-19 10:38:42,124 - DEBUG - Re-merging range N24:W24
+2025-08-19 10:38:42,126 - DEBUG - Re-merging range N25:W25
+2025-08-19 10:38:42,128 - DEBUG - Re-merging range N26:W26
+2025-08-19 10:38:42,130 - DEBUG - Re-merging range N27:W27
+2025-08-19 10:38:42,131 - DEBUG - Re-merging range N28:W28
+2025-08-19 10:38:42,133 - DEBUG - Re-merging range N29:W29
+2025-08-19 10:38:42,135 - DEBUG - Re-merging range N30:W30
+2025-08-19 10:38:42,137 - DEBUG - Re-merging range N31:W31
+2025-08-19 10:38:42,139 - DEBUG - Re-merging range N32:W32
+2025-08-19 10:38:42,141 - DEBUG - Re-merging range N33:W33
+2025-08-19 10:38:42,142 - DEBUG - Re-merging range N34:W34
+2025-08-19 10:38:42,144 - DEBUG - Re-merging range N35:W35
+2025-08-19 10:38:42,146 - DEBUG - Re-merging range AX15:BA15
+2025-08-19 10:38:42,147 - DEBUG - Re-merging range AX16:BA16
+2025-08-19 10:38:42,148 - DEBUG - Re-merging range AX17:BA17
+2025-08-19 10:38:42,149 - DEBUG - Re-merging range AX18:BA18
+2025-08-19 10:38:42,150 - DEBUG - Re-merging range AX19:BA19
+2025-08-19 10:38:42,153 - DEBUG - Re-merging range AX20:BA20
+2025-08-19 10:38:42,153 - DEBUG - Re-merging range AX21:BA21
+2025-08-19 10:38:42,153 - DEBUG - Re-merging range AX22:BA22
+2025-08-19 10:38:42,153 - DEBUG - Re-merging range AX23:BA23
+2025-08-19 10:38:42,153 - DEBUG - Re-merging range AX24:BA24
+2025-08-19 10:38:42,153 - DEBUG - Re-merging range AX25:BA25
+2025-08-19 10:38:42,153 - DEBUG - Re-merging range AX26:BA26
+2025-08-19 10:38:42,153 - DEBUG - Re-merging range AX27:BA27
+2025-08-19 10:38:42,153 - DEBUG - Re-merging range AX28:BA28
+2025-08-19 10:38:42,153 - DEBUG - Re-merging range AX29:BA29
+2025-08-19 10:38:42,153 - DEBUG - Re-merging range AX30:BA30
+2025-08-19 10:38:42,153 - DEBUG - Re-merging range AX31:BA31
+2025-08-19 10:38:42,153 - DEBUG - Re-merging range AX32:BA32
+2025-08-19 10:38:42,153 - DEBUG - Re-merging range AX33:BA33
+2025-08-19 10:38:42,168 - DEBUG - Re-merging range AX34:BA34
+2025-08-19 10:38:42,168 - DEBUG - Re-merging range AX35:BA35
+2025-08-19 10:38:42,168 - DEBUG - Re-merging range BJ15:BM15
+2025-08-19 10:38:42,168 - DEBUG - Re-merging range BJ16:BM16
+2025-08-19 10:38:42,168 - DEBUG - Re-merging range BJ17:BM17
+2025-08-19 10:38:42,168 - DEBUG - Re-merging range BJ18:BM18
+2025-08-19 10:38:42,168 - DEBUG - Re-merging range BJ19:BM19
+2025-08-19 10:38:42,168 - DEBUG - Re-merging range BJ20:BM20
+2025-08-19 10:38:42,168 - DEBUG - Re-merging range BJ21:BM21
+2025-08-19 10:38:42,168 - DEBUG - Re-merging range BJ22:BM22
+2025-08-19 10:38:42,168 - DEBUG - Re-merging range BJ23:BM23
+2025-08-19 10:38:42,168 - DEBUG - Re-merging range BJ24:BM24
+2025-08-19 10:38:42,168 - DEBUG - Re-merging range BJ25:BM25
+2025-08-19 10:38:42,168 - DEBUG - Re-merging range BJ26:BM26
+2025-08-19 10:38:42,168 - DEBUG - Re-merging range BJ27:BM27
+2025-08-19 10:38:42,184 - DEBUG - Re-merging range BJ28:BM28
+2025-08-19 10:38:42,184 - DEBUG - Re-merging range BJ29:BM29
+2025-08-19 10:38:42,184 - DEBUG - Re-merging range BJ30:BM30
+2025-08-19 10:38:42,184 - DEBUG - Re-merging range BJ31:BM31
+2025-08-19 10:38:42,184 - DEBUG - Re-merging range BJ32:BM32
+2025-08-19 10:38:42,184 - DEBUG - Re-merging range BJ33:BM33
+2025-08-19 10:38:42,184 - DEBUG - Re-merging range BJ34:BM34
+2025-08-19 10:38:42,184 - DEBUG - Re-merging range BJ35:BM35
+2025-08-19 10:38:42,184 - DEBUG - Re-merging range C15:E15
+2025-08-19 10:38:42,184 - DEBUG - Re-merging range C16:E16
+2025-08-19 10:38:42,184 - DEBUG - Re-merging range C17:E17
+2025-08-19 10:38:42,184 - DEBUG - Re-merging range C18:E18
+2025-08-19 10:38:42,184 - DEBUG - Re-merging range C19:E19
+2025-08-19 10:38:42,184 - DEBUG - Re-merging range C20:E20
+2025-08-19 10:38:42,199 - DEBUG - Re-merging range C21:E21
+2025-08-19 10:38:42,199 - DEBUG - Re-merging range C22:E22
+2025-08-19 10:38:42,199 - DEBUG - Re-merging range C23:E23
+2025-08-19 10:38:42,199 - DEBUG - Re-merging range C24:E24
+2025-08-19 10:38:42,199 - DEBUG - Re-merging range C25:E25
+2025-08-19 10:38:42,199 - DEBUG - Re-merging range C26:E26
+2025-08-19 10:38:42,199 - DEBUG - Re-merging range C27:E27
+2025-08-19 10:38:42,199 - DEBUG - Re-merging range C28:E28
+2025-08-19 10:38:42,199 - DEBUG - Re-merging range C29:E29
+2025-08-19 10:38:42,199 - DEBUG - Re-merging range C30:E30
+2025-08-19 10:38:42,199 - DEBUG - Re-merging range C31:E31
+2025-08-19 10:38:42,199 - DEBUG - Re-merging range C32:E32
+2025-08-19 10:38:42,199 - DEBUG - Re-merging range C33:E33
+2025-08-19 10:38:42,199 - DEBUG - Re-merging range C34:E34
+2025-08-19 10:38:42,199 - DEBUG - Re-merging range C35:E35
+2025-08-19 10:38:42,199 - DEBUG - Re-merging range AM15:AO15
+2025-08-19 10:38:42,215 - DEBUG - Re-merging range AM16:AO16
+2025-08-19 10:38:42,215 - DEBUG - Re-merging range AM17:AO17
+2025-08-19 10:38:42,215 - DEBUG - Re-merging range AM18:AO18
+2025-08-19 10:38:42,215 - DEBUG - Re-merging range AM19:AO19
+2025-08-19 10:38:42,215 - DEBUG - Re-merging range AM20:AO20
+2025-08-19 10:38:42,215 - DEBUG - Re-merging range AM21:AO21
+2025-08-19 10:38:42,215 - DEBUG - Re-merging range AM22:AO22
+2025-08-19 10:38:42,215 - DEBUG - Re-merging range AM23:AO23
+2025-08-19 10:38:42,215 - DEBUG - Re-merging range AM24:AO24
+2025-08-19 10:38:42,215 - DEBUG - Re-merging range AM25:AO25
+2025-08-19 10:38:42,215 - DEBUG - Re-merging range AM26:AO26
+2025-08-19 10:38:42,215 - DEBUG - Re-merging range AM27:AO27
+2025-08-19 10:38:42,215 - DEBUG - Re-merging range AM28:AO28
+2025-08-19 10:38:42,215 - DEBUG - Re-merging range AM29:AO29
+2025-08-19 10:38:42,215 - DEBUG - Re-merging range AM30:AO30
+2025-08-19 10:38:42,231 - DEBUG - Re-merging range AM31:AO31
+2025-08-19 10:38:42,231 - DEBUG - Re-merging range AM32:AO32
+2025-08-19 10:38:42,231 - DEBUG - Re-merging range AM33:AO33
+2025-08-19 10:38:42,231 - DEBUG - Re-merging range AM34:AO34
+2025-08-19 10:38:42,231 - DEBUG - Re-merging range AM35:AO35
+2025-08-19 10:38:42,231 - DEBUG - Re-merging range X15:AG15
+2025-08-19 10:38:42,231 - DEBUG - Re-merging range X16:AG16
+2025-08-19 10:38:42,231 - DEBUG - Re-merging range X17:AG17
+2025-08-19 10:38:42,231 - DEBUG - Re-merging range X18:AG18
+2025-08-19 10:38:42,231 - DEBUG - Re-merging range X19:AG19
+2025-08-19 10:38:42,231 - DEBUG - Re-merging range X20:AG20
+2025-08-19 10:38:42,246 - DEBUG - Re-merging range X21:AG21
+2025-08-19 10:38:42,248 - DEBUG - Re-merging range X22:AG22
+2025-08-19 10:38:42,249 - DEBUG - Re-merging range X23:AG23
+2025-08-19 10:38:42,251 - DEBUG - Re-merging range X24:AG24
+2025-08-19 10:38:42,253 - DEBUG - Re-merging range X25:AG25
+2025-08-19 10:38:42,255 - DEBUG - Re-merging range X26:AG26
+2025-08-19 10:38:42,257 - DEBUG - Re-merging range X27:AG27
+2025-08-19 10:38:42,259 - DEBUG - Re-merging range X28:AG28
+2025-08-19 10:38:42,262 - DEBUG - Re-merging range X29:AG29
+2025-08-19 10:38:42,262 - DEBUG - Re-merging range X30:AG30
+2025-08-19 10:38:42,262 - DEBUG - Re-merging range X31:AG31
+2025-08-19 10:38:42,262 - DEBUG - Re-merging range X32:AG32
+2025-08-19 10:38:42,262 - DEBUG - Re-merging range X33:AG33
+2025-08-19 10:38:42,262 - DEBUG - Re-merging range X34:AG34
+2025-08-19 10:38:42,262 - DEBUG - Re-merging range X35:AG35
+2025-08-19 10:38:42,262 - DEBUG - Re-merging range F15:I15
+2025-08-19 10:38:42,262 - DEBUG - Re-merging range F16:I16
+2025-08-19 10:38:42,262 - DEBUG - Re-merging range F17:I17
+2025-08-19 10:38:42,277 - DEBUG - Re-merging range F18:I18
+2025-08-19 10:38:42,277 - DEBUG - Re-merging range F19:I19
+2025-08-19 10:38:42,277 - DEBUG - Re-merging range F20:I20
+2025-08-19 10:38:42,277 - DEBUG - Re-merging range F21:I21
+2025-08-19 10:38:42,277 - DEBUG - Re-merging range F22:I22
+2025-08-19 10:38:42,277 - DEBUG - Re-merging range F23:I23
+2025-08-19 10:38:42,277 - DEBUG - Re-merging range F24:I24
+2025-08-19 10:38:42,277 - DEBUG - Re-merging range F25:I25
+2025-08-19 10:38:42,277 - DEBUG - Re-merging range F26:I26
+2025-08-19 10:38:42,277 - DEBUG - Re-merging range F27:I27
+2025-08-19 10:38:42,277 - DEBUG - Re-merging range F28:I28
+2025-08-19 10:38:42,277 - DEBUG - Re-merging range F29:I29
+2025-08-19 10:38:42,277 - DEBUG - Re-merging range F30:I30
+2025-08-19 10:38:42,277 - DEBUG - Re-merging range F31:I31
+2025-08-19 10:38:42,293 - DEBUG - Re-merging range F32:I32
+2025-08-19 10:38:42,293 - DEBUG - Re-merging range F33:I33
+2025-08-19 10:38:42,293 - DEBUG - Re-merging range F34:I34
+2025-08-19 10:38:42,293 - DEBUG - Re-merging range F35:I35
+2025-08-19 10:38:42,293 - DEBUG - Re-merging range BR15:BU15
+2025-08-19 10:38:42,293 - DEBUG - Re-merging range BR16:BU16
+2025-08-19 10:38:42,293 - DEBUG - Re-merging range BR17:BU17
+2025-08-19 10:38:42,293 - DEBUG - Re-merging range BR18:BU18
+2025-08-19 10:38:42,293 - DEBUG - Re-merging range BR19:BU19
+2025-08-19 10:38:42,293 - DEBUG - Re-merging range BR20:BU20
+2025-08-19 10:38:42,293 - DEBUG - Re-merging range BR21:BU21
+2025-08-19 10:38:42,293 - DEBUG - Re-merging range BR22:BU22
+2025-08-19 10:38:42,293 - DEBUG - Re-merging range BR23:BU23
+2025-08-19 10:38:42,293 - DEBUG - Re-merging range BR24:BU24
+2025-08-19 10:38:42,308 - DEBUG - Re-merging range BR25:BU25
+2025-08-19 10:38:42,308 - DEBUG - Re-merging range BR26:BU26
+2025-08-19 10:38:42,308 - DEBUG - Re-merging range BR27:BU27
+2025-08-19 10:38:42,308 - DEBUG - Re-merging range BR28:BU28
+2025-08-19 10:38:42,308 - DEBUG - Re-merging range BR29:BU29
+2025-08-19 10:38:42,308 - DEBUG - Re-merging range BR30:BU30
+2025-08-19 10:38:42,308 - DEBUG - Re-merging range BR31:BU31
+2025-08-19 10:38:42,308 - DEBUG - Re-merging range BR32:BU32
+2025-08-19 10:38:42,308 - DEBUG - Re-merging range BR33:BU33
+2025-08-19 10:38:42,308 - DEBUG - Re-merging range BR34:BU34
+2025-08-19 10:38:42,308 - DEBUG - Re-merging range BR35:BU35
+2025-08-19 10:38:42,308 - DEBUG - Re-merging range J15:M15
+2025-08-19 10:38:42,308 - DEBUG - Re-merging range J16:M16
+2025-08-19 10:38:42,324 - DEBUG - Re-merging range J17:M17
+2025-08-19 10:38:42,324 - DEBUG - Re-merging range J18:M18
+2025-08-19 10:38:42,324 - DEBUG - Re-merging range J19:M19
+2025-08-19 10:38:42,324 - DEBUG - Re-merging range J20:M20
+2025-08-19 10:38:42,324 - DEBUG - Re-merging range J21:M21
+2025-08-19 10:38:42,324 - DEBUG - Re-merging range J22:M22
+2025-08-19 10:38:42,324 - DEBUG - Re-merging range J23:M23
+2025-08-19 10:38:42,324 - DEBUG - Re-merging range J24:M24
+2025-08-19 10:38:42,324 - DEBUG - Re-merging range J25:M25
+2025-08-19 10:38:42,324 - DEBUG - Re-merging range J26:M26
+2025-08-19 10:38:42,324 - DEBUG - Re-merging range J27:M27
+2025-08-19 10:38:42,324 - DEBUG - Re-merging range J28:M28
+2025-08-19 10:38:42,324 - DEBUG - Re-merging range J29:M29
+2025-08-19 10:38:42,324 - DEBUG - Re-merging range J30:M30
+2025-08-19 10:38:42,340 - DEBUG - Re-merging range J31:M31
+2025-08-19 10:38:42,340 - DEBUG - Re-merging range J32:M32
+2025-08-19 10:38:42,340 - DEBUG - Re-merging range J33:M33
+2025-08-19 10:38:42,340 - DEBUG - Re-merging range J34:M34
+2025-08-19 10:38:42,340 - DEBUG - Re-merging range J35:M35
+2025-08-19 10:38:42,340 - DEBUG - Re-merging range AP15:AS15
+2025-08-19 10:38:42,340 - DEBUG - Re-merging range AP16:AS16
+2025-08-19 10:38:42,340 - DEBUG - Re-merging range AP17:AS17
+2025-08-19 10:38:42,340 - DEBUG - Re-merging range AP18:AS18
+2025-08-19 10:38:42,340 - DEBUG - Re-merging range AP19:AS19
+2025-08-19 10:38:42,340 - DEBUG - Re-merging range AP20:AS20
+2025-08-19 10:38:42,340 - DEBUG - Re-merging range AP21:AS21
+2025-08-19 10:38:42,340 - DEBUG - Re-merging range AP22:AS22
+2025-08-19 10:38:42,340 - DEBUG - Re-merging range AP23:AS23
+2025-08-19 10:38:42,355 - DEBUG - Re-merging range AP24:AS24
+2025-08-19 10:38:42,355 - DEBUG - Re-merging range AP25:AS25
+2025-08-19 10:38:42,355 - DEBUG - Re-merging range AP26:AS26
+2025-08-19 10:38:42,355 - DEBUG - Re-merging range AP27:AS27
+2025-08-19 10:38:42,355 - DEBUG - Re-merging range AP28:AS28
+2025-08-19 10:38:42,355 - DEBUG - Re-merging range AP29:AS29
+2025-08-19 10:38:42,355 - DEBUG - Re-merging range AP30:AS30
+2025-08-19 10:38:42,355 - DEBUG - Re-merging range AP31:AS31
+2025-08-19 10:38:42,355 - DEBUG - Re-merging range AP32:AS32
+2025-08-19 10:38:42,355 - DEBUG - Re-merging range AP33:AS33
+2025-08-19 10:38:42,355 - DEBUG - Re-merging range AP34:AS34
+2025-08-19 10:38:42,355 - DEBUG - Re-merging range AP35:AS35
+2025-08-19 10:38:42,355 - DEBUG - Re-merging range AT15:AW15
+2025-08-19 10:38:42,371 - DEBUG - Re-merging range AT16:AW16
+2025-08-19 10:38:42,371 - DEBUG - Re-merging range AT17:AW17
+2025-08-19 10:38:42,371 - DEBUG - Re-merging range AT18:AW18
+2025-08-19 10:38:42,371 - DEBUG - Re-merging range AT19:AW19
+2025-08-19 10:38:42,371 - DEBUG - Re-merging range AT20:AW20
+2025-08-19 10:38:42,371 - DEBUG - Re-merging range AT21:AW21
+2025-08-19 10:38:42,371 - DEBUG - Re-merging range AT22:AW22
+2025-08-19 10:38:42,371 - DEBUG - Re-merging range AT23:AW23
+2025-08-19 10:38:42,371 - DEBUG - Re-merging range AT24:AW24
+2025-08-19 10:38:42,371 - DEBUG - Re-merging range AT25:AW25
+2025-08-19 10:38:42,371 - DEBUG - Re-merging range AT26:AW26
+2025-08-19 10:38:42,371 - DEBUG - Re-merging range AT27:AW27
+2025-08-19 10:38:42,371 - DEBUG - Re-merging range AT28:AW28
+2025-08-19 10:38:42,387 - DEBUG - Re-merging range AT29:AW29
+2025-08-19 10:38:42,387 - DEBUG - Re-merging range AT30:AW30
+2025-08-19 10:38:42,387 - DEBUG - Re-merging range AT31:AW31
+2025-08-19 10:38:42,387 - DEBUG - Re-merging range AT32:AW32
+2025-08-19 10:38:42,387 - DEBUG - Re-merging range AT33:AW33
+2025-08-19 10:38:42,387 - DEBUG - Re-merging range AT34:AW34
+2025-08-19 10:38:42,387 - DEBUG - Re-merging range AT35:AW35
+2025-08-19 10:38:42,387 - DEBUG - Re-merging range BF15:BI15
+2025-08-19 10:38:42,387 - DEBUG - Re-merging range BF16:BI16
+2025-08-19 10:38:42,387 - DEBUG - Re-merging range BF17:BI17
+2025-08-19 10:38:42,387 - DEBUG - Re-merging range BF18:BI18
+2025-08-19 10:38:42,387 - DEBUG - Re-merging range BF19:BI19
+2025-08-19 10:38:42,387 - DEBUG - Re-merging range BF20:BI20
+2025-08-19 10:38:42,387 - DEBUG - Re-merging range BF21:BI21
+2025-08-19 10:38:42,402 - DEBUG - Re-merging range BF22:BI22
+2025-08-19 10:38:42,402 - DEBUG - Re-merging range BF23:BI23
+2025-08-19 10:38:42,402 - DEBUG - Re-merging range BF24:BI24
+2025-08-19 10:38:42,402 - DEBUG - Re-merging range BF25:BI25
+2025-08-19 10:38:42,402 - DEBUG - Re-merging range BF26:BI26
+2025-08-19 10:38:42,402 - DEBUG - Re-merging range BF27:BI27
+2025-08-19 10:38:42,402 - DEBUG - Re-merging range BF28:BI28
+2025-08-19 10:38:42,402 - DEBUG - Re-merging range BF29:BI29
+2025-08-19 10:38:42,402 - DEBUG - Re-merging range BF30:BI30
+2025-08-19 10:38:42,402 - DEBUG - Re-merging range BF31:BI31
+2025-08-19 10:38:42,402 - DEBUG - Re-merging range BF32:BI32
+2025-08-19 10:38:42,402 - DEBUG - Re-merging range BF33:BI33
+2025-08-19 10:38:42,402 - DEBUG - Re-merging range BF34:BI34
+2025-08-19 10:38:42,418 - DEBUG - Re-merging range BF35:BI35
+2025-08-19 10:38:42,466 - DEBUG - Sheet 'Chi nhánh công ty TNHH Thương m': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:42,468 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:42,470 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:42,470 - DEBUG - Attempting to write group name 'Chi nhánh công ty TNHH Thương mại và Dịch vụ Song Bình - Trung tâm chuyển phát nhanh phía Bắc' to target anchor cell L18
+2025-08-19 10:38:42,471 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:42,481 - INFO - Inserted 15 rows into 'Chi nhánh công ty TNHH Thương m'.
+2025-08-19 10:38:42,481 - DEBUG - Copying styles and merges from source row: 14
+2025-08-19 10:38:43,027 - DEBUG - Re-merging range AI15:AL15
+2025-08-19 10:38:43,027 - DEBUG - Re-merging range AI16:AL16
+2025-08-19 10:38:43,027 - DEBUG - Re-merging range AI17:AL17
+2025-08-19 10:38:43,027 - DEBUG - Re-merging range AI18:AL18
+2025-08-19 10:38:43,027 - DEBUG - Re-merging range AI19:AL19
+2025-08-19 10:38:43,027 - DEBUG - Re-merging range AI20:AL20
+2025-08-19 10:38:43,027 - DEBUG - Re-merging range AI21:AL21
+2025-08-19 10:38:43,043 - DEBUG - Re-merging range AI22:AL22
+2025-08-19 10:38:43,043 - DEBUG - Re-merging range AI23:AL23
+2025-08-19 10:38:43,043 - DEBUG - Re-merging range AI24:AL24
+2025-08-19 10:38:43,043 - DEBUG - Re-merging range AI25:AL25
+2025-08-19 10:38:43,043 - DEBUG - Re-merging range AI26:AL26
+2025-08-19 10:38:43,043 - DEBUG - Re-merging range AI27:AL27
+2025-08-19 10:38:43,043 - DEBUG - Re-merging range AI28:AL28
+2025-08-19 10:38:43,043 - DEBUG - Re-merging range AI29:AL29
+2025-08-19 10:38:43,043 - DEBUG - Re-merging range BB15:BE15
+2025-08-19 10:38:43,043 - DEBUG - Re-merging range BB16:BE16
+2025-08-19 10:38:43,043 - DEBUG - Re-merging range BB17:BE17
+2025-08-19 10:38:43,043 - DEBUG - Re-merging range BB18:BE18
+2025-08-19 10:38:43,043 - DEBUG - Re-merging range BB19:BE19
+2025-08-19 10:38:43,043 - DEBUG - Re-merging range BB20:BE20
+2025-08-19 10:38:43,043 - DEBUG - Re-merging range BB21:BE21
+2025-08-19 10:38:43,058 - DEBUG - Re-merging range BB22:BE22
+2025-08-19 10:38:43,058 - DEBUG - Re-merging range BB23:BE23
+2025-08-19 10:38:43,058 - DEBUG - Re-merging range BB24:BE24
+2025-08-19 10:38:43,058 - DEBUG - Re-merging range BB25:BE25
+2025-08-19 10:38:43,058 - DEBUG - Re-merging range BB26:BE26
+2025-08-19 10:38:43,058 - DEBUG - Re-merging range BB27:BE27
+2025-08-19 10:38:43,058 - DEBUG - Re-merging range BB28:BE28
+2025-08-19 10:38:43,058 - DEBUG - Re-merging range BB29:BE29
+2025-08-19 10:38:43,058 - DEBUG - Re-merging range BN15:BQ15
+2025-08-19 10:38:43,058 - DEBUG - Re-merging range BN16:BQ16
+2025-08-19 10:38:43,058 - DEBUG - Re-merging range BN17:BQ17
+2025-08-19 10:38:43,058 - DEBUG - Re-merging range BN18:BQ18
+2025-08-19 10:38:43,058 - DEBUG - Re-merging range BN19:BQ19
+2025-08-19 10:38:43,058 - DEBUG - Re-merging range BN20:BQ20
+2025-08-19 10:38:43,058 - DEBUG - Re-merging range BN21:BQ21
+2025-08-19 10:38:43,074 - DEBUG - Re-merging range BN22:BQ22
+2025-08-19 10:38:43,074 - DEBUG - Re-merging range BN23:BQ23
+2025-08-19 10:38:43,074 - DEBUG - Re-merging range BN24:BQ24
+2025-08-19 10:38:43,074 - DEBUG - Re-merging range BN25:BQ25
+2025-08-19 10:38:43,074 - DEBUG - Re-merging range BN26:BQ26
+2025-08-19 10:38:43,074 - DEBUG - Re-merging range BN27:BQ27
+2025-08-19 10:38:43,074 - DEBUG - Re-merging range BN28:BQ28
+2025-08-19 10:38:43,074 - DEBUG - Re-merging range BN29:BQ29
+2025-08-19 10:38:43,074 - DEBUG - Re-merging range BV15:BX15
+2025-08-19 10:38:43,074 - DEBUG - Re-merging range BV16:BX16
+2025-08-19 10:38:43,074 - DEBUG - Re-merging range BV17:BX17
+2025-08-19 10:38:43,074 - DEBUG - Re-merging range BV18:BX18
+2025-08-19 10:38:43,074 - DEBUG - Re-merging range BV19:BX19
+2025-08-19 10:38:43,074 - DEBUG - Re-merging range BV20:BX20
+2025-08-19 10:38:43,074 - DEBUG - Re-merging range BV21:BX21
+2025-08-19 10:38:43,090 - DEBUG - Re-merging range BV22:BX22
+2025-08-19 10:38:43,091 - DEBUG - Re-merging range BV23:BX23
+2025-08-19 10:38:43,092 - DEBUG - Re-merging range BV24:BX24
+2025-08-19 10:38:43,093 - DEBUG - Re-merging range BV25:BX25
+2025-08-19 10:38:43,094 - DEBUG - Re-merging range BV26:BX26
+2025-08-19 10:38:43,095 - DEBUG - Re-merging range BV27:BX27
+2025-08-19 10:38:43,096 - DEBUG - Re-merging range BV28:BX28
+2025-08-19 10:38:43,097 - DEBUG - Re-merging range BV29:BX29
+2025-08-19 10:38:43,098 - DEBUG - Re-merging range BY15:CA15
+2025-08-19 10:38:43,099 - DEBUG - Re-merging range BY16:CA16
+2025-08-19 10:38:43,099 - DEBUG - Re-merging range BY17:CA17
+2025-08-19 10:38:43,100 - DEBUG - Re-merging range BY18:CA18
+2025-08-19 10:38:43,101 - DEBUG - Re-merging range BY19:CA19
+2025-08-19 10:38:43,102 - DEBUG - Re-merging range BY20:CA20
+2025-08-19 10:38:43,103 - DEBUG - Re-merging range BY21:CA21
+2025-08-19 10:38:43,104 - DEBUG - Re-merging range BY22:CA22
+2025-08-19 10:38:43,105 - DEBUG - Re-merging range BY23:CA23
+2025-08-19 10:38:43,106 - DEBUG - Re-merging range BY24:CA24
+2025-08-19 10:38:43,107 - DEBUG - Re-merging range BY25:CA25
+2025-08-19 10:38:43,108 - DEBUG - Re-merging range BY26:CA26
+2025-08-19 10:38:43,109 - DEBUG - Re-merging range BY27:CA27
+2025-08-19 10:38:43,110 - DEBUG - Re-merging range BY28:CA28
+2025-08-19 10:38:43,111 - DEBUG - Re-merging range BY29:CA29
+2025-08-19 10:38:43,112 - DEBUG - Re-merging range N15:W15
+2025-08-19 10:38:43,114 - DEBUG - Re-merging range N16:W16
+2025-08-19 10:38:43,116 - DEBUG - Re-merging range N17:W17
+2025-08-19 10:38:43,117 - DEBUG - Re-merging range N18:W18
+2025-08-19 10:38:43,119 - DEBUG - Re-merging range N19:W19
+2025-08-19 10:38:43,121 - DEBUG - Re-merging range N20:W20
+2025-08-19 10:38:43,122 - DEBUG - Re-merging range N21:W21
+2025-08-19 10:38:43,124 - DEBUG - Re-merging range N22:W22
+2025-08-19 10:38:43,126 - DEBUG - Re-merging range N23:W23
+2025-08-19 10:38:43,128 - DEBUG - Re-merging range N24:W24
+2025-08-19 10:38:43,130 - DEBUG - Re-merging range N25:W25
+2025-08-19 10:38:43,132 - DEBUG - Re-merging range N26:W26
+2025-08-19 10:38:43,133 - DEBUG - Re-merging range N27:W27
+2025-08-19 10:38:43,135 - DEBUG - Re-merging range N28:W28
+2025-08-19 10:38:43,136 - DEBUG - Re-merging range N29:W29
+2025-08-19 10:38:43,136 - DEBUG - Re-merging range AX15:BA15
+2025-08-19 10:38:43,136 - DEBUG - Re-merging range AX16:BA16
+2025-08-19 10:38:43,136 - DEBUG - Re-merging range AX17:BA17
+2025-08-19 10:38:43,136 - DEBUG - Re-merging range AX18:BA18
+2025-08-19 10:38:43,136 - DEBUG - Re-merging range AX19:BA19
+2025-08-19 10:38:43,136 - DEBUG - Re-merging range AX20:BA20
+2025-08-19 10:38:43,136 - DEBUG - Re-merging range AX21:BA21
+2025-08-19 10:38:43,136 - DEBUG - Re-merging range AX22:BA22
+2025-08-19 10:38:43,136 - DEBUG - Re-merging range AX23:BA23
+2025-08-19 10:38:43,136 - DEBUG - Re-merging range AX24:BA24
+2025-08-19 10:38:43,136 - DEBUG - Re-merging range AX25:BA25
+2025-08-19 10:38:43,136 - DEBUG - Re-merging range AX26:BA26
+2025-08-19 10:38:43,152 - DEBUG - Re-merging range AX27:BA27
+2025-08-19 10:38:43,152 - DEBUG - Re-merging range AX28:BA28
+2025-08-19 10:38:43,152 - DEBUG - Re-merging range AX29:BA29
+2025-08-19 10:38:43,152 - DEBUG - Re-merging range BJ15:BM15
+2025-08-19 10:38:43,152 - DEBUG - Re-merging range BJ16:BM16
+2025-08-19 10:38:43,152 - DEBUG - Re-merging range BJ17:BM17
+2025-08-19 10:38:43,152 - DEBUG - Re-merging range BJ18:BM18
+2025-08-19 10:38:43,152 - DEBUG - Re-merging range BJ19:BM19
+2025-08-19 10:38:43,152 - DEBUG - Re-merging range BJ20:BM20
+2025-08-19 10:38:43,152 - DEBUG - Re-merging range BJ21:BM21
+2025-08-19 10:38:43,152 - DEBUG - Re-merging range BJ22:BM22
+2025-08-19 10:38:43,152 - DEBUG - Re-merging range BJ23:BM23
+2025-08-19 10:38:43,152 - DEBUG - Re-merging range BJ24:BM24
+2025-08-19 10:38:43,152 - DEBUG - Re-merging range BJ25:BM25
+2025-08-19 10:38:43,152 - DEBUG - Re-merging range BJ26:BM26
+2025-08-19 10:38:43,167 - DEBUG - Re-merging range BJ27:BM27
+2025-08-19 10:38:43,167 - DEBUG - Re-merging range BJ28:BM28
+2025-08-19 10:38:43,167 - DEBUG - Re-merging range BJ29:BM29
+2025-08-19 10:38:43,167 - DEBUG - Re-merging range C15:E15
+2025-08-19 10:38:43,167 - DEBUG - Re-merging range C16:E16
+2025-08-19 10:38:43,167 - DEBUG - Re-merging range C17:E17
+2025-08-19 10:38:43,167 - DEBUG - Re-merging range C18:E18
+2025-08-19 10:38:43,167 - DEBUG - Re-merging range C19:E19
+2025-08-19 10:38:43,167 - DEBUG - Re-merging range C20:E20
+2025-08-19 10:38:43,167 - DEBUG - Re-merging range C21:E21
+2025-08-19 10:38:43,167 - DEBUG - Re-merging range C22:E22
+2025-08-19 10:38:43,167 - DEBUG - Re-merging range C23:E23
+2025-08-19 10:38:43,167 - DEBUG - Re-merging range C24:E24
+2025-08-19 10:38:43,167 - DEBUG - Re-merging range C25:E25
+2025-08-19 10:38:43,167 - DEBUG - Re-merging range C26:E26
+2025-08-19 10:38:43,183 - DEBUG - Re-merging range C27:E27
+2025-08-19 10:38:43,183 - DEBUG - Re-merging range C28:E28
+2025-08-19 10:38:43,183 - DEBUG - Re-merging range C29:E29
+2025-08-19 10:38:43,183 - DEBUG - Re-merging range AM15:AO15
+2025-08-19 10:38:43,183 - DEBUG - Re-merging range AM16:AO16
+2025-08-19 10:38:43,183 - DEBUG - Re-merging range AM17:AO17
+2025-08-19 10:38:43,183 - DEBUG - Re-merging range AM18:AO18
+2025-08-19 10:38:43,183 - DEBUG - Re-merging range AM19:AO19
+2025-08-19 10:38:43,183 - DEBUG - Re-merging range AM20:AO20
+2025-08-19 10:38:43,183 - DEBUG - Re-merging range AM21:AO21
+2025-08-19 10:38:43,183 - DEBUG - Re-merging range AM22:AO22
+2025-08-19 10:38:43,183 - DEBUG - Re-merging range AM23:AO23
+2025-08-19 10:38:43,183 - DEBUG - Re-merging range AM24:AO24
+2025-08-19 10:38:43,183 - DEBUG - Re-merging range AM25:AO25
+2025-08-19 10:38:43,183 - DEBUG - Re-merging range AM26:AO26
+2025-08-19 10:38:43,183 - DEBUG - Re-merging range AM27:AO27
+2025-08-19 10:38:43,199 - DEBUG - Re-merging range AM28:AO28
+2025-08-19 10:38:43,199 - DEBUG - Re-merging range AM29:AO29
+2025-08-19 10:38:43,199 - DEBUG - Re-merging range X15:AG15
+2025-08-19 10:38:43,199 - DEBUG - Re-merging range X16:AG16
+2025-08-19 10:38:43,199 - DEBUG - Re-merging range X17:AG17
+2025-08-19 10:38:43,199 - DEBUG - Re-merging range X18:AG18
+2025-08-19 10:38:43,199 - DEBUG - Re-merging range X19:AG19
+2025-08-19 10:38:43,199 - DEBUG - Re-merging range X20:AG20
+2025-08-19 10:38:43,199 - DEBUG - Re-merging range X21:AG21
+2025-08-19 10:38:43,199 - DEBUG - Re-merging range X22:AG22
+2025-08-19 10:38:43,214 - DEBUG - Re-merging range X23:AG23
+2025-08-19 10:38:43,214 - DEBUG - Re-merging range X24:AG24
+2025-08-19 10:38:43,214 - DEBUG - Re-merging range X25:AG25
+2025-08-19 10:38:43,214 - DEBUG - Re-merging range X26:AG26
+2025-08-19 10:38:43,214 - DEBUG - Re-merging range X27:AG27
+2025-08-19 10:38:43,214 - DEBUG - Re-merging range X28:AG28
+2025-08-19 10:38:43,214 - DEBUG - Re-merging range X29:AG29
+2025-08-19 10:38:43,214 - DEBUG - Re-merging range F15:I15
+2025-08-19 10:38:43,214 - DEBUG - Re-merging range F16:I16
+2025-08-19 10:38:43,230 - DEBUG - Re-merging range F17:I17
+2025-08-19 10:38:43,230 - DEBUG - Re-merging range F18:I18
+2025-08-19 10:38:43,230 - DEBUG - Re-merging range F19:I19
+2025-08-19 10:38:43,230 - DEBUG - Re-merging range F20:I20
+2025-08-19 10:38:43,230 - DEBUG - Re-merging range F21:I21
+2025-08-19 10:38:43,230 - DEBUG - Re-merging range F22:I22
+2025-08-19 10:38:43,230 - DEBUG - Re-merging range F23:I23
+2025-08-19 10:38:43,230 - DEBUG - Re-merging range F24:I24
+2025-08-19 10:38:43,230 - DEBUG - Re-merging range F25:I25
+2025-08-19 10:38:43,230 - DEBUG - Re-merging range F26:I26
+2025-08-19 10:38:43,230 - DEBUG - Re-merging range F27:I27
+2025-08-19 10:38:43,230 - DEBUG - Re-merging range F28:I28
+2025-08-19 10:38:43,230 - DEBUG - Re-merging range F29:I29
+2025-08-19 10:38:43,230 - DEBUG - Re-merging range BR15:BU15
+2025-08-19 10:38:43,245 - DEBUG - Re-merging range BR16:BU16
+2025-08-19 10:38:43,245 - DEBUG - Re-merging range BR17:BU17
+2025-08-19 10:38:43,245 - DEBUG - Re-merging range BR18:BU18
+2025-08-19 10:38:43,245 - DEBUG - Re-merging range BR19:BU19
+2025-08-19 10:38:43,245 - DEBUG - Re-merging range BR20:BU20
+2025-08-19 10:38:43,245 - DEBUG - Re-merging range BR21:BU21
+2025-08-19 10:38:43,245 - DEBUG - Re-merging range BR22:BU22
+2025-08-19 10:38:43,245 - DEBUG - Re-merging range BR23:BU23
+2025-08-19 10:38:43,245 - DEBUG - Re-merging range BR24:BU24
+2025-08-19 10:38:43,245 - DEBUG - Re-merging range BR25:BU25
+2025-08-19 10:38:43,245 - DEBUG - Re-merging range BR26:BU26
+2025-08-19 10:38:43,245 - DEBUG - Re-merging range BR27:BU27
+2025-08-19 10:38:43,245 - DEBUG - Re-merging range BR28:BU28
+2025-08-19 10:38:43,245 - DEBUG - Re-merging range BR29:BU29
+2025-08-19 10:38:43,261 - DEBUG - Re-merging range J15:M15
+2025-08-19 10:38:43,261 - DEBUG - Re-merging range J16:M16
+2025-08-19 10:38:43,261 - DEBUG - Re-merging range J17:M17
+2025-08-19 10:38:43,261 - DEBUG - Re-merging range J18:M18
+2025-08-19 10:38:43,261 - DEBUG - Re-merging range J19:M19
+2025-08-19 10:38:43,261 - DEBUG - Re-merging range J20:M20
+2025-08-19 10:38:43,261 - DEBUG - Re-merging range J21:M21
+2025-08-19 10:38:43,261 - DEBUG - Re-merging range J22:M22
+2025-08-19 10:38:43,261 - DEBUG - Re-merging range J23:M23
+2025-08-19 10:38:43,261 - DEBUG - Re-merging range J24:M24
+2025-08-19 10:38:43,261 - DEBUG - Re-merging range J25:M25
+2025-08-19 10:38:43,261 - DEBUG - Re-merging range J26:M26
+2025-08-19 10:38:43,261 - DEBUG - Re-merging range J27:M27
+2025-08-19 10:38:43,261 - DEBUG - Re-merging range J28:M28
+2025-08-19 10:38:43,277 - DEBUG - Re-merging range J29:M29
+2025-08-19 10:38:43,277 - DEBUG - Re-merging range AP15:AS15
+2025-08-19 10:38:43,277 - DEBUG - Re-merging range AP16:AS16
+2025-08-19 10:38:43,277 - DEBUG - Re-merging range AP17:AS17
+2025-08-19 10:38:43,277 - DEBUG - Re-merging range AP18:AS18
+2025-08-19 10:38:43,277 - DEBUG - Re-merging range AP19:AS19
+2025-08-19 10:38:43,277 - DEBUG - Re-merging range AP20:AS20
+2025-08-19 10:38:43,277 - DEBUG - Re-merging range AP21:AS21
+2025-08-19 10:38:43,277 - DEBUG - Re-merging range AP22:AS22
+2025-08-19 10:38:43,277 - DEBUG - Re-merging range AP23:AS23
+2025-08-19 10:38:43,277 - DEBUG - Re-merging range AP24:AS24
+2025-08-19 10:38:43,277 - DEBUG - Re-merging range AP25:AS25
+2025-08-19 10:38:43,277 - DEBUG - Re-merging range AP26:AS26
+2025-08-19 10:38:43,277 - DEBUG - Re-merging range AP27:AS27
+2025-08-19 10:38:43,292 - DEBUG - Re-merging range AP28:AS28
+2025-08-19 10:38:43,292 - DEBUG - Re-merging range AP29:AS29
+2025-08-19 10:38:43,292 - DEBUG - Re-merging range AT15:AW15
+2025-08-19 10:38:43,292 - DEBUG - Re-merging range AT16:AW16
+2025-08-19 10:38:43,292 - DEBUG - Re-merging range AT17:AW17
+2025-08-19 10:38:43,292 - DEBUG - Re-merging range AT18:AW18
+2025-08-19 10:38:43,292 - DEBUG - Re-merging range AT19:AW19
+2025-08-19 10:38:43,292 - DEBUG - Re-merging range AT20:AW20
+2025-08-19 10:38:43,292 - DEBUG - Re-merging range AT21:AW21
+2025-08-19 10:38:43,292 - DEBUG - Re-merging range AT22:AW22
+2025-08-19 10:38:43,292 - DEBUG - Re-merging range AT23:AW23
+2025-08-19 10:38:43,292 - DEBUG - Re-merging range AT24:AW24
+2025-08-19 10:38:43,292 - DEBUG - Re-merging range AT25:AW25
+2025-08-19 10:38:43,292 - DEBUG - Re-merging range AT26:AW26
+2025-08-19 10:38:43,308 - DEBUG - Re-merging range AT27:AW27
+2025-08-19 10:38:43,308 - DEBUG - Re-merging range AT28:AW28
+2025-08-19 10:38:43,308 - DEBUG - Re-merging range AT29:AW29
+2025-08-19 10:38:43,308 - DEBUG - Re-merging range BF15:BI15
+2025-08-19 10:38:43,308 - DEBUG - Re-merging range BF16:BI16
+2025-08-19 10:38:43,308 - DEBUG - Re-merging range BF17:BI17
+2025-08-19 10:38:43,308 - DEBUG - Re-merging range BF18:BI18
+2025-08-19 10:38:43,308 - DEBUG - Re-merging range BF19:BI19
+2025-08-19 10:38:43,308 - DEBUG - Re-merging range BF20:BI20
+2025-08-19 10:38:43,308 - DEBUG - Re-merging range BF21:BI21
+2025-08-19 10:38:43,308 - DEBUG - Re-merging range BF22:BI22
+2025-08-19 10:38:43,308 - DEBUG - Re-merging range BF23:BI23
+2025-08-19 10:38:43,308 - DEBUG - Re-merging range BF24:BI24
+2025-08-19 10:38:43,308 - DEBUG - Re-merging range BF25:BI25
+2025-08-19 10:38:43,324 - DEBUG - Re-merging range BF26:BI26
+2025-08-19 10:38:43,325 - DEBUG - Re-merging range BF27:BI27
+2025-08-19 10:38:43,326 - DEBUG - Re-merging range BF28:BI28
+2025-08-19 10:38:43,328 - DEBUG - Re-merging range BF29:BI29
+2025-08-19 10:38:43,371 - DEBUG - Sheet 'CÔNG TY TNHH ANCL TECHCO': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:43,371 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:43,371 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:43,371 - DEBUG - Attempting to write group name 'CÔNG TY TNHH ANCL TECHCO' to target anchor cell L18
+2025-08-19 10:38:43,371 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:43,542 - DEBUG - Sheet 'CÔNG TY CỔ PHẦN CÔNG NGHIỆP VÀ ': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:43,542 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:43,542 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:43,542 - DEBUG - Attempting to write group name 'CÔNG TY CỔ PHẦN CÔNG NGHIỆP VÀ THƯƠNG MẠI HTV VIỆT NAM' to target anchor cell L18
+2025-08-19 10:38:43,542 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:43,590 - DEBUG - Sheet 'CÔNG TY TNHH ORGANO (VIỆT NAM)': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:43,590 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:43,590 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:43,590 - DEBUG - Attempting to write group name 'CÔNG TY TNHH ORGANO (VIỆT NAM)' to target anchor cell L18
+2025-08-19 10:38:43,590 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:43,638 - DEBUG - Sheet 'Công ty TNHH MTV Diesel Sông Cô': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:43,638 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:43,638 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:43,638 - DEBUG - Attempting to write group name 'Công ty TNHH MTV Diesel Sông Công' to target anchor cell L18
+2025-08-19 10:38:43,638 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:43,695 - DEBUG - Sheet 'YAMAZEN CORPORATION': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:43,698 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:43,700 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:43,700 - DEBUG - Attempting to write group name 'YAMAZEN CORPORATION' to target anchor cell L18
+2025-08-19 10:38:43,700 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:43,741 - DEBUG - Sheet 'Techsteel Fabrication Pte Ltd': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:43,741 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:43,741 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:43,741 - DEBUG - Attempting to write group name 'Techsteel Fabrication Pte Ltd' to target anchor cell L18
+2025-08-19 10:38:43,741 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:43,789 - DEBUG - Sheet 'MUSASHISANGYOCORPORATION': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:43,789 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:43,789 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:43,789 - DEBUG - Attempting to write group name 'MUSASHISANGYOCORPORATION' to target anchor cell L18
+2025-08-19 10:38:43,789 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:43,838 - DEBUG - Sheet 'CÔNG TY TNHH MISUMI VIỆT NAM': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:43,838 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:43,854 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:43,854 - DEBUG - Attempting to write group name 'CÔNG TY TNHH MISUMI VIỆT NAM' to target anchor cell L18
+2025-08-19 10:38:43,854 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:43,894 - DEBUG - Sheet 'Công Ty Cổ Phần Công Nghệ PAC V': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:43,894 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:43,894 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:43,894 - DEBUG - Attempting to write group name 'Công Ty Cổ Phần Công Nghệ PAC Việt Nam' to target anchor cell L18
+2025-08-19 10:38:43,894 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:43,943 - DEBUG - Sheet 'Công ty TNHH Keyence Việt Nam': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:43,943 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:43,943 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:43,943 - DEBUG - Attempting to write group name 'Công ty TNHH Keyence Việt Nam' to target anchor cell L18
+2025-08-19 10:38:43,943 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:43,998 - DEBUG - Sheet 'Công Ty TNHH V-Stainless Steel': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:43,998 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:43,998 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:43,998 - DEBUG - Attempting to write group name 'Công Ty TNHH V-Stainless Steel' to target anchor cell L18
+2025-08-19 10:38:43,998 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:44,045 - DEBUG - Sheet 'CÔNG TY TNHH THƯƠNG MẠI VÀ DỊCH1': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:44,061 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:44,061 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:44,061 - DEBUG - Attempting to write group name 'CÔNG TY TNHH THƯƠNG MẠI VÀ DỊCH VỤ KỸ THUẬT UFO VIỆT NAM' to target anchor cell L18
+2025-08-19 10:38:44,061 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:44,077 - INFO - Inserted 20 rows into 'CÔNG TY TNHH THƯƠNG MẠI VÀ DỊCH'.
+2025-08-19 10:38:44,077 - DEBUG - Copying styles and merges from source row: 14
+2025-08-19 10:38:44,808 - DEBUG - Re-merging range AI15:AL15
+2025-08-19 10:38:44,808 - DEBUG - Re-merging range AI16:AL16
+2025-08-19 10:38:44,808 - DEBUG - Re-merging range AI17:AL17
+2025-08-19 10:38:44,808 - DEBUG - Re-merging range AI18:AL18
+2025-08-19 10:38:44,808 - DEBUG - Re-merging range AI19:AL19
+2025-08-19 10:38:44,808 - DEBUG - Re-merging range AI20:AL20
+2025-08-19 10:38:44,808 - DEBUG - Re-merging range AI21:AL21
+2025-08-19 10:38:44,808 - DEBUG - Re-merging range AI22:AL22
+2025-08-19 10:38:44,808 - DEBUG - Re-merging range AI23:AL23
+2025-08-19 10:38:44,808 - DEBUG - Re-merging range AI24:AL24
+2025-08-19 10:38:44,808 - DEBUG - Re-merging range AI25:AL25
+2025-08-19 10:38:44,824 - DEBUG - Re-merging range AI26:AL26
+2025-08-19 10:38:44,824 - DEBUG - Re-merging range AI27:AL27
+2025-08-19 10:38:44,824 - DEBUG - Re-merging range AI28:AL28
+2025-08-19 10:38:44,824 - DEBUG - Re-merging range AI29:AL29
+2025-08-19 10:38:44,824 - DEBUG - Re-merging range AI30:AL30
+2025-08-19 10:38:44,824 - DEBUG - Re-merging range AI31:AL31
+2025-08-19 10:38:44,824 - DEBUG - Re-merging range AI32:AL32
+2025-08-19 10:38:44,824 - DEBUG - Re-merging range AI33:AL33
+2025-08-19 10:38:44,824 - DEBUG - Re-merging range AI34:AL34
+2025-08-19 10:38:44,824 - DEBUG - Re-merging range BB15:BE15
+2025-08-19 10:38:44,824 - DEBUG - Re-merging range BB16:BE16
+2025-08-19 10:38:44,824 - DEBUG - Re-merging range BB17:BE17
+2025-08-19 10:38:44,824 - DEBUG - Re-merging range BB18:BE18
+2025-08-19 10:38:44,824 - DEBUG - Re-merging range BB19:BE19
+2025-08-19 10:38:44,824 - DEBUG - Re-merging range BB20:BE20
+2025-08-19 10:38:44,840 - DEBUG - Re-merging range BB21:BE21
+2025-08-19 10:38:44,840 - DEBUG - Re-merging range BB22:BE22
+2025-08-19 10:38:44,840 - DEBUG - Re-merging range BB23:BE23
+2025-08-19 10:38:44,840 - DEBUG - Re-merging range BB24:BE24
+2025-08-19 10:38:44,840 - DEBUG - Re-merging range BB25:BE25
+2025-08-19 10:38:44,840 - DEBUG - Re-merging range BB26:BE26
+2025-08-19 10:38:44,840 - DEBUG - Re-merging range BB27:BE27
+2025-08-19 10:38:44,840 - DEBUG - Re-merging range BB28:BE28
+2025-08-19 10:38:44,840 - DEBUG - Re-merging range BB29:BE29
+2025-08-19 10:38:44,840 - DEBUG - Re-merging range BB30:BE30
+2025-08-19 10:38:44,840 - DEBUG - Re-merging range BB31:BE31
+2025-08-19 10:38:44,840 - DEBUG - Re-merging range BB32:BE32
+2025-08-19 10:38:44,840 - DEBUG - Re-merging range BB33:BE33
+2025-08-19 10:38:44,840 - DEBUG - Re-merging range BB34:BE34
+2025-08-19 10:38:44,840 - DEBUG - Re-merging range BN15:BQ15
+2025-08-19 10:38:44,855 - DEBUG - Re-merging range BN16:BQ16
+2025-08-19 10:38:44,856 - DEBUG - Re-merging range BN17:BQ17
+2025-08-19 10:38:44,857 - DEBUG - Re-merging range BN18:BQ18
+2025-08-19 10:38:44,858 - DEBUG - Re-merging range BN19:BQ19
+2025-08-19 10:38:44,859 - DEBUG - Re-merging range BN20:BQ20
+2025-08-19 10:38:44,860 - DEBUG - Re-merging range BN21:BQ21
+2025-08-19 10:38:44,862 - DEBUG - Re-merging range BN22:BQ22
+2025-08-19 10:38:44,863 - DEBUG - Re-merging range BN23:BQ23
+2025-08-19 10:38:44,864 - DEBUG - Re-merging range BN24:BQ24
+2025-08-19 10:38:44,865 - DEBUG - Re-merging range BN25:BQ25
+2025-08-19 10:38:44,866 - DEBUG - Re-merging range BN26:BQ26
+2025-08-19 10:38:44,867 - DEBUG - Re-merging range BN27:BQ27
+2025-08-19 10:38:44,868 - DEBUG - Re-merging range BN28:BQ28
+2025-08-19 10:38:44,869 - DEBUG - Re-merging range BN29:BQ29
+2025-08-19 10:38:44,870 - DEBUG - Re-merging range BN30:BQ30
+2025-08-19 10:38:44,870 - DEBUG - Re-merging range BN31:BQ31
+2025-08-19 10:38:44,870 - DEBUG - Re-merging range BN32:BQ32
+2025-08-19 10:38:44,870 - DEBUG - Re-merging range BN33:BQ33
+2025-08-19 10:38:44,870 - DEBUG - Re-merging range BN34:BQ34
+2025-08-19 10:38:44,870 - DEBUG - Re-merging range BV15:BX15
+2025-08-19 10:38:44,870 - DEBUG - Re-merging range BV16:BX16
+2025-08-19 10:38:44,870 - DEBUG - Re-merging range BV17:BX17
+2025-08-19 10:38:44,870 - DEBUG - Re-merging range BV18:BX18
+2025-08-19 10:38:44,870 - DEBUG - Re-merging range BV19:BX19
+2025-08-19 10:38:44,870 - DEBUG - Re-merging range BV20:BX20
+2025-08-19 10:38:44,870 - DEBUG - Re-merging range BV21:BX21
+2025-08-19 10:38:44,870 - DEBUG - Re-merging range BV22:BX22
+2025-08-19 10:38:44,870 - DEBUG - Re-merging range BV23:BX23
+2025-08-19 10:38:44,870 - DEBUG - Re-merging range BV24:BX24
+2025-08-19 10:38:44,870 - DEBUG - Re-merging range BV25:BX25
+2025-08-19 10:38:44,886 - DEBUG - Re-merging range BV26:BX26
+2025-08-19 10:38:44,886 - DEBUG - Re-merging range BV27:BX27
+2025-08-19 10:38:44,886 - DEBUG - Re-merging range BV28:BX28
+2025-08-19 10:38:44,886 - DEBUG - Re-merging range BV29:BX29
+2025-08-19 10:38:44,886 - DEBUG - Re-merging range BV30:BX30
+2025-08-19 10:38:44,886 - DEBUG - Re-merging range BV31:BX31
+2025-08-19 10:38:44,886 - DEBUG - Re-merging range BV32:BX32
+2025-08-19 10:38:44,886 - DEBUG - Re-merging range BV33:BX33
+2025-08-19 10:38:44,886 - DEBUG - Re-merging range BV34:BX34
+2025-08-19 10:38:44,886 - DEBUG - Re-merging range BY15:CA15
+2025-08-19 10:38:44,886 - DEBUG - Re-merging range BY16:CA16
+2025-08-19 10:38:44,886 - DEBUG - Re-merging range BY17:CA17
+2025-08-19 10:38:44,886 - DEBUG - Re-merging range BY18:CA18
+2025-08-19 10:38:44,886 - DEBUG - Re-merging range BY19:CA19
+2025-08-19 10:38:44,886 - DEBUG - Re-merging range BY20:CA20
+2025-08-19 10:38:44,886 - DEBUG - Re-merging range BY21:CA21
+2025-08-19 10:38:44,902 - DEBUG - Re-merging range BY22:CA22
+2025-08-19 10:38:44,902 - DEBUG - Re-merging range BY23:CA23
+2025-08-19 10:38:44,902 - DEBUG - Re-merging range BY24:CA24
+2025-08-19 10:38:44,902 - DEBUG - Re-merging range BY25:CA25
+2025-08-19 10:38:44,902 - DEBUG - Re-merging range BY26:CA26
+2025-08-19 10:38:44,902 - DEBUG - Re-merging range BY27:CA27
+2025-08-19 10:38:44,902 - DEBUG - Re-merging range BY28:CA28
+2025-08-19 10:38:44,902 - DEBUG - Re-merging range BY29:CA29
+2025-08-19 10:38:44,902 - DEBUG - Re-merging range BY30:CA30
+2025-08-19 10:38:44,902 - DEBUG - Re-merging range BY31:CA31
+2025-08-19 10:38:44,902 - DEBUG - Re-merging range BY32:CA32
+2025-08-19 10:38:44,902 - DEBUG - Re-merging range BY33:CA33
+2025-08-19 10:38:44,902 - DEBUG - Re-merging range BY34:CA34
+2025-08-19 10:38:44,902 - DEBUG - Re-merging range N15:W15
+2025-08-19 10:38:44,902 - DEBUG - Re-merging range N16:W16
+2025-08-19 10:38:44,917 - DEBUG - Re-merging range N17:W17
+2025-08-19 10:38:44,917 - DEBUG - Re-merging range N18:W18
+2025-08-19 10:38:44,917 - DEBUG - Re-merging range N19:W19
+2025-08-19 10:38:44,917 - DEBUG - Re-merging range N20:W20
+2025-08-19 10:38:44,917 - DEBUG - Re-merging range N21:W21
+2025-08-19 10:38:44,917 - DEBUG - Re-merging range N22:W22
+2025-08-19 10:38:44,917 - DEBUG - Re-merging range N23:W23
+2025-08-19 10:38:44,917 - DEBUG - Re-merging range N24:W24
+2025-08-19 10:38:44,917 - DEBUG - Re-merging range N25:W25
+2025-08-19 10:38:44,933 - DEBUG - Re-merging range N26:W26
+2025-08-19 10:38:44,933 - DEBUG - Re-merging range N27:W27
+2025-08-19 10:38:44,933 - DEBUG - Re-merging range N28:W28
+2025-08-19 10:38:44,933 - DEBUG - Re-merging range N29:W29
+2025-08-19 10:38:44,933 - DEBUG - Re-merging range N30:W30
+2025-08-19 10:38:44,933 - DEBUG - Re-merging range N31:W31
+2025-08-19 10:38:44,933 - DEBUG - Re-merging range N32:W32
+2025-08-19 10:38:44,933 - DEBUG - Re-merging range N33:W33
+2025-08-19 10:38:44,949 - DEBUG - Re-merging range N34:W34
+2025-08-19 10:38:44,949 - DEBUG - Re-merging range AX15:BA15
+2025-08-19 10:38:44,949 - DEBUG - Re-merging range AX16:BA16
+2025-08-19 10:38:44,949 - DEBUG - Re-merging range AX17:BA17
+2025-08-19 10:38:44,949 - DEBUG - Re-merging range AX18:BA18
+2025-08-19 10:38:44,949 - DEBUG - Re-merging range AX19:BA19
+2025-08-19 10:38:44,949 - DEBUG - Re-merging range AX20:BA20
+2025-08-19 10:38:44,949 - DEBUG - Re-merging range AX21:BA21
+2025-08-19 10:38:44,949 - DEBUG - Re-merging range AX22:BA22
+2025-08-19 10:38:44,949 - DEBUG - Re-merging range AX23:BA23
+2025-08-19 10:38:44,949 - DEBUG - Re-merging range AX24:BA24
+2025-08-19 10:38:44,949 - DEBUG - Re-merging range AX25:BA25
+2025-08-19 10:38:44,949 - DEBUG - Re-merging range AX26:BA26
+2025-08-19 10:38:44,949 - DEBUG - Re-merging range AX27:BA27
+2025-08-19 10:38:44,964 - DEBUG - Re-merging range AX28:BA28
+2025-08-19 10:38:44,964 - DEBUG - Re-merging range AX29:BA29
+2025-08-19 10:38:44,964 - DEBUG - Re-merging range AX30:BA30
+2025-08-19 10:38:44,964 - DEBUG - Re-merging range AX31:BA31
+2025-08-19 10:38:44,964 - DEBUG - Re-merging range AX32:BA32
+2025-08-19 10:38:44,964 - DEBUG - Re-merging range AX33:BA33
+2025-08-19 10:38:44,964 - DEBUG - Re-merging range AX34:BA34
+2025-08-19 10:38:44,964 - DEBUG - Re-merging range BJ15:BM15
+2025-08-19 10:38:44,964 - DEBUG - Re-merging range BJ16:BM16
+2025-08-19 10:38:44,964 - DEBUG - Re-merging range BJ17:BM17
+2025-08-19 10:38:44,964 - DEBUG - Re-merging range BJ18:BM18
+2025-08-19 10:38:44,964 - DEBUG - Re-merging range BJ19:BM19
+2025-08-19 10:38:44,964 - DEBUG - Re-merging range BJ20:BM20
+2025-08-19 10:38:44,964 - DEBUG - Re-merging range BJ21:BM21
+2025-08-19 10:38:44,980 - DEBUG - Re-merging range BJ22:BM22
+2025-08-19 10:38:44,980 - DEBUG - Re-merging range BJ23:BM23
+2025-08-19 10:38:44,980 - DEBUG - Re-merging range BJ24:BM24
+2025-08-19 10:38:44,980 - DEBUG - Re-merging range BJ25:BM25
+2025-08-19 10:38:44,980 - DEBUG - Re-merging range BJ26:BM26
+2025-08-19 10:38:44,980 - DEBUG - Re-merging range BJ27:BM27
+2025-08-19 10:38:44,980 - DEBUG - Re-merging range BJ28:BM28
+2025-08-19 10:38:44,980 - DEBUG - Re-merging range BJ29:BM29
+2025-08-19 10:38:44,980 - DEBUG - Re-merging range BJ30:BM30
+2025-08-19 10:38:44,980 - DEBUG - Re-merging range BJ31:BM31
+2025-08-19 10:38:44,980 - DEBUG - Re-merging range BJ32:BM32
+2025-08-19 10:38:44,980 - DEBUG - Re-merging range BJ33:BM33
+2025-08-19 10:38:44,980 - DEBUG - Re-merging range BJ34:BM34
+2025-08-19 10:38:44,980 - DEBUG - Re-merging range C15:E15
+2025-08-19 10:38:44,995 - DEBUG - Re-merging range C16:E16
+2025-08-19 10:38:44,995 - DEBUG - Re-merging range C17:E17
+2025-08-19 10:38:44,995 - DEBUG - Re-merging range C18:E18
+2025-08-19 10:38:44,995 - DEBUG - Re-merging range C19:E19
+2025-08-19 10:38:44,995 - DEBUG - Re-merging range C20:E20
+2025-08-19 10:38:44,995 - DEBUG - Re-merging range C21:E21
+2025-08-19 10:38:44,995 - DEBUG - Re-merging range C22:E22
+2025-08-19 10:38:44,995 - DEBUG - Re-merging range C23:E23
+2025-08-19 10:38:44,995 - DEBUG - Re-merging range C24:E24
+2025-08-19 10:38:44,995 - DEBUG - Re-merging range C25:E25
+2025-08-19 10:38:44,995 - DEBUG - Re-merging range C26:E26
+2025-08-19 10:38:44,995 - DEBUG - Re-merging range C27:E27
+2025-08-19 10:38:44,995 - DEBUG - Re-merging range C28:E28
+2025-08-19 10:38:44,995 - DEBUG - Re-merging range C29:E29
+2025-08-19 10:38:44,995 - DEBUG - Re-merging range C30:E30
+2025-08-19 10:38:44,995 - DEBUG - Re-merging range C31:E31
+2025-08-19 10:38:45,011 - DEBUG - Re-merging range C32:E32
+2025-08-19 10:38:45,011 - DEBUG - Re-merging range C33:E33
+2025-08-19 10:38:45,011 - DEBUG - Re-merging range C34:E34
+2025-08-19 10:38:45,011 - DEBUG - Re-merging range AM15:AO15
+2025-08-19 10:38:45,011 - DEBUG - Re-merging range AM16:AO16
+2025-08-19 10:38:45,011 - DEBUG - Re-merging range AM17:AO17
+2025-08-19 10:38:45,011 - DEBUG - Re-merging range AM18:AO18
+2025-08-19 10:38:45,011 - DEBUG - Re-merging range AM19:AO19
+2025-08-19 10:38:45,011 - DEBUG - Re-merging range AM20:AO20
+2025-08-19 10:38:45,011 - DEBUG - Re-merging range AM21:AO21
+2025-08-19 10:38:45,011 - DEBUG - Re-merging range AM22:AO22
+2025-08-19 10:38:45,011 - DEBUG - Re-merging range AM23:AO23
+2025-08-19 10:38:45,011 - DEBUG - Re-merging range AM24:AO24
+2025-08-19 10:38:45,011 - DEBUG - Re-merging range AM25:AO25
+2025-08-19 10:38:45,011 - DEBUG - Re-merging range AM26:AO26
+2025-08-19 10:38:45,027 - DEBUG - Re-merging range AM27:AO27
+2025-08-19 10:38:45,027 - DEBUG - Re-merging range AM28:AO28
+2025-08-19 10:38:45,027 - DEBUG - Re-merging range AM29:AO29
+2025-08-19 10:38:45,027 - DEBUG - Re-merging range AM30:AO30
+2025-08-19 10:38:45,027 - DEBUG - Re-merging range AM31:AO31
+2025-08-19 10:38:45,027 - DEBUG - Re-merging range AM32:AO32
+2025-08-19 10:38:45,027 - DEBUG - Re-merging range AM33:AO33
+2025-08-19 10:38:45,027 - DEBUG - Re-merging range AM34:AO34
+2025-08-19 10:38:45,027 - DEBUG - Re-merging range X15:AG15
+2025-08-19 10:38:45,027 - DEBUG - Re-merging range X16:AG16
+2025-08-19 10:38:45,027 - DEBUG - Re-merging range X17:AG17
+2025-08-19 10:38:45,027 - DEBUG - Re-merging range X18:AG18
+2025-08-19 10:38:45,027 - DEBUG - Re-merging range X19:AG19
+2025-08-19 10:38:45,042 - DEBUG - Re-merging range X20:AG20
+2025-08-19 10:38:45,042 - DEBUG - Re-merging range X21:AG21
+2025-08-19 10:38:45,042 - DEBUG - Re-merging range X22:AG22
+2025-08-19 10:38:45,042 - DEBUG - Re-merging range X23:AG23
+2025-08-19 10:38:45,042 - DEBUG - Re-merging range X24:AG24
+2025-08-19 10:38:45,042 - DEBUG - Re-merging range X25:AG25
+2025-08-19 10:38:45,042 - DEBUG - Re-merging range X26:AG26
+2025-08-19 10:38:45,042 - DEBUG - Re-merging range X27:AG27
+2025-08-19 10:38:45,058 - DEBUG - Re-merging range X28:AG28
+2025-08-19 10:38:45,060 - DEBUG - Re-merging range X29:AG29
+2025-08-19 10:38:45,062 - DEBUG - Re-merging range X30:AG30
+2025-08-19 10:38:45,063 - DEBUG - Re-merging range X31:AG31
+2025-08-19 10:38:45,065 - DEBUG - Re-merging range X32:AG32
+2025-08-19 10:38:45,067 - DEBUG - Re-merging range X33:AG33
+2025-08-19 10:38:45,069 - DEBUG - Re-merging range X34:AG34
+2025-08-19 10:38:45,071 - DEBUG - Re-merging range F15:I15
+2025-08-19 10:38:45,072 - DEBUG - Re-merging range F16:I16
+2025-08-19 10:38:45,073 - DEBUG - Re-merging range F17:I17
+2025-08-19 10:38:45,074 - DEBUG - Re-merging range F18:I18
+2025-08-19 10:38:45,075 - DEBUG - Re-merging range F19:I19
+2025-08-19 10:38:45,077 - DEBUG - Re-merging range F20:I20
+2025-08-19 10:38:45,078 - DEBUG - Re-merging range F21:I21
+2025-08-19 10:38:45,079 - DEBUG - Re-merging range F22:I22
+2025-08-19 10:38:45,080 - DEBUG - Re-merging range F23:I23
+2025-08-19 10:38:45,081 - DEBUG - Re-merging range F24:I24
+2025-08-19 10:38:45,082 - DEBUG - Re-merging range F25:I25
+2025-08-19 10:38:45,083 - DEBUG - Re-merging range F26:I26
+2025-08-19 10:38:45,084 - DEBUG - Re-merging range F27:I27
+2025-08-19 10:38:45,086 - DEBUG - Re-merging range F28:I28
+2025-08-19 10:38:45,087 - DEBUG - Re-merging range F29:I29
+2025-08-19 10:38:45,088 - DEBUG - Re-merging range F30:I30
+2025-08-19 10:38:45,089 - DEBUG - Re-merging range F31:I31
+2025-08-19 10:38:45,090 - DEBUG - Re-merging range F32:I32
+2025-08-19 10:38:45,091 - DEBUG - Re-merging range F33:I33
+2025-08-19 10:38:45,092 - DEBUG - Re-merging range F34:I34
+2025-08-19 10:38:45,094 - DEBUG - Re-merging range BR15:BU15
+2025-08-19 10:38:45,095 - DEBUG - Re-merging range BR16:BU16
+2025-08-19 10:38:45,096 - DEBUG - Re-merging range BR17:BU17
+2025-08-19 10:38:45,097 - DEBUG - Re-merging range BR18:BU18
+2025-08-19 10:38:45,098 - DEBUG - Re-merging range BR19:BU19
+2025-08-19 10:38:45,099 - DEBUG - Re-merging range BR20:BU20
+2025-08-19 10:38:45,100 - DEBUG - Re-merging range BR21:BU21
+2025-08-19 10:38:45,101 - DEBUG - Re-merging range BR22:BU22
+2025-08-19 10:38:45,103 - DEBUG - Re-merging range BR23:BU23
+2025-08-19 10:38:45,104 - DEBUG - Re-merging range BR24:BU24
+2025-08-19 10:38:45,105 - DEBUG - Re-merging range BR25:BU25
+2025-08-19 10:38:45,105 - DEBUG - Re-merging range BR26:BU26
+2025-08-19 10:38:45,105 - DEBUG - Re-merging range BR27:BU27
+2025-08-19 10:38:45,105 - DEBUG - Re-merging range BR28:BU28
+2025-08-19 10:38:45,105 - DEBUG - Re-merging range BR29:BU29
+2025-08-19 10:38:45,105 - DEBUG - Re-merging range BR30:BU30
+2025-08-19 10:38:45,105 - DEBUG - Re-merging range BR31:BU31
+2025-08-19 10:38:45,105 - DEBUG - Re-merging range BR32:BU32
+2025-08-19 10:38:45,105 - DEBUG - Re-merging range BR33:BU33
+2025-08-19 10:38:45,105 - DEBUG - Re-merging range BR34:BU34
+2025-08-19 10:38:45,105 - DEBUG - Re-merging range J15:M15
+2025-08-19 10:38:45,105 - DEBUG - Re-merging range J16:M16
+2025-08-19 10:38:45,105 - DEBUG - Re-merging range J17:M17
+2025-08-19 10:38:45,105 - DEBUG - Re-merging range J18:M18
+2025-08-19 10:38:45,121 - DEBUG - Re-merging range J19:M19
+2025-08-19 10:38:45,121 - DEBUG - Re-merging range J20:M20
+2025-08-19 10:38:45,121 - DEBUG - Re-merging range J21:M21
+2025-08-19 10:38:45,121 - DEBUG - Re-merging range J22:M22
+2025-08-19 10:38:45,121 - DEBUG - Re-merging range J23:M23
+2025-08-19 10:38:45,121 - DEBUG - Re-merging range J24:M24
+2025-08-19 10:38:45,121 - DEBUG - Re-merging range J25:M25
+2025-08-19 10:38:45,121 - DEBUG - Re-merging range J26:M26
+2025-08-19 10:38:45,121 - DEBUG - Re-merging range J27:M27
+2025-08-19 10:38:45,121 - DEBUG - Re-merging range J28:M28
+2025-08-19 10:38:45,121 - DEBUG - Re-merging range J29:M29
+2025-08-19 10:38:45,121 - DEBUG - Re-merging range J30:M30
+2025-08-19 10:38:45,121 - DEBUG - Re-merging range J31:M31
+2025-08-19 10:38:45,121 - DEBUG - Re-merging range J32:M32
+2025-08-19 10:38:45,137 - DEBUG - Re-merging range J33:M33
+2025-08-19 10:38:45,137 - DEBUG - Re-merging range J34:M34
+2025-08-19 10:38:45,137 - DEBUG - Re-merging range AP15:AS15
+2025-08-19 10:38:45,137 - DEBUG - Re-merging range AP16:AS16
+2025-08-19 10:38:45,137 - DEBUG - Re-merging range AP17:AS17
+2025-08-19 10:38:45,137 - DEBUG - Re-merging range AP18:AS18
+2025-08-19 10:38:45,137 - DEBUG - Re-merging range AP19:AS19
+2025-08-19 10:38:45,137 - DEBUG - Re-merging range AP20:AS20
+2025-08-19 10:38:45,137 - DEBUG - Re-merging range AP21:AS21
+2025-08-19 10:38:45,137 - DEBUG - Re-merging range AP22:AS22
+2025-08-19 10:38:45,137 - DEBUG - Re-merging range AP23:AS23
+2025-08-19 10:38:45,137 - DEBUG - Re-merging range AP24:AS24
+2025-08-19 10:38:45,137 - DEBUG - Re-merging range AP25:AS25
+2025-08-19 10:38:45,137 - DEBUG - Re-merging range AP26:AS26
+2025-08-19 10:38:45,152 - DEBUG - Re-merging range AP27:AS27
+2025-08-19 10:38:45,152 - DEBUG - Re-merging range AP28:AS28
+2025-08-19 10:38:45,152 - DEBUG - Re-merging range AP29:AS29
+2025-08-19 10:38:45,152 - DEBUG - Re-merging range AP30:AS30
+2025-08-19 10:38:45,152 - DEBUG - Re-merging range AP31:AS31
+2025-08-19 10:38:45,152 - DEBUG - Re-merging range AP32:AS32
+2025-08-19 10:38:45,152 - DEBUG - Re-merging range AP33:AS33
+2025-08-19 10:38:45,152 - DEBUG - Re-merging range AP34:AS34
+2025-08-19 10:38:45,152 - DEBUG - Re-merging range AT15:AW15
+2025-08-19 10:38:45,152 - DEBUG - Re-merging range AT16:AW16
+2025-08-19 10:38:45,152 - DEBUG - Re-merging range AT17:AW17
+2025-08-19 10:38:45,152 - DEBUG - Re-merging range AT18:AW18
+2025-08-19 10:38:45,152 - DEBUG - Re-merging range AT19:AW19
+2025-08-19 10:38:45,168 - DEBUG - Re-merging range AT20:AW20
+2025-08-19 10:38:45,168 - DEBUG - Re-merging range AT21:AW21
+2025-08-19 10:38:45,168 - DEBUG - Re-merging range AT22:AW22
+2025-08-19 10:38:45,168 - DEBUG - Re-merging range AT23:AW23
+2025-08-19 10:38:45,168 - DEBUG - Re-merging range AT24:AW24
+2025-08-19 10:38:45,168 - DEBUG - Re-merging range AT25:AW25
+2025-08-19 10:38:45,168 - DEBUG - Re-merging range AT26:AW26
+2025-08-19 10:38:45,168 - DEBUG - Re-merging range AT27:AW27
+2025-08-19 10:38:45,168 - DEBUG - Re-merging range AT28:AW28
+2025-08-19 10:38:45,168 - DEBUG - Re-merging range AT29:AW29
+2025-08-19 10:38:45,168 - DEBUG - Re-merging range AT30:AW30
+2025-08-19 10:38:45,168 - DEBUG - Re-merging range AT31:AW31
+2025-08-19 10:38:45,168 - DEBUG - Re-merging range AT32:AW32
+2025-08-19 10:38:45,168 - DEBUG - Re-merging range AT33:AW33
+2025-08-19 10:38:45,184 - DEBUG - Re-merging range AT34:AW34
+2025-08-19 10:38:45,186 - DEBUG - Re-merging range BF15:BI15
+2025-08-19 10:38:45,187 - DEBUG - Re-merging range BF16:BI16
+2025-08-19 10:38:45,188 - DEBUG - Re-merging range BF17:BI17
+2025-08-19 10:38:45,189 - DEBUG - Re-merging range BF18:BI18
+2025-08-19 10:38:45,190 - DEBUG - Re-merging range BF19:BI19
+2025-08-19 10:38:45,191 - DEBUG - Re-merging range BF20:BI20
+2025-08-19 10:38:45,192 - DEBUG - Re-merging range BF21:BI21
+2025-08-19 10:38:45,193 - DEBUG - Re-merging range BF22:BI22
+2025-08-19 10:38:45,194 - DEBUG - Re-merging range BF23:BI23
+2025-08-19 10:38:45,196 - DEBUG - Re-merging range BF24:BI24
+2025-08-19 10:38:45,197 - DEBUG - Re-merging range BF25:BI25
+2025-08-19 10:38:45,198 - DEBUG - Re-merging range BF26:BI26
+2025-08-19 10:38:45,199 - DEBUG - Re-merging range BF27:BI27
+2025-08-19 10:38:45,199 - DEBUG - Re-merging range BF28:BI28
+2025-08-19 10:38:45,199 - DEBUG - Re-merging range BF29:BI29
+2025-08-19 10:38:45,199 - DEBUG - Re-merging range BF30:BI30
+2025-08-19 10:38:45,199 - DEBUG - Re-merging range BF31:BI31
+2025-08-19 10:38:45,199 - DEBUG - Re-merging range BF32:BI32
+2025-08-19 10:38:45,199 - DEBUG - Re-merging range BF33:BI33
+2025-08-19 10:38:45,199 - DEBUG - Re-merging range BF34:BI34
+2025-08-19 10:38:45,245 - DEBUG - Sheet 'CÔNG TY TNHH KOYO MACHINE VIET ': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:45,245 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:45,261 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:45,261 - DEBUG - Attempting to write group name 'CÔNG TY TNHH KOYO MACHINE VIET NAM' to target anchor cell L18
+2025-08-19 10:38:45,261 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:45,302 - DEBUG - Sheet 'CÔNG TY CỔ PHẦN CHÍNH XÁC TCI': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:45,302 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:45,302 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:45,302 - DEBUG - Attempting to write group name 'CÔNG TY CỔ PHẦN CHÍNH XÁC TCI' to target anchor cell L18
+2025-08-19 10:38:45,302 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:45,350 - DEBUG - Sheet 'CÔNG TY TNHH CÔNG NGHỆ ANTEK VI': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:45,350 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:45,350 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:45,350 - DEBUG - Attempting to write group name 'CÔNG TY TNHH CÔNG NGHỆ ANTEK VIỆT NAM' to target anchor cell L18
+2025-08-19 10:38:45,350 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:45,365 - INFO - Inserted 8 rows into 'CÔNG TY TNHH CÔNG NGHỆ ANTEK VI'.
+2025-08-19 10:38:45,365 - DEBUG - Copying styles and merges from source row: 14
+2025-08-19 10:38:45,668 - DEBUG - Re-merging range AI15:AL15
+2025-08-19 10:38:45,668 - DEBUG - Re-merging range AI16:AL16
+2025-08-19 10:38:45,668 - DEBUG - Re-merging range AI17:AL17
+2025-08-19 10:38:45,668 - DEBUG - Re-merging range AI18:AL18
+2025-08-19 10:38:45,668 - DEBUG - Re-merging range AI19:AL19
+2025-08-19 10:38:45,668 - DEBUG - Re-merging range AI20:AL20
+2025-08-19 10:38:45,668 - DEBUG - Re-merging range AI21:AL21
+2025-08-19 10:38:45,668 - DEBUG - Re-merging range AI22:AL22
+2025-08-19 10:38:45,668 - DEBUG - Re-merging range BB15:BE15
+2025-08-19 10:38:45,668 - DEBUG - Re-merging range BB16:BE16
+2025-08-19 10:38:45,668 - DEBUG - Re-merging range BB17:BE17
+2025-08-19 10:38:45,668 - DEBUG - Re-merging range BB18:BE18
+2025-08-19 10:38:45,668 - DEBUG - Re-merging range BB19:BE19
+2025-08-19 10:38:45,668 - DEBUG - Re-merging range BB20:BE20
+2025-08-19 10:38:45,668 - DEBUG - Re-merging range BB21:BE21
+2025-08-19 10:38:45,683 - DEBUG - Re-merging range BB22:BE22
+2025-08-19 10:38:45,683 - DEBUG - Re-merging range BN15:BQ15
+2025-08-19 10:38:45,683 - DEBUG - Re-merging range BN16:BQ16
+2025-08-19 10:38:45,683 - DEBUG - Re-merging range BN17:BQ17
+2025-08-19 10:38:45,683 - DEBUG - Re-merging range BN18:BQ18
+2025-08-19 10:38:45,683 - DEBUG - Re-merging range BN19:BQ19
+2025-08-19 10:38:45,683 - DEBUG - Re-merging range BN20:BQ20
+2025-08-19 10:38:45,683 - DEBUG - Re-merging range BN21:BQ21
+2025-08-19 10:38:45,683 - DEBUG - Re-merging range BN22:BQ22
+2025-08-19 10:38:45,683 - DEBUG - Re-merging range BV15:BX15
+2025-08-19 10:38:45,683 - DEBUG - Re-merging range BV16:BX16
+2025-08-19 10:38:45,683 - DEBUG - Re-merging range BV17:BX17
+2025-08-19 10:38:45,683 - DEBUG - Re-merging range BV18:BX18
+2025-08-19 10:38:45,683 - DEBUG - Re-merging range BV19:BX19
+2025-08-19 10:38:45,683 - DEBUG - Re-merging range BV20:BX20
+2025-08-19 10:38:45,699 - DEBUG - Re-merging range BV21:BX21
+2025-08-19 10:38:45,699 - DEBUG - Re-merging range BV22:BX22
+2025-08-19 10:38:45,699 - DEBUG - Re-merging range BY15:CA15
+2025-08-19 10:38:45,699 - DEBUG - Re-merging range BY16:CA16
+2025-08-19 10:38:45,699 - DEBUG - Re-merging range BY17:CA17
+2025-08-19 10:38:45,699 - DEBUG - Re-merging range BY18:CA18
+2025-08-19 10:38:45,699 - DEBUG - Re-merging range BY19:CA19
+2025-08-19 10:38:45,699 - DEBUG - Re-merging range BY20:CA20
+2025-08-19 10:38:45,699 - DEBUG - Re-merging range BY21:CA21
+2025-08-19 10:38:45,699 - DEBUG - Re-merging range BY22:CA22
+2025-08-19 10:38:45,699 - DEBUG - Re-merging range N15:W15
+2025-08-19 10:38:45,699 - DEBUG - Re-merging range N16:W16
+2025-08-19 10:38:45,699 - DEBUG - Re-merging range N17:W17
+2025-08-19 10:38:45,714 - DEBUG - Re-merging range N18:W18
+2025-08-19 10:38:45,714 - DEBUG - Re-merging range N19:W19
+2025-08-19 10:38:45,714 - DEBUG - Re-merging range N20:W20
+2025-08-19 10:38:45,714 - DEBUG - Re-merging range N21:W21
+2025-08-19 10:38:45,714 - DEBUG - Re-merging range N22:W22
+2025-08-19 10:38:45,714 - DEBUG - Re-merging range AX15:BA15
+2025-08-19 10:38:45,714 - DEBUG - Re-merging range AX16:BA16
+2025-08-19 10:38:45,714 - DEBUG - Re-merging range AX17:BA17
+2025-08-19 10:38:45,714 - DEBUG - Re-merging range AX18:BA18
+2025-08-19 10:38:45,714 - DEBUG - Re-merging range AX19:BA19
+2025-08-19 10:38:45,714 - DEBUG - Re-merging range AX20:BA20
+2025-08-19 10:38:45,730 - DEBUG - Re-merging range AX21:BA21
+2025-08-19 10:38:45,730 - DEBUG - Re-merging range AX22:BA22
+2025-08-19 10:38:45,730 - DEBUG - Re-merging range BJ15:BM15
+2025-08-19 10:38:45,730 - DEBUG - Re-merging range BJ16:BM16
+2025-08-19 10:38:45,730 - DEBUG - Re-merging range BJ17:BM17
+2025-08-19 10:38:45,730 - DEBUG - Re-merging range BJ18:BM18
+2025-08-19 10:38:45,730 - DEBUG - Re-merging range BJ19:BM19
+2025-08-19 10:38:45,730 - DEBUG - Re-merging range BJ20:BM20
+2025-08-19 10:38:45,730 - DEBUG - Re-merging range BJ21:BM21
+2025-08-19 10:38:45,730 - DEBUG - Re-merging range BJ22:BM22
+2025-08-19 10:38:45,730 - DEBUG - Re-merging range C15:E15
+2025-08-19 10:38:45,730 - DEBUG - Re-merging range C16:E16
+2025-08-19 10:38:45,730 - DEBUG - Re-merging range C17:E17
+2025-08-19 10:38:45,730 - DEBUG - Re-merging range C18:E18
+2025-08-19 10:38:45,730 - DEBUG - Re-merging range C19:E19
+2025-08-19 10:38:45,746 - DEBUG - Re-merging range C20:E20
+2025-08-19 10:38:45,746 - DEBUG - Re-merging range C21:E21
+2025-08-19 10:38:45,746 - DEBUG - Re-merging range C22:E22
+2025-08-19 10:38:45,746 - DEBUG - Re-merging range AM15:AO15
+2025-08-19 10:38:45,746 - DEBUG - Re-merging range AM16:AO16
+2025-08-19 10:38:45,746 - DEBUG - Re-merging range AM17:AO17
+2025-08-19 10:38:45,746 - DEBUG - Re-merging range AM18:AO18
+2025-08-19 10:38:45,746 - DEBUG - Re-merging range AM19:AO19
+2025-08-19 10:38:45,746 - DEBUG - Re-merging range AM20:AO20
+2025-08-19 10:38:45,746 - DEBUG - Re-merging range AM21:AO21
+2025-08-19 10:38:45,746 - DEBUG - Re-merging range AM22:AO22
+2025-08-19 10:38:45,746 - DEBUG - Re-merging range X15:AG15
+2025-08-19 10:38:45,746 - DEBUG - Re-merging range X16:AG16
+2025-08-19 10:38:45,746 - DEBUG - Re-merging range X17:AG17
+2025-08-19 10:38:45,761 - DEBUG - Re-merging range X18:AG18
+2025-08-19 10:38:45,761 - DEBUG - Re-merging range X19:AG19
+2025-08-19 10:38:45,761 - DEBUG - Re-merging range X20:AG20
+2025-08-19 10:38:45,761 - DEBUG - Re-merging range X21:AG21
+2025-08-19 10:38:45,761 - DEBUG - Re-merging range X22:AG22
+2025-08-19 10:38:45,761 - DEBUG - Re-merging range F15:I15
+2025-08-19 10:38:45,761 - DEBUG - Re-merging range F16:I16
+2025-08-19 10:38:45,761 - DEBUG - Re-merging range F17:I17
+2025-08-19 10:38:45,761 - DEBUG - Re-merging range F18:I18
+2025-08-19 10:38:45,761 - DEBUG - Re-merging range F19:I19
+2025-08-19 10:38:45,761 - DEBUG - Re-merging range F20:I20
+2025-08-19 10:38:45,777 - DEBUG - Re-merging range F21:I21
+2025-08-19 10:38:45,777 - DEBUG - Re-merging range F22:I22
+2025-08-19 10:38:45,777 - DEBUG - Re-merging range BR15:BU15
+2025-08-19 10:38:45,777 - DEBUG - Re-merging range BR16:BU16
+2025-08-19 10:38:45,777 - DEBUG - Re-merging range BR17:BU17
+2025-08-19 10:38:45,777 - DEBUG - Re-merging range BR18:BU18
+2025-08-19 10:38:45,777 - DEBUG - Re-merging range BR19:BU19
+2025-08-19 10:38:45,777 - DEBUG - Re-merging range BR20:BU20
+2025-08-19 10:38:45,777 - DEBUG - Re-merging range BR21:BU21
+2025-08-19 10:38:45,777 - DEBUG - Re-merging range BR22:BU22
+2025-08-19 10:38:45,777 - DEBUG - Re-merging range J15:M15
+2025-08-19 10:38:45,777 - DEBUG - Re-merging range J16:M16
+2025-08-19 10:38:45,777 - DEBUG - Re-merging range J17:M17
+2025-08-19 10:38:45,777 - DEBUG - Re-merging range J18:M18
+2025-08-19 10:38:45,793 - DEBUG - Re-merging range J19:M19
+2025-08-19 10:38:45,793 - DEBUG - Re-merging range J20:M20
+2025-08-19 10:38:45,793 - DEBUG - Re-merging range J21:M21
+2025-08-19 10:38:45,793 - DEBUG - Re-merging range J22:M22
+2025-08-19 10:38:45,793 - DEBUG - Re-merging range AP15:AS15
+2025-08-19 10:38:45,793 - DEBUG - Re-merging range AP16:AS16
+2025-08-19 10:38:45,793 - DEBUG - Re-merging range AP17:AS17
+2025-08-19 10:38:45,793 - DEBUG - Re-merging range AP18:AS18
+2025-08-19 10:38:45,793 - DEBUG - Re-merging range AP19:AS19
+2025-08-19 10:38:45,793 - DEBUG - Re-merging range AP20:AS20
+2025-08-19 10:38:45,793 - DEBUG - Re-merging range AP21:AS21
+2025-08-19 10:38:45,793 - DEBUG - Re-merging range AP22:AS22
+2025-08-19 10:38:45,793 - DEBUG - Re-merging range AT15:AW15
+2025-08-19 10:38:45,793 - DEBUG - Re-merging range AT16:AW16
+2025-08-19 10:38:45,808 - DEBUG - Re-merging range AT17:AW17
+2025-08-19 10:38:45,808 - DEBUG - Re-merging range AT18:AW18
+2025-08-19 10:38:45,808 - DEBUG - Re-merging range AT19:AW19
+2025-08-19 10:38:45,808 - DEBUG - Re-merging range AT20:AW20
+2025-08-19 10:38:45,808 - DEBUG - Re-merging range AT21:AW21
+2025-08-19 10:38:45,808 - DEBUG - Re-merging range AT22:AW22
+2025-08-19 10:38:45,808 - DEBUG - Re-merging range BF15:BI15
+2025-08-19 10:38:45,808 - DEBUG - Re-merging range BF16:BI16
+2025-08-19 10:38:45,808 - DEBUG - Re-merging range BF17:BI17
+2025-08-19 10:38:45,808 - DEBUG - Re-merging range BF18:BI18
+2025-08-19 10:38:45,808 - DEBUG - Re-merging range BF19:BI19
+2025-08-19 10:38:45,808 - DEBUG - Re-merging range BF20:BI20
+2025-08-19 10:38:45,808 - DEBUG - Re-merging range BF21:BI21
+2025-08-19 10:38:45,808 - DEBUG - Re-merging range BF22:BI22
+2025-08-19 10:38:45,855 - DEBUG - Sheet 'Công ty cổ phần Yamaguchi Việt ': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:45,871 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:45,871 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:45,871 - DEBUG - Attempting to write group name 'Công ty cổ phần Yamaguchi Việt Nam' to target anchor cell L18
+2025-08-19 10:38:45,871 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:45,909 - DEBUG - Sheet 'Công ty TNHH thương mại dịch vụ': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:45,909 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:45,925 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:45,925 - DEBUG - Attempting to write group name 'Công ty TNHH thương mại dịch vụ Tinh Hà' to target anchor cell L18
+2025-08-19 10:38:45,925 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:45,925 - INFO - Inserted 5 rows into 'Công ty TNHH thương mại dịch vụ'.
+2025-08-19 10:38:45,925 - DEBUG - Copying styles and merges from source row: 14
+2025-08-19 10:38:46,106 - DEBUG - Re-merging range AI15:AL15
+2025-08-19 10:38:46,121 - DEBUG - Re-merging range AI16:AL16
+2025-08-19 10:38:46,121 - DEBUG - Re-merging range AI17:AL17
+2025-08-19 10:38:46,121 - DEBUG - Re-merging range AI18:AL18
+2025-08-19 10:38:46,121 - DEBUG - Re-merging range AI19:AL19
+2025-08-19 10:38:46,121 - DEBUG - Re-merging range BB15:BE15
+2025-08-19 10:38:46,121 - DEBUG - Re-merging range BB16:BE16
+2025-08-19 10:38:46,121 - DEBUG - Re-merging range BB17:BE17
+2025-08-19 10:38:46,121 - DEBUG - Re-merging range BB18:BE18
+2025-08-19 10:38:46,121 - DEBUG - Re-merging range BB19:BE19
+2025-08-19 10:38:46,121 - DEBUG - Re-merging range BN15:BQ15
+2025-08-19 10:38:46,121 - DEBUG - Re-merging range BN16:BQ16
+2025-08-19 10:38:46,121 - DEBUG - Re-merging range BN17:BQ17
+2025-08-19 10:38:46,121 - DEBUG - Re-merging range BN18:BQ18
+2025-08-19 10:38:46,121 - DEBUG - Re-merging range BN19:BQ19
+2025-08-19 10:38:46,121 - DEBUG - Re-merging range BV15:BX15
+2025-08-19 10:38:46,137 - DEBUG - Re-merging range BV16:BX16
+2025-08-19 10:38:46,137 - DEBUG - Re-merging range BV17:BX17
+2025-08-19 10:38:46,137 - DEBUG - Re-merging range BV18:BX18
+2025-08-19 10:38:46,137 - DEBUG - Re-merging range BV19:BX19
+2025-08-19 10:38:46,137 - DEBUG - Re-merging range BY15:CA15
+2025-08-19 10:38:46,137 - DEBUG - Re-merging range BY16:CA16
+2025-08-19 10:38:46,137 - DEBUG - Re-merging range BY17:CA17
+2025-08-19 10:38:46,137 - DEBUG - Re-merging range BY18:CA18
+2025-08-19 10:38:46,137 - DEBUG - Re-merging range BY19:CA19
+2025-08-19 10:38:46,137 - DEBUG - Re-merging range N15:W15
+2025-08-19 10:38:46,137 - DEBUG - Re-merging range N16:W16
+2025-08-19 10:38:46,137 - DEBUG - Re-merging range N17:W17
+2025-08-19 10:38:46,137 - DEBUG - Re-merging range N18:W18
+2025-08-19 10:38:46,152 - DEBUG - Re-merging range N19:W19
+2025-08-19 10:38:46,152 - DEBUG - Re-merging range AX15:BA15
+2025-08-19 10:38:46,152 - DEBUG - Re-merging range AX16:BA16
+2025-08-19 10:38:46,152 - DEBUG - Re-merging range AX17:BA17
+2025-08-19 10:38:46,152 - DEBUG - Re-merging range AX18:BA18
+2025-08-19 10:38:46,152 - DEBUG - Re-merging range AX19:BA19
+2025-08-19 10:38:46,152 - DEBUG - Re-merging range BJ15:BM15
+2025-08-19 10:38:46,152 - DEBUG - Re-merging range BJ16:BM16
+2025-08-19 10:38:46,152 - DEBUG - Re-merging range BJ17:BM17
+2025-08-19 10:38:46,152 - DEBUG - Re-merging range BJ18:BM18
+2025-08-19 10:38:46,152 - DEBUG - Re-merging range BJ19:BM19
+2025-08-19 10:38:46,152 - DEBUG - Re-merging range C15:E15
+2025-08-19 10:38:46,152 - DEBUG - Re-merging range C16:E16
+2025-08-19 10:38:46,152 - DEBUG - Re-merging range C17:E17
+2025-08-19 10:38:46,168 - DEBUG - Re-merging range C18:E18
+2025-08-19 10:38:46,168 - DEBUG - Re-merging range C19:E19
+2025-08-19 10:38:46,168 - DEBUG - Re-merging range AM15:AO15
+2025-08-19 10:38:46,168 - DEBUG - Re-merging range AM16:AO16
+2025-08-19 10:38:46,168 - DEBUG - Re-merging range AM17:AO17
+2025-08-19 10:38:46,168 - DEBUG - Re-merging range AM18:AO18
+2025-08-19 10:38:46,168 - DEBUG - Re-merging range AM19:AO19
+2025-08-19 10:38:46,168 - DEBUG - Re-merging range X15:AG15
+2025-08-19 10:38:46,168 - DEBUG - Re-merging range X16:AG16
+2025-08-19 10:38:46,168 - DEBUG - Re-merging range X17:AG17
+2025-08-19 10:38:46,168 - DEBUG - Re-merging range X18:AG18
+2025-08-19 10:38:46,168 - DEBUG - Re-merging range X19:AG19
+2025-08-19 10:38:46,184 - DEBUG - Re-merging range F15:I15
+2025-08-19 10:38:46,184 - DEBUG - Re-merging range F16:I16
+2025-08-19 10:38:46,184 - DEBUG - Re-merging range F17:I17
+2025-08-19 10:38:46,184 - DEBUG - Re-merging range F18:I18
+2025-08-19 10:38:46,184 - DEBUG - Re-merging range F19:I19
+2025-08-19 10:38:46,184 - DEBUG - Re-merging range BR15:BU15
+2025-08-19 10:38:46,184 - DEBUG - Re-merging range BR16:BU16
+2025-08-19 10:38:46,184 - DEBUG - Re-merging range BR17:BU17
+2025-08-19 10:38:46,184 - DEBUG - Re-merging range BR18:BU18
+2025-08-19 10:38:46,184 - DEBUG - Re-merging range BR19:BU19
+2025-08-19 10:38:46,184 - DEBUG - Re-merging range J15:M15
+2025-08-19 10:38:46,184 - DEBUG - Re-merging range J16:M16
+2025-08-19 10:38:46,184 - DEBUG - Re-merging range J17:M17
+2025-08-19 10:38:46,184 - DEBUG - Re-merging range J18:M18
+2025-08-19 10:38:46,184 - DEBUG - Re-merging range J19:M19
+2025-08-19 10:38:46,199 - DEBUG - Re-merging range AP15:AS15
+2025-08-19 10:38:46,199 - DEBUG - Re-merging range AP16:AS16
+2025-08-19 10:38:46,199 - DEBUG - Re-merging range AP17:AS17
+2025-08-19 10:38:46,199 - DEBUG - Re-merging range AP18:AS18
+2025-08-19 10:38:46,199 - DEBUG - Re-merging range AP19:AS19
+2025-08-19 10:38:46,199 - DEBUG - Re-merging range AT15:AW15
+2025-08-19 10:38:46,199 - DEBUG - Re-merging range AT16:AW16
+2025-08-19 10:38:46,199 - DEBUG - Re-merging range AT17:AW17
+2025-08-19 10:38:46,199 - DEBUG - Re-merging range AT18:AW18
+2025-08-19 10:38:46,199 - DEBUG - Re-merging range AT19:AW19
+2025-08-19 10:38:46,199 - DEBUG - Re-merging range BF15:BI15
+2025-08-19 10:38:46,199 - DEBUG - Re-merging range BF16:BI16
+2025-08-19 10:38:46,199 - DEBUG - Re-merging range BF17:BI17
+2025-08-19 10:38:46,199 - DEBUG - Re-merging range BF18:BI18
+2025-08-19 10:38:46,199 - DEBUG - Re-merging range BF19:BI19
+2025-08-19 10:38:46,253 - DEBUG - Sheet 'CÔNG TY CỔ PHẦN YAMAGUCHI ĐAN P': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:46,253 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:46,253 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:46,253 - DEBUG - Attempting to write group name 'CÔNG TY CỔ PHẦN YAMAGUCHI ĐAN PHƯỢNG' to target anchor cell L18
+2025-08-19 10:38:46,253 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:46,301 - DEBUG - Sheet 'CÔNG TY TNHH V-HONEST': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:46,301 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:46,317 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:46,317 - DEBUG - Attempting to write group name 'CÔNG TY TNHH V-HONEST' to target anchor cell L18
+2025-08-19 10:38:46,317 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:46,358 - DEBUG - Sheet 'CÔNG TY TNHH SẢN XUẤT VÀ THƯƠNG': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:46,358 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:46,358 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:46,358 - DEBUG - Attempting to write group name 'CÔNG TY TNHH SẢN XUẤT VÀ THƯƠNG MẠI GIGA TECH' to target anchor cell L18
+2025-08-19 10:38:46,358 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:46,405 - DEBUG - Sheet 'SYD Co.， Ltd': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:46,405 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:46,421 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:46,421 - DEBUG - Attempting to write group name 'SYD Co.， Ltd' to target anchor cell L18
+2025-08-19 10:38:46,421 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:46,461 - DEBUG - Sheet 'NHK PRECISION CO., LTD.': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:46,461 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:46,461 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:46,461 - DEBUG - Attempting to write group name 'NHK PRECISION CO., LTD.' to target anchor cell L18
+2025-08-19 10:38:46,461 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:46,509 - DEBUG - Sheet 'AIR WATER MACH INC. Kansai Bran': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:46,509 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:46,509 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:46,509 - DEBUG - Attempting to write group name 'AIR WATER MACH INC. Kansai Branch Osaka Office' to target anchor cell L18
+2025-08-19 10:38:46,509 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:46,699 - DEBUG - Sheet 'Bronkhorst Singapore Pte Ltd': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:46,699 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:46,714 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:46,714 - DEBUG - Attempting to write group name 'Bronkhorst Singapore Pte Ltd' to target anchor cell L18
+2025-08-19 10:38:46,714 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:46,761 - DEBUG - Sheet 'CÔNG TY TNHH LOGISTEED VIỆT NAM': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:46,763 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:46,766 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:46,766 - DEBUG - Attempting to write group name 'CÔNG TY TNHH LOGISTEED VIỆT NAM – CHI NHÁNH HÀ NỘI' to target anchor cell L18
+2025-08-19 10:38:46,766 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:46,809 - DEBUG - Sheet 'Chi nhánh công ty TNHH NNR glob': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:46,809 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:46,809 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:46,809 - DEBUG - Attempting to write group name 'Chi nhánh công ty TNHH NNR global Logistics (Việt Nam)' to target anchor cell L18
+2025-08-19 10:38:46,809 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:46,853 - DEBUG - Sheet 'Chi nhánh giao dịch Công ty TNH': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:46,853 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:46,869 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:46,869 - DEBUG - Attempting to write group name 'Chi nhánh giao dịch Công ty TNHH Kintetsu World Express Việt Nam' to target anchor cell L18
+2025-08-19 10:38:46,869 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:46,910 - DEBUG - Sheet 'DAIWA FINE CHEMICALS (THAILAND)': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:46,910 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:46,910 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:46,910 - DEBUG - Attempting to write group name 'DAIWA FINE CHEMICALS (THAILAND) CO.,LTD`' to target anchor cell L18
+2025-08-19 10:38:46,910 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:46,956 - DEBUG - Sheet 'CÔNG TY TNHH THƯƠNG MẠI VÀ DU L': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:46,956 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:46,972 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:46,972 - DEBUG - Attempting to write group name 'CÔNG TY TNHH THƯƠNG MẠI VÀ DU LỊCH PHI TRƯỜNG' to target anchor cell L18
+2025-08-19 10:38:46,972 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:47,013 - DEBUG - Sheet 'Công ty điện lực Bắc Ninh - Điệ': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:47,029 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:47,029 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:47,029 - DEBUG - Attempting to write group name 'Công ty điện lực Bắc Ninh - Điện lực Tiên Du' to target anchor cell L18
+2025-08-19 10:38:47,029 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:47,077 - DEBUG - Sheet 'Mizho': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:47,077 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:47,077 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:47,077 - DEBUG - Attempting to write group name 'Mizho' to target anchor cell L18
+2025-08-19 10:38:47,077 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:47,135 - DEBUG - Sheet 'SMBC': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:47,137 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:47,137 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:47,137 - DEBUG - Attempting to write group name 'SMBC' to target anchor cell L18
+2025-08-19 10:38:47,137 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:47,174 - DEBUG - Sheet 'Công ty TNHH Fujikin Việt Nam': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:47,174 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:47,191 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:47,191 - DEBUG - Attempting to write group name 'Công ty TNHH Fujikin Việt Nam' to target anchor cell L18
+2025-08-19 10:38:47,191 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:47,230 - DEBUG - Sheet 'Chi nhánh Công ty TNHH Fujikin ': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:47,230 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:47,230 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:47,230 - DEBUG - Attempting to write group name 'Chi nhánh Công ty TNHH Fujikin Việt Nam - VWL Hà Nội' to target anchor cell L18
+2025-08-19 10:38:47,230 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:47,278 - DEBUG - Sheet 'Trust': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:47,278 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:47,294 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:47,294 - DEBUG - Attempting to write group name 'Trust' to target anchor cell L18
+2025-08-19 10:38:47,294 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:47,334 - DEBUG - Sheet 'ABE': Searching for group identifier header 'Supplier name'
+2025-08-19 10:38:47,334 - DEBUG - Found header 'Supplier name' at anchor cell B18.
+2025-08-19 10:38:47,334 - DEBUG - Header cell is part of merged range B18:K18. Max column is 11.
+2025-08-19 10:38:47,334 - DEBUG - Attempting to write group name 'ABE' to target anchor cell L18
+2025-08-19 10:38:47,334 - DEBUG - Successfully wrote group name to L18.
+2025-08-19 10:38:53,867 - INFO - --- Transfer completed successfully ---
