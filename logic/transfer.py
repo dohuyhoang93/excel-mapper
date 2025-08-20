@@ -10,7 +10,8 @@ import shutil
 from pathlib import Path
 import logging
 from typing import List, Dict, Any, Optional, Callable, Set
-from openpyxl.utils import get_column_letter, range_boundaries
+from openpyxl.utils import get_column_letter, range_boundaries, column_index_from_string
+from openpyxl.utils.cell import coordinate_from_string
 from openpyxl.formula.translate import Translator
 from openpyxl.cell.cell import MergedCell
 import re
@@ -22,15 +23,16 @@ if not transfer_logger.handlers:
     transfer_logger.setLevel(logging.DEBUG)
     fh = logging.FileHandler('log.txt', mode='w', encoding='utf-8')
     fh.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - [%(funcName)s]: %(message)s')
     fh.setFormatter(formatter)
     transfer_logger.addHandler(fh)
+    transfer_logger.propagate = False
 
 def _sanitize_sheet_name(name: str) -> str:
     if not name:
         return "Untitled"
     name = str(name)
-    name = re.sub(r'[\\/*?:[\]]', '', name)
+    name = re.sub(r'[\\/*?:[\\]]', '', name)
     return name[:31]
 
 def parse_skip_rows_string(skip_rows_str: str) -> Set[int]:
@@ -65,9 +67,10 @@ class ExcelTransferEngine:
         self.dest_write_end_row = settings["dest_write_end_row"]
         self.group_by_column = settings.get("group_by_column")
         self.master_sheet_name = settings.get("master_sheet")
-        self.mappings = settings["mappings"]
-        self.source_columns = settings["source_columns"]
-        self.dest_columns = settings["dest_columns"]
+        self.mappings = settings.get("mappings", {})
+        self.source_columns = settings.get("source_columns", {})
+        self.dest_columns = settings.get("dest_columns", {})
+        self.single_value_mappings = settings.get("single_value_mapping", {})
         self.progress_callback = progress_callback
 
     def _update_progress(self, value: int, message: str):
@@ -123,13 +126,15 @@ class ExcelTransferEngine:
                 new_sheet = output_wb.create_sheet(title=new_sheet_name)
 
                 last_header_row = self._copy_range(master_sheet_vals, master_sheet_formulas, new_sheet, 1, self.dest_header_end_row, 1)
-                last_data_row = self._write_data_rows(new_sheet, master_sheet_vals, data_rows, last_header_row + 1)
+                last_data_row = self._write_data_rows(new_sheet, master_sheet_vals, master_sheet_formulas, data_rows, last_header_row + 1)
                 
                 footer_start_row = self.dest_write_end_row + 1 if self.dest_write_end_row > 0 else 0
                 if footer_start_row > 0:
                     self._copy_range(master_sheet_vals, master_sheet_formulas, new_sheet, footer_start_row, master_sheet_vals.max_row, last_data_row + 1)
 
                 self._write_group_identifier(new_sheet, group_name, self.group_by_column)
+                if data_rows:
+                    self._write_single_values(new_sheet, data_rows[0])
 
             output_filename = self.dest_path.with_name(f"{self.dest_path.stem}-output{self.dest_path.suffix}")
             output_wb.save(output_filename)
@@ -141,16 +146,13 @@ class ExcelTransferEngine:
             self._update_progress(100, "Transfer completed successfully")
 
     def _copy_range(self, source_sheet_vals: Worksheet, source_sheet_formulas: Worksheet, dest_sheet: Worksheet, min_row: int, max_row: int, dest_start_row: int) -> int:
-        transfer_logger.debug(f"Copying range from {source_sheet_vals.title}:{min_row}-{max_row} to {dest_sheet.title}:{dest_start_row}")
+        transfer_logger.info(f"Copying range from {source_sheet_vals.title}:{min_row}-{max_row} to {dest_sheet.title}:{dest_start_row}")
         
-        # Copy column dimensions
         for col, dim in source_sheet_vals.column_dimensions.items():
             dest_sheet.column_dimensions[col] = copy(dim)
 
-        # Copy rows, cells, and styles
         for r_idx, row in enumerate(source_sheet_vals.iter_rows(min_row=min_row, max_row=max_row)):
             dest_row_idx = dest_start_row + r_idx
-            # Copy row dimensions
             if row[0].row in source_sheet_vals.row_dimensions:
                 dest_sheet.row_dimensions[dest_row_idx] = copy(source_sheet_vals.row_dimensions[row[0].row])
 
@@ -170,7 +172,6 @@ class ExcelTransferEngine:
                 else:
                     dest_cell.value = source_cell.value
 
-        # Copy merged cells
         for mc_range in source_sheet_vals.merged_cells.ranges:
             if mc_range.min_row >= min_row and mc_range.max_row <= max_row:
                 offset = dest_start_row - min_row
@@ -179,33 +180,37 @@ class ExcelTransferEngine:
         
         return dest_start_row + (max_row - min_row)
 
-    def _write_data_rows(self, dest_sheet: Worksheet, master_sheet: Worksheet, data_rows: List[Dict[str, Any]], start_row: int) -> int:
+    def _write_data_rows(self, dest_sheet: Worksheet, master_sheet_vals: Worksheet, master_sheet_formulas: Worksheet, data_rows: List[Dict[str, Any]], start_row: int) -> int:
+        transfer_logger.info(f"Writing {len(data_rows)} data rows, starting at row {start_row}")
         template_row_idx = self.dest_write_start_row
         current_write_row = start_row
 
-        for i, row_data in enumerate(data_rows):
-            # Copy row dimensions from template
-            if template_row_idx in master_sheet.row_dimensions:
-                dest_sheet.row_dimensions[current_write_row] = copy(master_sheet.row_dimensions[template_row_idx])
+        # Diagnostic: Log the mappings dictionary once to ensure it's correct.
+        transfer_logger.debug(f"Mappings available for this run: {self.mappings}")
 
-            # Copy cell styles and merges from template
-            for col_idx in range(1, master_sheet.max_column + 1):
-                template_cell = master_sheet.cell(row=template_row_idx, column=col_idx)
-                dest_cell = dest_sheet.cell(row=current_write_row, column=col_idx)
-                if template_cell.has_style:
-                    dest_cell.font = copy(template_cell.font); dest_cell.border = copy(template_cell.border); dest_cell.fill = copy(template_cell.fill); dest_cell.number_format = template_cell.number_format; dest_cell.protection = copy(template_cell.protection); dest_cell.alignment = copy(template_cell.alignment)
-            
-            for mc_range in master_sheet.merged_cells.ranges:
-                if mc_range.min_row == template_row_idx and mc_range.max_row == template_row_idx:
-                    min_col, _, max_col, _ = mc_range.bounds
-                    dest_sheet.merge_cells(start_row=current_write_row, start_column=min_col, end_row=current_write_row, end_column=max_col)
+        for row_data in data_rows:
+            # Step 1: Stamp the entire template row using the robust _copy_range function.
+            self._copy_range(master_sheet_vals, master_sheet_formulas, dest_sheet, 
+                             min_row=template_row_idx, max_row=template_row_idx, 
+                             dest_start_row=current_write_row)
 
-            # Write actual data
+            # Step 2: Overwrite the stamped row with the actual mapped data.
+            transfer_logger.debug(f"--- Overwriting data for row {current_write_row} ---")
             for source_col, dest_col in self.mappings.items():
+                value_to_write = row_data.get(source_col)
+                log_msg_prefix = f"Row {current_write_row}: Mapping '{source_col}' -> '{dest_col}'"
+
                 if dest_col in self.dest_columns:
                     dest_col_num = self.dest_columns[dest_col]
                     cell_to_write = self._get_writable_cell(dest_sheet, current_write_row, dest_col_num)
-                    cell_to_write.value = row_data.get(source_col)
+                    
+                    # Detailed diagnostic log before writing the value
+                    transfer_logger.debug(f"{log_msg_prefix} | DestColNum: {dest_col_num} | Value: '{value_to_write}' | Attempting to write to cell {cell_to_write.coordinate}")
+                    
+                    cell_to_write.value = value_to_write
+                else:
+                    # Log if the destination column was not found in the pre-loaded dict
+                    transfer_logger.warning(f"{log_msg_prefix} | SKIPPED: Destination column '{dest_col}' not found in dest_columns dictionary.")
             
             current_write_row += 1
         
@@ -263,3 +268,27 @@ class ExcelTransferEngine:
                     except Exception as e:
                         transfer_logger.error(f"Error writing group identifier for '{group_name}': {e}")
                         return
+
+    def _write_single_values(self, worksheet, group_first_row: Dict[str, Any]):
+        if not self.single_value_mappings:
+            return
+        
+        transfer_logger.info(f"Writing single values to sheet '{worksheet.title}'")
+        for field, mapping in self.single_value_mappings.items():
+            source_col = mapping.get("source_col")
+            dest_cell_addr = mapping.get("dest_cell")
+            
+            if not source_col or not dest_cell_addr:
+                continue
+
+            value = group_first_row.get(source_col)
+            
+            try:
+                col_str, row_idx = coordinate_from_string(dest_cell_addr)
+                col_idx = column_index_from_string(col_str)
+
+                target_cell = self._get_writable_cell(worksheet, row_idx, col_idx)
+                target_cell.value = value
+                transfer_logger.debug(f"Wrote single value for '{field}' (Value: {value}) to {dest_cell_addr} (actual: {target_cell.coordinate})")
+            except Exception as e:
+                transfer_logger.error(f"Failed to write single value for field '{field}'. Error: {e}")

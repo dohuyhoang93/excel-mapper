@@ -87,7 +87,7 @@ class ExcelDataMapper:
     def __init__(self):
         self.root = ttk_boot.Window(themename="flatly")
         self.root.title("Excel Data Mapper")
-        self.root.geometry("1000x700")
+        self.root.geometry("1000x800") # Increased height for new widgets
 
         # Center the window on the screen
         self.root.update_idletasks()
@@ -101,14 +101,12 @@ class ExcelDataMapper:
         
         self.icon_path = None
         try:
-            # Correctly determine the base path for PyInstaller
             base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
             icon_path = os.path.join(base_path, "icon.ico")
             if os.path.exists(icon_path):
                 self.root.iconbitmap(icon_path)
                 self.icon_path = icon_path
         except Exception:
-            # If icon loading fails, do nothing and proceed
             pass
         
         self.source_file = tk.StringVar()
@@ -130,6 +128,16 @@ class ExcelDataMapper:
         self.source_columns = {}
         self.dest_columns = {}
         self.mapping_combos = {}
+
+        # New: For single value mappings
+        self.single_value_fields = {
+            "Applicant - Date": {"source_var": tk.StringVar(), "dest_var": tk.StringVar(), "combo": None},
+            "Applicant - Employ ID": {"source_var": tk.StringVar(), "dest_var": tk.StringVar(), "combo": None},
+            "Applicant - Signature": {"source_var": tk.StringVar(), "dest_var": tk.StringVar(), "combo": None},
+            "Manager - Date": {"source_var": tk.StringVar(), "dest_var": tk.StringVar(), "combo": None},
+            "Manager - Employ ID": {"source_var": tk.StringVar(), "dest_var": tk.StringVar(), "combo": None},
+            "Manager - Signature": {"source_var": tk.StringVar(), "dest_var": tk.StringVar(), "combo": None}
+        }
         
         self.config_manager = ConfigurationManager()
         self.column_mapper = ColumnMapper()
@@ -267,6 +275,26 @@ class ExcelDataMapper:
         self.group_by_combo = ttk_boot.Combobox(group_by_frame, textvariable=self.group_by_column)
         self.group_by_combo.pack(fill=X)
 
+        # New: Single Value Mapping Frame
+        single_value_frame = ttk_boot.LabelFrame(left_panel, text="Single Value Mapping", padding=5)
+        single_value_frame.pack(fill=X, pady=(0, 5), anchor=N)
+        # Grid layout for this frame
+        single_value_frame.columnconfigure(1, weight=1)
+        single_value_frame.columnconfigure(2, weight=1)
+        # Header
+        ttk_boot.Label(single_value_frame, text="Field", font='-weight bold').grid(row=0, column=0, sticky="w", padx=2)
+        ttk_boot.Label(single_value_frame, text="Source Column", font='-weight bold').grid(row=0, column=1, sticky="w", padx=2)
+        ttk_boot.Label(single_value_frame, text="Destination Cell", font='-weight bold').grid(row=0, column=2, sticky="w", padx=2)
+
+        for i, (field, data) in enumerate(self.single_value_fields.items(), start=1):
+            ttk_boot.Label(single_value_frame, text=f"{field}:").grid(row=i, column=0, sticky="w", padx=2, pady=2)
+            combo = ttk_boot.Combobox(single_value_frame, textvariable=data["source_var"])
+            combo.grid(row=i, column=1, sticky="ew", padx=2)
+            data["combo"] = combo # Store reference to the combobox
+            
+            entry = ttk_boot.Entry(single_value_frame, textvariable=data["dest_var"], width=15)
+            entry.grid(row=i, column=2, sticky="ew", padx=2)
+
         # --- Populate Right Panel ---
         mapping_container = ttk_boot.LabelFrame(right_panel, text="Column Mapping", padding=5)
         mapping_container.pack(fill=BOTH, expand=True)
@@ -383,6 +411,11 @@ class ExcelDataMapper:
             self.group_by_combo['values'] = source_keys
             if saved_group_by_col and saved_group_by_col in source_keys:
                 self.group_by_column.set(saved_group_by_col)
+
+            # New: Populate single value mapping combos
+            for field_data in self.single_value_fields.values():
+                if field_data["combo"]:
+                    field_data["combo"]['values'] = source_keys
             
             self.create_mapping_widgets(apply_suggestions=apply_suggestions)
             self.update_status(f"Loaded {len(self.source_columns)} source and {len(self.dest_columns)} destination columns")
@@ -430,8 +463,15 @@ class ExcelDataMapper:
 
             mappings = {source_col: combo.get() for source_col, combo in self.mapping_combos.items() if combo.get()}
             
+            # New: Get single value mappings
+            single_value_mappings = {}
+            for field, data in self.single_value_fields.items():
+                source_col = data["source_var"].get()
+                dest_cell = data["dest_var"].get()
+                if source_col and dest_cell:
+                    single_value_mappings[field] = {"source_col": source_col, "dest_cell": dest_cell}
+
             job_config = {
-                #"source_file": self.source_file.get(), "dest_file": self.dest_file.get(),
                 "source_header_start_row": self.source_header_start_row.get(), "source_header_end_row": self.source_header_end_row.get(),
                 "dest_header_start_row": self.dest_header_start_row.get(), "dest_header_end_row": self.dest_header_end_row.get(),
                 "dest_write_start_row": self.dest_write_start_row.get(), "dest_write_end_row": self.dest_write_end_row.get(),
@@ -439,7 +479,9 @@ class ExcelDataMapper:
                 "respect_cell_protection": self.respect_cell_protection.get(),
                 "respect_formulas": self.respect_formulas.get(), 
                 "group_by_column": self.group_by_column.get(), 
+                "master_sheet": self.master_sheet.get(),
                 "mapping": mappings,
+                "single_value_mapping": single_value_mappings
             }
             
             self.config_manager.save_job_config(job_config, config_file_path)
@@ -462,8 +504,6 @@ class ExcelDataMapper:
 
             config = self.config_manager.load_job_config(config_file_path)
 
-            #self.source_file.set(config.get("source_file", ""))
-            #self.dest_file.set(config.get("dest_file", ""))
             self.source_header_start_row.set(config.get("source_header_start_row", 1))
             self.source_header_end_row.set(config.get("source_header_end_row", 1))
             self.dest_header_start_row.set(config.get("dest_header_start_row", 9))
@@ -473,6 +513,7 @@ class ExcelDataMapper:
             self.dest_skip_rows.set(config.get("dest_skip_rows", ""))
             self.respect_cell_protection.set(config.get("respect_cell_protection", True))
             self.respect_formulas.set(config.get("respect_formulas", True))
+            self.master_sheet.set(config.get("master_sheet", ""))
             
             if self.source_file.get() and self.dest_file.get():
                 saved_group_by_col = config.get("group_by_column", "")
@@ -481,6 +522,13 @@ class ExcelDataMapper:
                 for source_col, dest_col in mappings.items():
                     if source_col in self.mapping_combos:
                         self.mapping_combos[source_col].set(dest_col)
+                
+                # New: Load single value mappings
+                single_value_mappings = config.get("single_value_mapping", {})
+                for field, mapping_data in single_value_mappings.items():
+                    if field in self.single_value_fields:
+                        self.single_value_fields[field]["source_var"].set(mapping_data.get("source_col", ""))
+                        self.single_value_fields[field]["dest_var"].set(mapping_data.get("dest_cell", ""))
 
             self.save_app_settings() # Update last used files
             self.update_status(f"Job configuration loaded from {os.path.basename(config_file_path)}")
