@@ -123,6 +123,7 @@ class ExcelDataMapper:
         self.dest_skip_rows = tk.StringVar(value="")
         self.respect_cell_protection = tk.BooleanVar(value=True)
         self.respect_formulas = tk.BooleanVar(value=True)
+        self.limit_columns = tk.BooleanVar(value=True) # New variable for column optimization
         self.detection_keywords = tk.StringVar(value="total,sum,cộng,tổng,thành tiền")
         
         self.source_columns = {}
@@ -267,6 +268,7 @@ class ExcelDataMapper:
         ttk_boot.Entry(write_zone_frame, textvariable=self.dest_skip_rows).grid(row=3, column=0, columnspan=3, padx=0, sticky=EW)
         ttk_boot.Checkbutton(write_zone_frame, text="Respect cell protection", variable=self.respect_cell_protection).grid(row=4, column=0, columnspan=3, sticky=W, pady=(5,0))
         ttk_boot.Checkbutton(write_zone_frame, text="Respect formulas", variable=self.respect_formulas).grid(row=5, column=0, columnspan=3, sticky=W)
+        ttk_boot.Checkbutton(write_zone_frame, text="Optimize columns (copy up to last used column)", variable=self.limit_columns).grid(row=6, column=0, columnspan=3, sticky=W, pady=(0,5))
 
         group_by_frame = ttk_boot.LabelFrame(left_panel, text="Group by Configuration", padding=5)
         group_by_frame.pack(fill=X, pady=(0, 5), anchor=N)
@@ -647,7 +649,8 @@ class ExcelDataMapper:
                 "mappings": mappings,
                 "source_columns": self.source_columns,
                 "dest_columns": self.dest_columns,
-                "single_value_mapping": single_value_mappings # Add single value mappings to settings
+                "single_value_mapping": single_value_mappings, # Add single value mappings to settings
+                "limit_columns": self.limit_columns.get()
             }
 
             # 2. Create and run the engine

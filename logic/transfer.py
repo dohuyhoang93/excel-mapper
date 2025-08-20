@@ -71,6 +71,8 @@ class ExcelTransferEngine:
         self.source_columns = settings.get("source_columns", {})
         self.dest_columns = settings.get("dest_columns", {})
         self.single_value_mappings = settings.get("single_value_mapping", {})
+        self.limit_columns = settings.get("limit_columns", False)
+        self.template_max_col = 0 # Will be calculated later
         self.progress_callback = progress_callback
 
     def _update_progress(self, value: int, message: str):
@@ -110,6 +112,14 @@ class ExcelTransferEngine:
 
             master_sheet_vals = wb_template_vals[self.master_sheet_name]
             master_sheet_formulas = wb_template_formulas[self.master_sheet_name]
+
+            # Calculate the column limit based on user setting
+            if self.limit_columns:
+                self.template_max_col = self._get_template_max_column(master_sheet_vals)
+                transfer_logger.info(f"Column optimization enabled. Detected last used column as {self.template_max_col}")
+            else:
+                self.template_max_col = master_sheet_vals.max_column
+                transfer_logger.info(f"Column optimization disabled. Using sheet max_column: {self.template_max_col}")
 
             output_wb = Workbook()
             if output_wb.active:
@@ -151,7 +161,7 @@ class ExcelTransferEngine:
         for col, dim in source_sheet_vals.column_dimensions.items():
             dest_sheet.column_dimensions[col] = copy(dim)
 
-        for r_idx, row in enumerate(source_sheet_vals.iter_rows(min_row=min_row, max_row=max_row)):
+        for r_idx, row in enumerate(source_sheet_vals.iter_rows(min_row=min_row, max_row=max_row, max_col=self.template_max_col)):
             dest_row_idx = dest_start_row + r_idx
             if row[0].row in source_sheet_vals.row_dimensions:
                 dest_sheet.row_dimensions[dest_row_idx] = copy(source_sheet_vals.row_dimensions[row[0].row])
@@ -203,6 +213,21 @@ class ExcelTransferEngine:
             current_write_row += 1
         
         return current_write_row - 1
+
+    def _get_template_max_column(self, worksheet: Worksheet) -> int:
+        """Scans a worksheet to find the last column that contains data or has a style."""
+        max_col = 0
+        # Scan all rows to find the rightmost column with any content
+        for row in worksheet.iter_rows():
+            for cell in row:
+                # A cell is considered "used" if it has a value or a non-default style.
+                # openpyxl's has_style is True if font, border, fill, etc. are not default.
+                if cell.value is not None or cell.has_style:
+                    if cell.column > max_col:
+                        max_col = cell.column
+        
+        # As a fallback, if the sheet is completely empty, use the worksheet's property
+        return max_col if max_col > 0 else worksheet.max_column
 
     def _read_source_data(self) -> List[Dict[str, Any]]:
         workbook = None
