@@ -1,6 +1,7 @@
 # User-specific or local configuration
 config.json
 specs.md
+log.txt
 
 # PyInstaller build artifacts
 *.exe

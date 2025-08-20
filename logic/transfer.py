@@ -147,6 +147,9 @@ class ExcelTransferEngine:
                 if data_rows:
                     self._write_single_values(new_sheet, data_rows[0])
 
+                # Stretch and apply data validation rules after all rows are in place
+                self._stretch_and_apply_validations(new_sheet, master_sheet_formulas, len(data_rows))
+
             output_filename = self.dest_path.with_name(f"{self.dest_path.stem}-output{self.dest_path.suffix}")
             output_wb.save(output_filename)
             transfer_logger.info(f"Successfully created new file: {output_filename}")
@@ -311,3 +314,50 @@ class ExcelTransferEngine:
                 transfer_logger.debug(f"Wrote single value from '{source_col}' to {dest_cell_addr} (Value: {value})")
             except Exception as e:
                 transfer_logger.error(f"Failed to write single value from '{source_col}' to {dest_cell_addr}. Error: {e}")
+
+    def _stretch_and_apply_validations(self, new_sheet: Worksheet, master_sheet: Worksheet, actual_data_rows: int):
+        """
+        Copies data validations from a master sheet to a new sheet, 
+        stretching the ranges that fall within the data write zone.
+        """
+        if not master_sheet.data_validations:
+            return
+
+        try:
+            for dv in master_sheet.data_validations.dataValidation:
+                new_dv = copy(dv)
+                
+                # Heuristic: If a validation range starts at the write zone and has the same height,
+                # assume it should be stretched vertically to fit new data.
+                needs_stretching = False
+                if self.dest_write_end_row > 0 and actual_data_rows > 0:
+                    # sqref can be a MultiCellRange object, so we must convert it to a string to iterate
+                    sqref_str = str(new_dv.sqref)
+                    for range_str in sqref_str.split():
+                        _min_col, min_row, _max_col, max_row = range_boundaries(range_str)
+                        if min_row == self.dest_write_start_row and max_row == self.dest_write_end_row:
+                            needs_stretching = True
+                            break
+
+                if needs_stretching:
+                    new_sqref = ""
+                    sqref_str = str(new_dv.sqref) # Ensure we are working with a string
+                    # Re-build the sqref string with the new, stretched height
+                    for range_str in sqref_str.split():
+                        min_col, min_row, max_col, _ = range_boundaries(range_str)
+                        new_max_row = self.dest_write_start_row + actual_data_rows - 1
+                        
+                        if new_max_row < min_row:
+                            new_max_row = min_row
+
+                        new_sqref += f" {get_column_letter(min_col)}{min_row}:{get_column_letter(max_col)}{new_max_row}"
+                    
+                    new_dv.sqref = new_sqref.strip()
+                    transfer_logger.debug(f"Stretched DV range from '{dv.sqref}' to '{new_dv.sqref}'")
+
+                new_sheet.add_data_validation(new_dv)
+                
+            transfer_logger.info(f"Copied and processed {len(master_sheet.data_validations.dataValidation)} DV rules for sheet '{new_sheet.title}'.")
+
+        except Exception as e:
+            transfer_logger.warning(f"Could not copy/stretch DV rules for sheet '{new_sheet.title}'. Error: {e}")
