@@ -32,7 +32,7 @@ def _sanitize_sheet_name(name: str) -> str:
     if not name:
         return "Untitled"
     name = str(name)
-    name = re.sub(r'[\\/*?:[\\]]', '', name)
+    name = re.sub(r'[\\/*?:[\]]', '', name)
     return name[:31]
 
 def parse_skip_rows_string(skip_rows_str: str) -> Set[int]:
@@ -71,9 +71,7 @@ class ExcelTransferEngine:
         self.mappings = settings.get("mappings", {})
         self.source_columns = settings.get("source_columns", {})
         self.dest_columns = settings.get("dest_columns", {})
-        self.single_value_mappings = settings.get("single_value_mapping", {})
-        self.limit_columns = settings.get("limit_columns", False)
-        self.template_max_col = 0 # Will be calculated later
+        self.single_value_mappings = settings.get("single_value_mapping", [])
         self.progress_callback = progress_callback
 
     def _update_progress(self, value: int, message: str):
@@ -113,14 +111,6 @@ class ExcelTransferEngine:
 
             master_sheet_vals = wb_template_vals[self.master_sheet_name]
             master_sheet_formulas = wb_template_formulas[self.master_sheet_name]
-
-            # Calculate the column limit based on user setting
-            if self.limit_columns:
-                self.template_max_col = self._get_template_max_column(master_sheet_vals)
-                transfer_logger.info(f"Column optimization enabled. Detected last used column as {self.template_max_col}")
-            else:
-                self.template_max_col = master_sheet_vals.max_column
-                transfer_logger.info(f"Column optimization disabled. Using sheet max_column: {self.template_max_col}")
 
             output_wb = Workbook()
             if output_wb.active:
@@ -162,10 +152,14 @@ class ExcelTransferEngine:
     def _copy_range(self, source_sheet_vals: Worksheet, source_sheet_formulas: Worksheet, dest_sheet: Worksheet, min_row: int, max_row: int, dest_start_row: int) -> int:
         transfer_logger.info(f"Copying range from {source_sheet_vals.title}:{min_row}-{max_row} to {dest_sheet.title}:{dest_start_row}")
         
-        for col, dim in source_sheet_vals.column_dimensions.items():
-            dest_sheet.column_dimensions[col] = copy(dim)
+        max_col = source_sheet_vals.max_column
 
-        for r_idx, row in enumerate(source_sheet_vals.iter_rows(min_row=min_row, max_row=max_row, max_col=self.template_max_col)):
+        for col_idx in range(1, max_col + 1):
+            dim = source_sheet_vals.column_dimensions.get(get_column_letter(col_idx))
+            if dim:
+                dest_sheet.column_dimensions[get_column_letter(col_idx)] = copy(dim)
+
+        for r_idx, row in enumerate(source_sheet_vals.iter_rows(min_row=min_row, max_row=max_row, max_col=max_col)):
             dest_row_idx = dest_start_row + r_idx
             if row[0].row in source_sheet_vals.row_dimensions:
                 dest_sheet.row_dimensions[dest_row_idx] = copy(source_sheet_vals.row_dimensions[row[0].row])
@@ -173,7 +167,16 @@ class ExcelTransferEngine:
             for c_idx, source_cell in enumerate(row):
                 dest_cell = dest_sheet.cell(row=dest_row_idx, column=c_idx + 1)
                 if source_cell.has_style:
-                    dest_cell.font = copy(source_cell.font); dest_cell.border = copy(source_cell.border); dest_cell.fill = copy(source_cell.fill); dest_cell.number_format = source_cell.number_format; dest_cell.protection = copy(source_cell.protection); dest_cell.alignment = copy(source_cell.alignment)
+                    dest_cell.font = copy(source_cell.font)
+                    dest_cell.fill = copy(source_cell.fill)
+                    dest_cell.number_format = source_cell.number_format
+                    dest_cell.protection = copy(source_cell.protection)
+                    dest_cell.alignment = copy(source_cell.alignment)
+                    border_to_copy = source_cell.border
+                    if (border_to_copy.left.style or border_to_copy.right.style or 
+                        border_to_copy.top.style or border_to_copy.bottom.style or 
+                        border_to_copy.diagonal.style):
+                        dest_cell.border = copy(border_to_copy)
                 
                 formula = source_sheet_formulas.cell(row=source_cell.row, column=source_cell.column).value
                 if isinstance(formula, str) and formula.startswith('='):
@@ -200,38 +203,19 @@ class ExcelTransferEngine:
         current_write_row = start_row
 
         for row_data in data_rows:
-            # Step 1: Stamp the entire template row using the robust _copy_range function.
-            # This copies styles, static values, and formulas from the template data row.
             self._copy_range(master_sheet_vals, master_sheet_formulas, dest_sheet, 
                              min_row=template_row_idx, max_row=template_row_idx, 
                              dest_start_row=current_write_row)
 
-            # Step 2: Overwrite the stamped row with the actual mapped data.
             for source_col, dest_col in self.mappings.items():
                 if dest_col in self.dest_columns:
                     dest_col_num = self.dest_columns[dest_col]
-                    # Get the cell in the newly created row to write to.
                     cell_to_write = self._get_writable_cell(dest_sheet, current_write_row, dest_col_num)
                     cell_to_write.value = row_data.get(source_col)
             
             current_write_row += 1
         
         return current_write_row - 1
-
-    def _get_template_max_column(self, worksheet: Worksheet) -> int:
-        """Scans a worksheet to find the last column that contains data or has a style."""
-        max_col = 0
-        # Scan all rows to find the rightmost column with any content
-        for row in worksheet.iter_rows():
-            for cell in row:
-                # A cell is considered "used" if it has a value or a non-default style.
-                # openpyxl's has_style is True if font, border, fill, etc. are not default.
-                if cell.value is not None or cell.has_style:
-                    if cell.column > max_col:
-                        max_col = cell.column
-        
-        # As a fallback, if the sheet is completely empty, use the worksheet's property
-        return max_col if max_col > 0 else worksheet.max_column
 
     def _read_source_data(self) -> List[Dict[str, Any]]:
         workbook = None
@@ -295,7 +279,6 @@ class ExcelTransferEngine:
             return
         
         transfer_logger.info(f"Writing single values to sheet '{worksheet.title}'")
-        # The mapping object is now a list of dicts
         for mapping in self.single_value_mappings:
             source_col = mapping.get("source_col")
             dest_cell_addr = mapping.get("dest_cell")
@@ -317,46 +300,53 @@ class ExcelTransferEngine:
 
     def _stretch_and_apply_validations(self, new_sheet: Worksheet, master_sheet: Worksheet, actual_data_rows: int):
         """
-        Copies data validations from a master sheet to a new sheet, 
-        stretching the ranges that fall within the data write zone.
+        Copies and adjusts Data Validation rules from a master sheet to a new sheet.
+        It handles three cases: Header (copy), Data Zone (stretch), and Footer (offset).
         """
         if not master_sheet.data_validations:
             return
 
+        # Calculate the row offset for the footer based on how many rows were added/removed.
+        footer_offset = 0
+        if self.dest_write_end_row > 0: # Ensure there is a data zone defined
+            template_data_height = self.dest_write_end_row - self.dest_write_start_row + 1
+            footer_offset = actual_data_rows - template_data_height
+
         try:
             for dv in master_sheet.data_validations.dataValidation:
                 new_dv = copy(dv)
-                
-                # Heuristic: If a validation range starts at the write zone and has the same height,
-                # assume it should be stretched vertically to fit new data.
-                needs_stretching = False
-                if self.dest_write_end_row > 0 and actual_data_rows > 0:
-                    # sqref can be a MultiCellRange object, so we must convert it to a string to iterate
-                    sqref_str = str(new_dv.sqref)
-                    for range_str in sqref_str.split():
-                        _min_col, min_row, _max_col, max_row = range_boundaries(range_str)
-                        if min_row == self.dest_write_start_row and max_row == self.dest_write_end_row:
-                            needs_stretching = True
-                            break
+                new_sqref = ""
 
-                if needs_stretching:
-                    new_sqref = ""
-                    sqref_str = str(new_dv.sqref) # Ensure we are working with a string
-                    # Re-build the sqref string with the new, stretched height
-                    for range_str in sqref_str.split():
-                        min_col, min_row, max_col, _ = range_boundaries(range_str)
-                        new_max_row = self.dest_write_start_row + actual_data_rows - 1
-                        
-                        if new_max_row < min_row:
-                            new_max_row = min_row
+                # A validation can apply to multiple ranges, so we process each one.
+                for range_str in str(new_dv.sqref).split():
+                    min_col, min_row, max_col, max_row = range_boundaries(range_str)
 
-                        new_sqref += f" {get_column_letter(min_col)}{min_row}:{get_column_letter(max_col)}{new_max_row}"
+                    # Case 1: Rule is entirely within the Header. Copy as-is.
+                    if max_row < self.dest_write_start_row:
+                        new_sqref += f" {range_str}"
                     
-                    new_dv.sqref = new_sqref.strip()
-                    transfer_logger.debug(f"Stretched DV range from '{dv.sqref}' to '{new_dv.sqref}'")
+                    # Case 2: Rule is within the Data Zone. Stretch it.
+                    elif min_row >= self.dest_write_start_row and max_row <= self.dest_write_end_row:
+                        new_max_row = self.dest_write_start_row + actual_data_rows - 1
+                        if new_max_row < min_row: new_max_row = min_row # Handle case where data rows are fewer than template
+                        new_sqref += f" {get_column_letter(min_col)}{min_row}:{get_column_letter(max_col)}{new_max_row}"
+                        transfer_logger.debug(f"Stretched DV range from '{range_str}' to '{new_sqref.strip()}'")
 
-                new_sheet.add_data_validation(new_dv)
-                
+                    # Case 3: Rule is entirely within the Footer. Offset it.
+                    elif min_row > self.dest_write_end_row:
+                        new_min_row = min_row + footer_offset
+                        new_max_row = max_row + footer_offset
+                        new_sqref += f" {get_column_letter(min_col)}{new_min_row}:{get_column_letter(max_col)}{new_max_row}"
+                        transfer_logger.debug(f"Offset DV range from '{range_str}' to '{new_sqref.strip()}'")
+
+                    # Case 4: Rule spans across zones (unusual). Copy as-is for safety.
+                    else:
+                        new_sqref += f" {range_str}"
+
+                new_dv.sqref = new_sqref.strip()
+                if new_dv.sqref: # Only add if there's a valid range
+                    new_sheet.add_data_validation(new_dv)
+            
             transfer_logger.info(f"Copied and processed {len(master_sheet.data_validations.dataValidation)} DV rules for sheet '{new_sheet.title}'.")
 
         except Exception as e:
