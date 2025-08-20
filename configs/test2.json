@@ -4,13 +4,14 @@
   "dest_header_start_row": 9,
   "dest_header_end_row": 10,
   "dest_write_start_row": 11,
-  "dest_write_end_row": 29,
+  "dest_write_end_row": 23,
   "dest_skip_rows": "",
   "respect_cell_protection": true,
   "respect_formulas": true,
-  "sort_column": "Contents",
+  "group_by_column": "Supplier name",
+  "source_sheet": "Payment List",
+  "master_sheet": "Form",
   "mapping": {
-    "Số\ncover": "No.",
     "Trading   date\nNgày lập cover": "Trading   date",
     "Applicant - Division": "Cost burden - Division CD",
     "Trading day's exchange rate    (To VND)": "Trading day's exchange rate    (To VND)",
@@ -21,5 +22,27 @@
     "Amount": "VND or US$　or JPY - Amount",
     "Official invoice number": "Official invoice number"
   },
-  "created_date": "2025-08-04T12:05:10.987434"
+  "single_value_mapping": {
+    "Applicant - Date": {
+      "source_col": "Trading   date\nNgày lập cover",
+      "dest_cell": "AY5"
+    },
+    "Applicant - Employ ID": {
+      "source_col": "Applicant - Employee ID",
+      "dest_cell": "AY6"
+    },
+    "Applicant - Signature": {
+      "source_col": "Applicant - Signature",
+      "dest_cell": "AY7"
+    },
+    "Manager - Employ ID": {
+      "source_col": "Manager - Employee ID",
+      "dest_cell": "BP6"
+    },
+    "Manager - Signature": {
+      "source_col": "Signature",
+      "dest_cell": "BP7"
+    }
+  },
+  "created_date": "2025-08-20T13:48:45.300407"
 }

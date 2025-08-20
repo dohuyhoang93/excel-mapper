@@ -22,10 +22,16 @@ from logic.parser import ExcelParser
 from logic.config_manager import ConfigurationManager
 from logic.mapper import ColumnMapper
 from logic.transfer import ExcelTransferEngine, parse_skip_rows_string
-from gui.widgets import (ScrollableFrame, AboutDialog, PreviewDialog, 
-                         DetectionConfigDialog, show_custom_info, 
-                         show_custom_error, show_custom_warning, 
-                         show_custom_question)
+from gui.widgets import (
+    ScrollableFrame,
+    AboutDialog,
+    PreviewDialog,
+    DetectionConfigDialog,
+    show_custom_info,
+    show_custom_error,
+    show_custom_warning,
+    show_custom_question,
+)
 
 # Cấu hình logging
 logging.basicConfig(
@@ -87,9 +93,8 @@ class ExcelDataMapper:
     def __init__(self):
         self.root = ttk_boot.Window(themename="flatly")
         self.root.title("Excel Data Mapper")
-        self.root.geometry("1000x800") # Increased height for new widgets
+        self.root.geometry("1000x800")
 
-        # Center the window on the screen
         self.root.update_idletasks()
         width = self.root.winfo_width()
         height = self.root.winfo_height()
@@ -109,28 +114,32 @@ class ExcelDataMapper:
         except Exception:
             pass
         
+        # --- Variable Declarations ---
         self.source_file = tk.StringVar()
         self.dest_file = tk.StringVar()
+        self.source_sheet = tk.StringVar()
+        self.master_sheet = tk.StringVar()
+        
         self.source_header_start_row = tk.IntVar(value=1)
         self.source_header_end_row = tk.IntVar(value=1)
         self.dest_header_start_row = tk.IntVar(value=9)
         self.dest_header_end_row = tk.IntVar(value=9)
+        
         self.group_by_column = tk.StringVar()
-        self.master_sheet = tk.StringVar()
         self.current_theme = "flatly"
+        
         self.dest_write_start_row = tk.IntVar(value=11)
         self.dest_write_end_row = tk.IntVar(value=0)
         self.dest_skip_rows = tk.StringVar(value="")
         self.respect_cell_protection = tk.BooleanVar(value=True)
         self.respect_formulas = tk.BooleanVar(value=True)
-        self.limit_columns = tk.BooleanVar(value=True) # New variable for column optimization
+        self.limit_columns = tk.BooleanVar(value=True)
         self.detection_keywords = tk.StringVar(value="total,sum,cộng,tổng,thành tiền")
         
         self.source_columns = {}
         self.dest_columns = {}
         self.mapping_combos = {}
 
-        # New: For single value mappings
         self.single_value_fields = {
             "Applicant - Date": {"source_var": tk.StringVar(), "dest_var": tk.StringVar(), "combo": None},
             "Applicant - Employ ID": {"source_var": tk.StringVar(), "dest_var": tk.StringVar(), "combo": None},
@@ -178,8 +187,6 @@ class ExcelDataMapper:
         main_frame = ttk_boot.Frame(self.root, padding=5)
         main_frame.pack(fill=BOTH, expand=True, side=TOP)
 
-        # --- Bottom Panels (Status and Actions) ---
-        # We pack them first to reserve their space at the bottom
         self.status_frame = ttk_boot.Frame(main_frame)
         self.status_frame.pack(side=BOTTOM, fill=X, pady=(5, 0))
         self.status_frame.columnconfigure(0, weight=1)
@@ -202,58 +209,54 @@ class ExcelDataMapper:
         self.preview_button = ttk_boot.Button(action_frame, text="Preview Transfer", command=self.preview_transfer, bootstyle="outline-secondary")
         self.preview_button.pack(side=RIGHT, padx=5)
 
-        # --- Top Panels (Content Area with Two Columns) ---
         content_frame = ttk_boot.Frame(main_frame)
         content_frame.pack(fill=BOTH, expand=True)
 
-        # Left column for configuration panels
         left_panel = ttk_boot.Frame(content_frame, padding=(0, 0, 10, 0))
         left_panel.pack(side=LEFT, fill=Y, anchor=N)
 
-        # Right column for the mapping table
         right_panel = ttk_boot.Frame(content_frame)
         right_panel.pack(side=LEFT, fill=BOTH, expand=True)
 
         # --- Populate Left Panel ---
-        file_frame = ttk_boot.LabelFrame(left_panel, text="File Selection", padding=5)
+        file_frame = ttk_boot.LabelFrame(left_panel, text="File & Sheet Selection", padding=5)
         file_frame.pack(fill=X, pady=(0, 5), anchor=N)
         file_frame.columnconfigure(1, weight=1)
+        
         ttk_boot.Label(file_frame, text="Source File:").grid(row=0, column=0, sticky=W, pady=2)
         ttk_boot.Entry(file_frame, textvariable=self.source_file, width=50).grid(row=0, column=1, padx=5, pady=2, sticky=EW)
         ttk_boot.Button(file_frame, bootstyle="outline", text="Browse", command=self.browse_source_file).grid(row=0, column=2, padx=5, pady=2)
-        ttk_boot.Label(file_frame, text="Destination File:").grid(row=1, column=0, sticky=W, pady=2)
-        ttk_boot.Entry(file_frame, textvariable=self.dest_file, width=50).grid(row=1, column=1, padx=5, pady=2, sticky=EW)
-        ttk_boot.Button(file_frame, bootstyle="outline", text="Browse", command=self.browse_dest_file).grid(row=1, column=2, padx=5, pady=2)
         
+        ttk_boot.Label(file_frame, text="Source Sheet:").grid(row=1, column=0, sticky=W, pady=2)
+        self.source_sheet_combo = ttk_boot.Combobox(file_frame, textvariable=self.source_sheet, state=DISABLED)
+        self.source_sheet_combo.grid(row=1, column=1, columnspan=2, padx=5, pady=2, sticky=EW)
+
+        ttk_boot.Label(file_frame, text="Destination File:").grid(row=2, column=0, sticky=W, pady=2)
+        ttk_boot.Entry(file_frame, textvariable=self.dest_file, width=50).grid(row=2, column=1, padx=5, pady=2, sticky=EW)
+        ttk_boot.Button(file_frame, bootstyle="outline", text="Browse", command=self.browse_dest_file).grid(row=2, column=2, padx=5, pady=2)
+
+        ttk_boot.Label(file_frame, text="Master Sheet:").grid(row=3, column=0, sticky=W, pady=2)
+        self.master_sheet_combo = ttk_boot.Combobox(file_frame, textvariable=self.master_sheet, state=DISABLED)
+        self.master_sheet_combo.grid(row=3, column=1, columnspan=2, padx=5, pady=2, sticky=EW)
+
         header_frame = ttk_boot.LabelFrame(left_panel, text="Header Configuration", padding=5)
         header_frame.pack(fill=X, pady=(0, 5), anchor=N)
-        # Make the column with the last spinbox expand, pushing the button to the right
         header_frame.columnconfigure(4, weight=1)
 
-        # Row 0: Source Headers
         ttk_boot.Label(header_frame, text="Source:").grid(row=0, column=0, sticky=W, pady=(0, 2))
         ttk_boot.Label(header_frame, text="From:").grid(row=0, column=1, sticky=W, padx=(5, 0))
         ttk_boot.Spinbox(header_frame, from_=1, to=50, textvariable=self.source_header_start_row, width=5).grid(row=0, column=2, padx=(5, 10))
         ttk_boot.Label(header_frame, text="To:").grid(row=0, column=3, sticky=W)
         ttk_boot.Spinbox(header_frame, from_=1, to=50, textvariable=self.source_header_end_row, width=5).grid(row=0, column=4, padx=5, sticky=EW)
         
-        # Row 1: Destination Headers
         ttk_boot.Label(header_frame, text="Destination:").grid(row=1, column=0, sticky=W, pady=(0, 2))
         ttk_boot.Label(header_frame, text="From:").grid(row=1, column=1, sticky=W, padx=(5, 0))
         ttk_boot.Spinbox(header_frame, from_=1, to=50, textvariable=self.dest_header_start_row, width=5).grid(row=1, column=2, padx=(5, 10))
         ttk_boot.Label(header_frame, text="To:").grid(row=1, column=3, sticky=W)
         ttk_boot.Spinbox(header_frame, from_=1, to=50, textvariable=self.dest_header_end_row, width=5).grid(row=1, column=4, padx=5, sticky=EW)
         
-        # Load Button, aligned to the right, spanning two rows
         self.load_cols_button = ttk_boot.Button(header_frame, text="Load Columns", command=self.safe_load_columns, bootstyle="outline-info")
         self.load_cols_button.grid(row=0, column=5, rowspan=2, padx=(10, 0), pady=2, sticky="ns")
-
-        master_sheet_frame = ttk_boot.LabelFrame(left_panel, text="Master Sheet Selection", padding=5)
-        master_sheet_frame.pack(fill=X, pady=(0, 5), anchor=N)
-        master_sheet_frame.columnconfigure(0, weight=1)
-        ttk_boot.Label(master_sheet_frame, text="Master Sheet:").pack(fill=X)
-        self.master_sheet_combo = ttk_boot.Combobox(master_sheet_frame, textvariable=self.master_sheet, state=DISABLED)
-        self.master_sheet_combo.pack(fill=X)
 
         write_zone_frame = ttk_boot.LabelFrame(left_panel, text="Setting write zone", padding=5)
         write_zone_frame.pack(fill=X, pady=(0, 5), anchor=N)
@@ -277,13 +280,10 @@ class ExcelDataMapper:
         self.group_by_combo = ttk_boot.Combobox(group_by_frame, textvariable=self.group_by_column)
         self.group_by_combo.pack(fill=X)
 
-        # New: Single Value Mapping Frame
         single_value_frame = ttk_boot.LabelFrame(left_panel, text="Single Value Mapping", padding=5)
         single_value_frame.pack(fill=X, pady=(0, 5), anchor=N)
-        # Grid layout for this frame
         single_value_frame.columnconfigure(1, weight=1)
         single_value_frame.columnconfigure(2, weight=1)
-        # Header
         ttk_boot.Label(single_value_frame, text="Field", font='-weight bold').grid(row=0, column=0, sticky="w", padx=2)
         ttk_boot.Label(single_value_frame, text="Source Column", font='-weight bold').grid(row=0, column=1, sticky="w", padx=2)
         ttk_boot.Label(single_value_frame, text="Destination Cell", font='-weight bold').grid(row=0, column=2, sticky="w", padx=2)
@@ -292,12 +292,10 @@ class ExcelDataMapper:
             ttk_boot.Label(single_value_frame, text=f"{field}:").grid(row=i, column=0, sticky="w", padx=2, pady=2)
             combo = ttk_boot.Combobox(single_value_frame, textvariable=data["source_var"])
             combo.grid(row=i, column=1, sticky="ew", padx=2)
-            data["combo"] = combo # Store reference to the combobox
-            
+            data["combo"] = combo
             entry = ttk_boot.Entry(single_value_frame, textvariable=data["dest_var"], width=15)
             entry.grid(row=i, column=2, sticky="ew", padx=2)
 
-        # --- Populate Right Panel ---
         mapping_container = ttk_boot.LabelFrame(right_panel, text="Column Mapping", padding=5)
         mapping_container.pack(fill=BOTH, expand=True)
         self.mapping_scroll_frame = ScrollableFrame(mapping_container)
@@ -308,6 +306,7 @@ class ExcelDataMapper:
         if filename:
             self.source_file.set(filename)
             self.log_info(f"Source file selected: {filename}")
+            self._load_source_sheets(filename)
     
     def browse_dest_file(self):
         filename = filedialog.askopenfilename(title="Select Destination Excel file", filetypes=[("Excel files", "*.xlsx *.xls")])
@@ -316,8 +315,38 @@ class ExcelDataMapper:
             self.log_info(f"Destination file selected: {filename}")
             self._load_destination_sheets(filename)
 
+    def _load_source_sheets(self, file_path: str):
+        """Loads VISIBLE sheet names from the source file into the source sheet combobox."""
+        try:
+            if not file_path or not os.path.exists(file_path):
+                self.source_sheet_combo['values'] = []
+                self.source_sheet.set('')
+                self.source_sheet_combo.config(state=DISABLED)
+                return
+
+            FileHandleManager.force_release_handles()
+            wb = openpyxl.load_workbook(file_path, read_only=True)
+            visible_sheets = [sheet.title for sheet in wb.worksheets if sheet.sheet_state == 'visible']
+            wb.close()
+            
+            self.source_sheet_combo['values'] = visible_sheets
+            if visible_sheets:
+                self.source_sheet.set(visible_sheets[0])
+                self.source_sheet_combo.config(state='readonly')
+            else:
+                self.source_sheet.set('')
+                self.source_sheet_combo.config(state=DISABLED)
+            self.log_info(f"Loaded visible source sheets: {visible_sheets}")
+
+        except Exception as e:
+            self.log_error(f"Error loading source sheets: {str(e)}")
+            show_custom_error(self.root, self, "Error", f"Could not read sheets from source file: {str(e)}")
+            self.source_sheet_combo['values'] = []
+            self.source_sheet.set('')
+            self.source_sheet_combo.config(state=DISABLED)
+
     def _load_destination_sheets(self, file_path: str):
-        """Loads sheet names from the destination file into the master sheet combobox."""
+        """Loads VISIBLE sheet names from the destination file into the master sheet combobox."""
         try:
             if not file_path or not os.path.exists(file_path):
                 self.master_sheet_combo['values'] = []
@@ -327,17 +356,17 @@ class ExcelDataMapper:
 
             FileHandleManager.force_release_handles()
             wb = openpyxl.load_workbook(file_path, read_only=True)
-            sheet_names = wb.sheetnames
+            visible_sheets = [sheet.title for sheet in wb.worksheets if sheet.sheet_state == 'visible']
             wb.close()
             
-            self.master_sheet_combo['values'] = sheet_names
-            if sheet_names:
-                self.master_sheet.set(sheet_names[0])
+            self.master_sheet_combo['values'] = visible_sheets
+            if visible_sheets:
+                self.master_sheet.set(visible_sheets[0])
                 self.master_sheet_combo.config(state='readonly')
             else:
                 self.master_sheet.set('')
                 self.master_sheet_combo.config(state=DISABLED)
-            self.log_info(f"Loaded sheets from {os.path.basename(file_path)}")
+            self.log_info(f"Loaded visible destination sheets: {visible_sheets}")
 
         except Exception as e:
             self.log_error(f"Error loading destination sheets: {str(e)}")
@@ -359,7 +388,9 @@ class ExcelDataMapper:
     
     def check_file_accessibility(self, file_path: str) -> bool:
         try:
-            if not os.path.exists(file_path): return False
+            if not os.path.exists(file_path):
+                show_custom_error(self.root, self, "File Not Found", f"The file could not be found:\n{file_path}")
+                return False
             if FileHandleManager.is_file_locked(file_path):
                 self.update_status(f"Waiting for file to be released: {os.path.basename(file_path)}")
                 if not FileHandleManager.wait_for_file_release(file_path, max_wait_seconds=10):
@@ -374,10 +405,12 @@ class ExcelDataMapper:
             self.log_error(f"Error checking file accessibility: {str(e)}")
             return False
     
-    def get_excel_columns(self, file_path, start_row, end_row):
+    def get_excel_columns(self, file_path, start_row, end_row, sheet_name: Optional[str] = None):
         try:
             FileHandleManager.force_release_handles()
-            with ExcelParser(file_path) as parser:
+            with ExcelParser(file_path, sheet_name=sheet_name) as parser:
+                if not parser.worksheet:
+                    raise ValueError(f"Sheet '{sheet_name}' not found or workbook is empty.")
                 headers = parser.get_headers(start_row, end_row)
                 return {name: index for name, index in headers.items() if name and str(name).strip()}
         except Exception as e:
@@ -391,22 +424,17 @@ class ExcelDataMapper:
             if not self.source_file.get() or not self.dest_file.get():
                 show_custom_warning(self.root, self, "Warning", "Please select both source and destination files first.")
                 return
-            if not self.check_file_accessibility(self.source_file.get()):
-                show_custom_error(self.root, self, "Error", f"Cannot access source file: {self.source_file.get()}")
-                return
-            if not self.check_file_accessibility(self.dest_file.get()):
-                show_custom_error(self.root, self, "Error", f"Cannot access destination file: {self.dest_file.get()}")
+            if not self.check_file_accessibility(self.source_file.get()) or not self.check_file_accessibility(self.dest_file.get()):
                 return
             
             self.force_release_excel_handles()
             self.update_status("Loading columns...")
             
-            self.source_columns = self.get_excel_columns(self.source_file.get(), self.source_header_start_row.get(), self.source_header_end_row.get())
-            time.sleep(0.1)
-            self.dest_columns = self.get_excel_columns(self.dest_file.get(), self.dest_header_start_row.get(), self.dest_header_end_row.get())
+            self.source_columns = self.get_excel_columns(self.source_file.get(), self.source_header_start_row.get(), self.source_header_end_row.get(), sheet_name=self.source_sheet.get())
+            self.dest_columns = self.get_excel_columns(self.dest_file.get(), self.dest_header_start_row.get(), self.dest_header_end_row.get(), sheet_name=self.master_sheet.get())
             
             if not self.source_columns or not self.dest_columns:
-                show_custom_error(self.root, self, "Error", "Could not load columns. Please check file paths and header row numbers.")
+                show_custom_error(self.root, self, "Error", "Could not load columns. Please check file paths, sheet selections, and header row numbers.")
                 return
             
             source_keys = list(self.source_columns.keys())
@@ -414,7 +442,6 @@ class ExcelDataMapper:
             if saved_group_by_col and saved_group_by_col in source_keys:
                 self.group_by_column.set(saved_group_by_col)
 
-            # New: Populate single value mapping combos
             for field_data in self.single_value_fields.values():
                 if field_data["combo"]:
                     field_data["combo"]['values'] = source_keys
@@ -465,7 +492,6 @@ class ExcelDataMapper:
 
             mappings = {source_col: combo.get() for source_col, combo in self.mapping_combos.items() if combo.get()}
             
-            # New: Get single value mappings
             single_value_mappings = {}
             for field, data in self.single_value_fields.items():
                 source_col = data["source_var"].get()
@@ -481,13 +507,14 @@ class ExcelDataMapper:
                 "respect_cell_protection": self.respect_cell_protection.get(),
                 "respect_formulas": self.respect_formulas.get(), 
                 "group_by_column": self.group_by_column.get(), 
+                "source_sheet": self.source_sheet.get(),
                 "master_sheet": self.master_sheet.get(),
                 "mapping": mappings,
                 "single_value_mapping": single_value_mappings
             }
             
             self.config_manager.save_job_config(job_config, config_file_path)
-            self.save_app_settings() # Update last used files in app settings
+            self.save_app_settings()
             
             self.update_status(f"Job configuration saved to {os.path.basename(config_file_path)}")
             self.log_info(f"Job configuration saved: {config_file_path}")
@@ -515,8 +542,27 @@ class ExcelDataMapper:
             self.dest_skip_rows.set(config.get("dest_skip_rows", ""))
             self.respect_cell_protection.set(config.get("respect_cell_protection", True))
             self.respect_formulas.set(config.get("respect_formulas", True))
-            self.master_sheet.set(config.get("master_sheet", ""))
-            
+
+            # Load and validate source sheet
+            saved_source_sheet = config.get("source_sheet", "")
+            available_source_sheets = self.source_sheet_combo['values']
+            if available_source_sheets and saved_source_sheet and saved_source_sheet in available_source_sheets:
+                self.source_sheet.set(saved_source_sheet)
+            elif saved_source_sheet:
+                show_custom_warning(self.root, self, "Source Sheet Not Found", 
+                                    f"Saved source sheet '{saved_source_sheet}' not found in the current source file.\n"
+                                    f"Defaulting to the first available sheet: '{available_source_sheets[0] if available_source_sheets else ''}'.")
+
+            # Load and validate master sheet (destination)
+            saved_master_sheet = config.get("master_sheet", "")
+            available_dest_sheets = self.master_sheet_combo['values']
+            if available_dest_sheets and saved_master_sheet and saved_master_sheet in available_dest_sheets:
+                self.master_sheet.set(saved_master_sheet)
+            elif saved_master_sheet:
+                show_custom_warning(self.root, self, "Master Sheet Not Found", 
+                                    f"Saved master sheet '{saved_master_sheet}' not found in the current destination file.\n"
+                                    f"Defaulting to the first available sheet: '{available_dest_sheets[0] if available_dest_sheets else ''}'.")
+
             if self.source_file.get() and self.dest_file.get():
                 saved_group_by_col = config.get("group_by_column", "")
                 self.safe_load_columns(saved_group_by_col=saved_group_by_col, apply_suggestions=False)
@@ -525,14 +571,13 @@ class ExcelDataMapper:
                     if source_col in self.mapping_combos:
                         self.mapping_combos[source_col].set(dest_col)
                 
-                # New: Load single value mappings
                 single_value_mappings = config.get("single_value_mapping", {})
                 for field, mapping_data in single_value_mappings.items():
                     if field in self.single_value_fields:
                         self.single_value_fields[field]["source_var"].set(mapping_data.get("source_col", ""))
                         self.single_value_fields[field]["dest_var"].set(mapping_data.get("dest_cell", ""))
 
-            self.save_app_settings() # Update last used files
+            self.save_app_settings()
             self.update_status(f"Job configuration loaded from {os.path.basename(config_file_path)}")
             self.log_info(f"Job configuration loaded: {config_file_path}")
         except Exception as e:
@@ -544,19 +589,17 @@ class ExcelDataMapper:
         try:
             settings = self.config_manager.load_app_settings()
             
-            # Restore last used theme
             new_theme = settings.get("theme", "flatly")
             if new_theme != self.current_theme:
                 self.root.style.theme_use(new_theme)
                 self.current_theme = new_theme
             
-            # Restore last used keywords
             self.detection_keywords.set(settings.get("detection_keywords", "total,sum,cộng,tổng,thành tiền"))
 
-            # Restore last used file paths if they exist
             last_source = settings.get("last_source_file", "")
             if os.path.exists(last_source):
                 self.source_file.set(last_source)
+                self._load_source_sheets(last_source)
             
             last_dest = settings.get("last_dest_file", "")
             if os.path.exists(last_dest):
@@ -567,7 +610,6 @@ class ExcelDataMapper:
 
         except Exception as e:
             self.log_error(f"Error loading application settings: {str(e)}")
-            # Don't show a popup for this, just log it.
             
     def save_app_settings(self):
         """Saves global application settings."""
@@ -592,15 +634,16 @@ class ExcelDataMapper:
         if not self.source_file.get() or not self.dest_file.get():
             show_custom_warning(self.root, self, "Warning", "Please select both source and destination files.")
             return
+        if not self.source_sheet.get() or not self.master_sheet.get():
+            show_custom_warning(self.root, self, "Warning", "Please select a sheet for both source and destination files.")
+            return
         if not hasattr(self, 'mapping_combos') or not self.mapping_combos:
             show_custom_warning(self.root, self, "Warning", "Please load columns first.")
             return
         if not self.group_by_column.get():
             show_custom_warning(self.root, self, "Warning", "Please select a 'Group by Column'.")
             return
-        if not self.master_sheet.get():
-            show_custom_warning(self.root, self, "Warning", "Please select a 'Master Sheet'.")
-            return
+        
         mappings = {s: c.get() for s, c in self.mapping_combos.items() if c.get()}
         if not mappings:
             show_custom_warning(self.root, self, "Warning", "Please configure at least one column mapping.")
@@ -622,9 +665,6 @@ class ExcelDataMapper:
 
     def _execute_transfer_thread(self, mappings):
         try:
-            # 1. Collect all settings for the engine
-            
-            # --- Collect single value mappings ---
             single_value_mappings = {}
             for field, data in self.single_value_fields.items():
                 source_col = data["source_var"].get()
@@ -635,6 +675,8 @@ class ExcelDataMapper:
             settings = {
                 "source_file": self.source_file.get(),
                 "dest_file": self.dest_file.get(),
+                "source_sheet": self.source_sheet.get(),
+                "master_sheet": self.master_sheet.get(),
                 "source_header_start_row": self.source_header_start_row.get(),
                 "source_header_end_row": self.source_header_end_row.get(),
                 "dest_header_start_row": self.dest_header_start_row.get(),
@@ -644,26 +686,21 @@ class ExcelDataMapper:
                 "dest_skip_rows": self.dest_skip_rows.get(),
                 "respect_cell_protection": self.respect_cell_protection.get(),
                 "respect_formulas": self.respect_formulas.get(),
+                "limit_columns": self.limit_columns.get(),
                 "group_by_column": self.group_by_column.get(),
-                "master_sheet": self.master_sheet.get(),
                 "mappings": mappings,
                 "source_columns": self.source_columns,
                 "dest_columns": self.dest_columns,
-                "single_value_mapping": single_value_mappings, # Add single value mappings to settings
-                "limit_columns": self.limit_columns.get()
+                "single_value_mapping": single_value_mappings
             }
 
-            # 2. Create and run the engine
             engine = ExcelTransferEngine(settings, self.update_progress_callback)
             engine.run_transfer()
             
-            # 3. Update UI on success
             self.root.after(0, self.on_transfer_success)
         except Exception as e:
-            # 4. Update UI on error
             self.root.after(0, self.on_transfer_error, e)
         finally:
-            # 5. ALWAYS release handles and re-enable controls
             FileHandleManager.force_release_handles()
             self.root.after(0, self.enable_controls)
 
@@ -671,7 +708,7 @@ class ExcelDataMapper:
         """Callback function for the engine to update the GUI's progress."""
         self.progress['value'] = value
         self.update_status(message)
-        self.root.update() # Use update, not update_idletasks, to force redraw
+        self.root.update()
     
     def on_transfer_success(self):
         self.progress['value'] = 100
@@ -743,7 +780,8 @@ class ExcelDataMapper:
             predicted_start_row = self.dest_header_end_row.get() + 1
             self.dest_write_start_row.set(predicted_start_row)
             predicted_end_row = 0
-            with ExcelParser(self.dest_file.get()) as p:
+            with ExcelParser(self.dest_file.get(), sheet_name=self.master_sheet.get()) as p:
+                if not p.worksheet: return
                 ws = p.worksheet
                 keywords = [k.strip() for k in self.detection_keywords.get().lower().split(',') if k.strip()]
                 for row in range(predicted_start_row, ws.max_row + 1):
@@ -775,9 +813,8 @@ class ExcelDataMapper:
                 report["error"] = "Please select a 'Group by Column' for the preview."
                 return report
 
-            # Read source data - using the main parser to get all data for accurate grouping
-            with ExcelParser(self.source_file.get()) as p:
-                # Re-using the logic from the transfer engine's _read_source_data
+            with ExcelParser(self.source_file.get(), sheet_name=self.source_sheet.get()) as p:
+                if not p.worksheet: raise ValueError(f"Sheet '{self.source_sheet.get()}' not found in source file.")
                 worksheet = p.worksheet
                 start_data_row = self.source_header_end_row.get() + 1
                 source_data = []
@@ -795,7 +832,6 @@ class ExcelDataMapper:
                 report["error"] = "No data found in source file to generate a preview."
                 return report
 
-            # Group data
             grouped_data = {}
             for row in source_data:
                 key = str(row.get(group_by_col, "Uncategorized"))
@@ -806,7 +842,6 @@ class ExcelDataMapper:
             report['group_count'] = len(grouped_data)
             report['total_rows'] = len(source_data)
             
-            # Get top 5 largest groups
             top_groups = sorted(grouped_data.items(), key=lambda item: len(item[1]), reverse=True)[:5]
             report['top_groups'] = [(name, len(rows)) for name, rows in top_groups]
 
@@ -822,6 +857,9 @@ class ExcelDataMapper:
         if not all([self.source_file.get(), os.path.exists(self.source_file.get()), self.dest_file.get(), os.path.exists(self.dest_file.get())]):
             show_custom_error(self.root, self, "Error", "Please select valid source and destination files.")
             return
+        if not self.source_sheet.get() or not self.master_sheet.get():
+            show_custom_warning(self.root, self, "Warning", "Please select a sheet for both source and destination.")
+            return
         if not hasattr(self, 'mapping_combos') or not self.source_columns:
             show_custom_warning(self.root, self, "Warning", "Please load columns first.")
             return
@@ -834,7 +872,8 @@ class ExcelDataMapper:
             if not mappings:
                 show_custom_warning(self.root, self, "Warning", "Please configure at least one mapping for a meaningful preview.")
                 return
-            with ExcelParser(self.source_file.get()) as p:
+            with ExcelParser(self.source_file.get(), sheet_name=self.source_sheet.get()) as p:
+                if not p.worksheet: raise ValueError(f"Sheet '{self.source_sheet.get()}' not found.")
                 preview_data = p.read_data_preview(self.source_columns, self.source_header_end_row.get(), 10)
             report_data['settings'] = self.get_current_settings()
             PreviewDialog(self.root, self, report_data, preview_data, mappings)
@@ -858,7 +897,6 @@ class ExcelDataMapper:
             self.root.mainloop()
         except Exception as e:
             self.log_error(f"Critical error in main loop: {str(e)}")
-            # Fallback to console message if GUI fails early
             try:
                 root = tk.Tk()
                 root.withdraw()
@@ -873,11 +911,9 @@ if __name__ == "__main__":
         app.run()
     except Exception as e:
         logging.critical(f"Failed to start application: {str(e)}\n{traceback.format_exc()}")
-        # Fallback to console message if GUI fails early
         try:
             root = tk.Tk()
             root.withdraw()
-            # Use a basic messagebox as a last resort if the custom one fails
             from tkinter import messagebox
             messagebox.showerror("Critical Error", f"Application encountered a critical error:\n\n{e}")
         except tk.TclError:

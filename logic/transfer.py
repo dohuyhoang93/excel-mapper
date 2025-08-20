@@ -66,6 +66,7 @@ class ExcelTransferEngine:
         self.dest_write_start_row = settings["dest_write_start_row"]
         self.dest_write_end_row = settings["dest_write_end_row"]
         self.group_by_column = settings.get("group_by_column")
+        self.source_sheet_name = settings.get("source_sheet")
         self.master_sheet_name = settings.get("master_sheet")
         self.mappings = settings.get("mappings", {})
         self.source_columns = settings.get("source_columns", {})
@@ -233,7 +234,11 @@ class ExcelTransferEngine:
         workbook = None
         try:
             workbook = openpyxl.load_workbook(self.source_path, data_only=True)
-            worksheet = workbook.active
+            if self.source_sheet_name and self.source_sheet_name in workbook.sheetnames:
+                worksheet = workbook[self.source_sheet_name]
+            else:
+                worksheet = workbook.active
+            
             start_data_row = self.source_header_end_row + 1
             data = []
             for row_index in range(start_data_row, worksheet.max_row + 1):

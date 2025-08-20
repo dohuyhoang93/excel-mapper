@@ -11,10 +11,11 @@ import gc
 class ExcelParser:
     """Handles parsing of Excel files with complex structures and proper resource management"""
     
-    def __init__(self, file_path: str):
+    def __init__(self, file_path: str, sheet_name: Optional[str] = None):
         self.file_path = Path(file_path)
         self.workbook = None
         self.worksheet = None
+        self.sheet_name = sheet_name # Store the desired sheet name
         
     def __enter__(self):
         """Context manager entry"""
@@ -23,7 +24,11 @@ class ExcelParser:
             gc.collect()
             
             self.workbook = openpyxl.load_workbook(self.file_path, data_only=True)
-            self.worksheet = self.workbook.active
+            # Open specific sheet if name is provided and valid, otherwise default to active
+            if self.sheet_name and self.sheet_name in self.workbook.sheetnames:
+                self.worksheet = self.workbook[self.sheet_name]
+            else:
+                self.worksheet = self.workbook.active
             return self
         except Exception as e:
             # Ensure cleanup on initialization failure
