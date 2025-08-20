@@ -9,7 +9,7 @@ from openpyxl.worksheet.worksheet import Worksheet
 import shutil
 from pathlib import Path
 import logging
-from typing import List, Dict, Any, Optional, Callable, Set
+from typing import List, Dict, Any, Optional, Callable, Set, Tuple
 from openpyxl.utils import get_column_letter, range_boundaries, column_index_from_string
 from openpyxl.utils.cell import coordinate_from_string
 from openpyxl.formula.translate import Translator
@@ -112,6 +112,10 @@ class ExcelTransferEngine:
             master_sheet_vals = wb_template_vals[self.master_sheet_name]
             master_sheet_formulas = wb_template_formulas[self.master_sheet_name]
 
+            # --- Pre-process Data Validations for performance ---
+            classified_dvs = self._classify_data_validations(master_sheet_formulas)
+            # ---
+
             output_wb = Workbook()
             if output_wb.active:
                 output_wb.remove(output_wb.active)
@@ -137,8 +141,8 @@ class ExcelTransferEngine:
                 if data_rows:
                     self._write_single_values(new_sheet, data_rows[0])
 
-                # Stretch and apply data validation rules after all rows are in place
-                self._stretch_and_apply_validations(new_sheet, master_sheet_formulas, len(data_rows))
+                # Apply the pre-processed Data Validation rules
+                self._apply_classified_validations(new_sheet, classified_dvs, len(data_rows))
 
             output_filename = self.dest_path.with_name(f"{self.dest_path.stem}-output{self.dest_path.suffix}")
             output_wb.save(output_filename)
@@ -172,10 +176,15 @@ class ExcelTransferEngine:
                     dest_cell.number_format = source_cell.number_format
                     dest_cell.protection = copy(source_cell.protection)
                     dest_cell.alignment = copy(source_cell.alignment)
+                    # Only copy the border if it has visible lines to avoid stray styles
                     border_to_copy = source_cell.border
-                    if (border_to_copy.left.style or border_to_copy.right.style or 
-                        border_to_copy.top.style or border_to_copy.bottom.style or 
-                        border_to_copy.diagonal.style):
+                    if (
+                        border_to_copy.left.style
+                        or border_to_copy.right.style
+                        or border_to_copy.top.style
+                        or border_to_copy.bottom.style
+                        or border_to_copy.diagonal.style
+                    ):
                         dest_cell.border = copy(border_to_copy)
                 
                 formula = source_sheet_formulas.cell(row=source_cell.row, column=source_cell.column).value
@@ -298,56 +307,78 @@ class ExcelTransferEngine:
             except Exception as e:
                 transfer_logger.error(f"Failed to write single value from '{source_col}' to {dest_cell_addr}. Error: {e}")
 
-    def _stretch_and_apply_validations(self, new_sheet: Worksheet, master_sheet: Worksheet, actual_data_rows: int):
-        """
-        Copies and adjusts Data Validation rules from a master sheet to a new sheet.
-        It handles three cases: Header (copy), Data Zone (stretch), and Footer (offset).
-        """
+    def _classify_data_validations(self, master_sheet: Worksheet) -> Tuple[List, List, List, List]:
+        """Scans and classifies all data validation rules into zones (header, data, footer, other)."""
+        header_dvs, data_dvs, footer_dvs, other_dvs = [], [], [], []
         if not master_sheet.data_validations:
-            return
+            return header_dvs, data_dvs, footer_dvs, other_dvs
 
-        # Calculate the row offset for the footer based on how many rows were added/removed.
-        footer_offset = 0
-        if self.dest_write_end_row > 0: # Ensure there is a data zone defined
-            template_data_height = self.dest_write_end_row - self.dest_write_start_row + 1
-            footer_offset = actual_data_rows - template_data_height
+        for dv in master_sheet.data_validations.dataValidation:
+            is_data, is_header, is_footer, is_other = False, False, False, False
+            # A DV can apply to multiple ranges, so we must check all of them
+            for range_str in str(dv.sqref).split():
+                _min_col, min_row, _max_col, max_row = range_boundaries(range_str)
+                
+                # Classify based on range location
+                if max_row < self.dest_write_start_row:
+                    is_header = True
+                elif min_row >= self.dest_write_start_row and (self.dest_write_end_row == 0 or max_row <= self.dest_write_end_row):
+                    is_data = True
+                elif self.dest_write_end_row > 0 and min_row > self.dest_write_end_row:
+                    is_footer = True
+                else: # Range spans across multiple zones
+                    is_other = True
+            
+            # Add to the appropriate list, prioritizing data-related rules
+            if is_data:
+                data_dvs.append(dv)
+            elif is_footer:
+                footer_dvs.append(dv)
+            elif is_header:
+                header_dvs.append(dv)
+            elif is_other:
+                other_dvs.append(dv)
 
+        transfer_logger.info(f"Classified {len(master_sheet.data_validations.dataValidation)} DV rules: "
+                             f"{len(header_dvs)} header, {len(data_dvs)} data, {len(footer_dvs)} footer, {len(other_dvs)} other.")
+        return header_dvs, data_dvs, footer_dvs, other_dvs
+
+    def _apply_classified_validations(self, new_sheet: Worksheet, classified_dvs: Tuple, actual_data_rows: int):
+        """Applies pre-classified and adjusted Data Validation rules to a new sheet."""
+        header_dvs, data_dvs, footer_dvs, other_dvs = classified_dvs
+        
         try:
-            for dv in master_sheet.data_validations.dataValidation:
-                new_dv = copy(dv)
-                new_sqref = ""
+            # Case 1 & 4: Header and Other rules are copied as-is
+            for dv in header_dvs + other_dvs:
+                new_sheet.add_data_validation(copy(dv))
 
-                # A validation can apply to multiple ranges, so we process each one.
-                for range_str in str(new_dv.sqref).split():
-                    min_col, min_row, max_col, max_row = range_boundaries(range_str)
-
-                    # Case 1: Rule is entirely within the Header. Copy as-is.
-                    if max_row < self.dest_write_start_row:
-                        new_sqref += f" {range_str}"
-                    
-                    # Case 2: Rule is within the Data Zone. Stretch it.
-                    elif min_row >= self.dest_write_start_row and max_row <= self.dest_write_end_row:
+            # Case 2: Stretch rules in the data zone
+            if actual_data_rows > 0:
+                for dv in data_dvs:
+                    new_dv = copy(dv)
+                    new_sqref = ""
+                    for range_str in str(dv.sqref).split():
+                        min_col, min_row, max_col, _ = range_boundaries(range_str)
                         new_max_row = self.dest_write_start_row + actual_data_rows - 1
-                        if new_max_row < min_row: new_max_row = min_row # Handle case where data rows are fewer than template
+                        if new_max_row < min_row: new_max_row = min_row
                         new_sqref += f" {get_column_letter(min_col)}{min_row}:{get_column_letter(max_col)}{new_max_row}"
-                        transfer_logger.debug(f"Stretched DV range from '{range_str}' to '{new_sqref.strip()}'")
+                    new_dv.sqref = new_sqref.strip()
+                    if new_dv.sqref: new_sheet.add_data_validation(new_dv)
 
-                    # Case 3: Rule is entirely within the Footer. Offset it.
-                    elif min_row > self.dest_write_end_row:
+            # Case 3: Offset rules in the footer
+            if self.dest_write_end_row > 0:
+                template_data_height = self.dest_write_end_row - self.dest_write_start_row + 1
+                footer_offset = actual_data_rows - template_data_height
+                for dv in footer_dvs:
+                    new_dv = copy(dv)
+                    new_sqref = ""
+                    for range_str in str(dv.sqref).split():
+                        min_col, min_row, max_col, max_row = range_boundaries(range_str)
                         new_min_row = min_row + footer_offset
                         new_max_row = max_row + footer_offset
                         new_sqref += f" {get_column_letter(min_col)}{new_min_row}:{get_column_letter(max_col)}{new_max_row}"
-                        transfer_logger.debug(f"Offset DV range from '{range_str}' to '{new_sqref.strip()}'")
-
-                    # Case 4: Rule spans across zones (unusual). Copy as-is for safety.
-                    else:
-                        new_sqref += f" {range_str}"
-
-                new_dv.sqref = new_sqref.strip()
-                if new_dv.sqref: # Only add if there's a valid range
-                    new_sheet.add_data_validation(new_dv)
-            
-            transfer_logger.info(f"Copied and processed {len(master_sheet.data_validations.dataValidation)} DV rules for sheet '{new_sheet.title}'.")
+                    new_dv.sqref = new_sqref.strip()
+                    if new_dv.sqref: new_sheet.add_data_validation(new_dv)
 
         except Exception as e:
-            transfer_logger.warning(f"Could not copy/stretch DV rules for sheet '{new_sheet.title}'. Error: {e}")
+            transfer_logger.warning(f"Could not apply DV rules for sheet '{new_sheet.title}'. Error: {e}")
