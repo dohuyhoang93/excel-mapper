@@ -621,6 +621,15 @@ class ExcelDataMapper:
     def _execute_transfer_thread(self, mappings):
         try:
             # 1. Collect all settings for the engine
+            
+            # --- Collect single value mappings ---
+            single_value_mappings = {}
+            for field, data in self.single_value_fields.items():
+                source_col = data["source_var"].get()
+                dest_cell = data["dest_var"].get()
+                if source_col and dest_cell:
+                    single_value_mappings[field] = {"source_col": source_col, "dest_cell": dest_cell}
+
             settings = {
                 "source_file": self.source_file.get(),
                 "dest_file": self.dest_file.get(),
@@ -638,6 +647,7 @@ class ExcelDataMapper:
                 "mappings": mappings,
                 "source_columns": self.source_columns,
                 "dest_columns": self.dest_columns,
+                "single_value_mapping": single_value_mappings # Add single value mappings to settings
             }
 
             # 2. Create and run the engine

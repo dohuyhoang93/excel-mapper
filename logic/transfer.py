@@ -185,32 +185,20 @@ class ExcelTransferEngine:
         template_row_idx = self.dest_write_start_row
         current_write_row = start_row
 
-        # Diagnostic: Log the mappings dictionary once to ensure it's correct.
-        transfer_logger.debug(f"Mappings available for this run: {self.mappings}")
-
         for row_data in data_rows:
             # Step 1: Stamp the entire template row using the robust _copy_range function.
+            # This copies styles, static values, and formulas from the template data row.
             self._copy_range(master_sheet_vals, master_sheet_formulas, dest_sheet, 
                              min_row=template_row_idx, max_row=template_row_idx, 
                              dest_start_row=current_write_row)
 
             # Step 2: Overwrite the stamped row with the actual mapped data.
-            transfer_logger.debug(f"--- Overwriting data for row {current_write_row} ---")
             for source_col, dest_col in self.mappings.items():
-                value_to_write = row_data.get(source_col)
-                log_msg_prefix = f"Row {current_write_row}: Mapping '{source_col}' -> '{dest_col}'"
-
                 if dest_col in self.dest_columns:
                     dest_col_num = self.dest_columns[dest_col]
+                    # Get the cell in the newly created row to write to.
                     cell_to_write = self._get_writable_cell(dest_sheet, current_write_row, dest_col_num)
-                    
-                    # Detailed diagnostic log before writing the value
-                    transfer_logger.debug(f"{log_msg_prefix} | DestColNum: {dest_col_num} | Value: '{value_to_write}' | Attempting to write to cell {cell_to_write.coordinate}")
-                    
-                    cell_to_write.value = value_to_write
-                else:
-                    # Log if the destination column was not found in the pre-loaded dict
-                    transfer_logger.warning(f"{log_msg_prefix} | SKIPPED: Destination column '{dest_col}' not found in dest_columns dictionary.")
+                    cell_to_write.value = row_data.get(source_col)
             
             current_write_row += 1
         
