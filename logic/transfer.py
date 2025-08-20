@@ -292,7 +292,8 @@ class ExcelTransferEngine:
             return
         
         transfer_logger.info(f"Writing single values to sheet '{worksheet.title}'")
-        for field, mapping in self.single_value_mappings.items():
+        # The mapping object is now a list of dicts
+        for mapping in self.single_value_mappings:
             source_col = mapping.get("source_col")
             dest_cell_addr = mapping.get("dest_cell")
             
@@ -307,6 +308,6 @@ class ExcelTransferEngine:
 
                 target_cell = self._get_writable_cell(worksheet, row_idx, col_idx)
                 target_cell.value = value
-                transfer_logger.debug(f"Wrote single value for '{field}' (Value: {value}) to {dest_cell_addr} (actual: {target_cell.coordinate})")
+                transfer_logger.debug(f"Wrote single value from '{source_col}' to {dest_cell_addr} (Value: {value})")
             except Exception as e:
-                transfer_logger.error(f"Failed to write single value for field '{field}'. Error: {e}")
+                transfer_logger.error(f"Failed to write single value from '{source_col}' to {dest_cell_addr}. Error: {e}")

@@ -22,27 +22,27 @@
     "Amount": "VND or US$　or JPY - Amount",
     "Official invoice number": "Official invoice number"
   },
-  "single_value_mapping": {
-    "Applicant - Date": {
-      "source_col": "Trading   date\nNgày lập cover",
-      "dest_cell": "AY5"
-    },
-    "Applicant - Employ ID": {
-      "source_col": "Applicant - Employee ID",
+  "single_value_mapping": [
+    {
+      "source_col": "Manager - Employee ID",
       "dest_cell": "AY6"
     },
-    "Applicant - Signature": {
-      "source_col": "Applicant - Signature",
+    {
+      "source_col": "Signature",
       "dest_cell": "AY7"
     },
-    "Manager - Employ ID": {
-      "source_col": "Manager - Employee ID",
+    {
+      "source_col": "Trading   date\nNgày lập cover",
+      "dest_cell": "BP5"
+    },
+    {
+      "source_col": "Applicant - Employee ID",
       "dest_cell": "BP6"
     },
-    "Manager - Signature": {
-      "source_col": "Signature",
+    {
+      "source_col": "Applicant - Signature",
       "dest_cell": "BP7"
     }
-  },
-  "created_date": "2025-08-20T13:48:45.300407"
+  ],
+  "created_date": "2025-08-20T14:10:42.045811"
 }

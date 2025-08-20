@@ -6,7 +6,7 @@ import json
 import os
 import logging
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List, Dict, Any
 import openpyxl
 from openpyxl.cell.cell import MergedCell
 import subprocess
@@ -22,16 +22,10 @@ from logic.parser import ExcelParser
 from logic.config_manager import ConfigurationManager
 from logic.mapper import ColumnMapper
 from logic.transfer import ExcelTransferEngine, parse_skip_rows_string
-from gui.widgets import (
-    ScrollableFrame,
-    AboutDialog,
-    PreviewDialog,
-    DetectionConfigDialog,
-    show_custom_info,
-    show_custom_error,
-    show_custom_warning,
-    show_custom_question,
-)
+from gui.widgets import (ScrollableFrame, AboutDialog, PreviewDialog, 
+                         DetectionConfigDialog, show_custom_info, 
+                         show_custom_error, show_custom_warning, 
+                         show_custom_question)
 
 # Cấu hình logging
 logging.basicConfig(
@@ -140,14 +134,8 @@ class ExcelDataMapper:
         self.dest_columns = {}
         self.mapping_combos = {}
 
-        self.single_value_fields = {
-            "Applicant - Date": {"source_var": tk.StringVar(), "dest_var": tk.StringVar(), "combo": None},
-            "Applicant - Employ ID": {"source_var": tk.StringVar(), "dest_var": tk.StringVar(), "combo": None},
-            "Applicant - Signature": {"source_var": tk.StringVar(), "dest_var": tk.StringVar(), "combo": None},
-            "Manager - Date": {"source_var": tk.StringVar(), "dest_var": tk.StringVar(), "combo": None},
-            "Manager - Employ ID": {"source_var": tk.StringVar(), "dest_var": tk.StringVar(), "combo": None},
-            "Manager - Signature": {"source_var": tk.StringVar(), "dest_var": tk.StringVar(), "combo": None}
-        }
+        # Dynamic list for single value mappings
+        self.single_value_mappings_list: List[Dict[str, Any]] = []
         
         self.config_manager = ConfigurationManager()
         self.column_mapper = ColumnMapper()
@@ -280,26 +268,73 @@ class ExcelDataMapper:
         self.group_by_combo = ttk_boot.Combobox(group_by_frame, textvariable=self.group_by_column)
         self.group_by_combo.pack(fill=X)
 
-        single_value_frame = ttk_boot.LabelFrame(left_panel, text="Single Value Mapping", padding=5)
-        single_value_frame.pack(fill=X, pady=(0, 5), anchor=N)
-        single_value_frame.columnconfigure(1, weight=1)
-        single_value_frame.columnconfigure(2, weight=1)
-        ttk_boot.Label(single_value_frame, text="Field", font='-weight bold').grid(row=0, column=0, sticky="w", padx=2)
-        ttk_boot.Label(single_value_frame, text="Source Column", font='-weight bold').grid(row=0, column=1, sticky="w", padx=2)
-        ttk_boot.Label(single_value_frame, text="Destination Cell", font='-weight bold').grid(row=0, column=2, sticky="w", padx=2)
+        # --- Dynamic Single Value Mapping Frame ---
+        single_value_lf = ttk_boot.LabelFrame(left_panel, text="Single Value Mapping", padding=5)
+        single_value_lf.pack(fill=X, pady=(0, 5), anchor=N)
+        single_value_lf.columnconfigure(0, weight=1)
+        single_value_lf.columnconfigure(1, weight=1)
 
-        for i, (field, data) in enumerate(self.single_value_fields.items(), start=1):
-            ttk_boot.Label(single_value_frame, text=f"{field}:").grid(row=i, column=0, sticky="w", padx=2, pady=2)
-            combo = ttk_boot.Combobox(single_value_frame, textvariable=data["source_var"])
-            combo.grid(row=i, column=1, sticky="ew", padx=2)
-            data["combo"] = combo
-            entry = ttk_boot.Entry(single_value_frame, textvariable=data["dest_var"], width=15)
-            entry.grid(row=i, column=2, sticky="ew", padx=2)
+        header_frame = ttk_boot.Frame(single_value_lf)
+        header_frame.pack(fill=X, expand=True)
+        header_frame.columnconfigure(0, weight=1)
+        header_frame.columnconfigure(1, weight=1)
+        ttk_boot.Label(header_frame, text="Source Column", font='-weight bold').grid(row=0, column=0, sticky="w", padx=2)
+        ttk_boot.Label(header_frame, text="Destination Cell", font='-weight bold').grid(row=0, column=1, sticky="w", padx=2)
 
+        self.single_value_scroll_frame = ScrollableFrame(single_value_lf, height=150)
+        self.single_value_scroll_frame.pack(fill=X, expand=True, pady=(5,0))
+        
+        button_frame = ttk_boot.Frame(single_value_lf)
+        button_frame.pack(fill=X, pady=(5,0))
+        ttk_boot.Button(button_frame, text="Add Mapping", command=self.add_single_value_row, bootstyle="outline-success").pack(side=LEFT)
+
+        # --- Right Panel ---
         mapping_container = ttk_boot.LabelFrame(right_panel, text="Column Mapping", padding=5)
         mapping_container.pack(fill=BOTH, expand=True)
         self.mapping_scroll_frame = ScrollableFrame(mapping_container)
         self.mapping_scroll_frame.pack(fill=BOTH, expand=True)
+
+        # Initial draw
+        self._redraw_single_value_frame()
+
+    def add_single_value_row(self):
+        """Adds a new empty row to the single value mapping list and redraws the UI."""
+        self.single_value_mappings_list.append({
+            "source_var": tk.StringVar(),
+            "dest_var": tk.StringVar()
+        })
+        self._redraw_single_value_frame()
+
+    def remove_single_value_row(self, row_to_remove: Dict[str, Any]):
+        """Removes a specific row from the single value mapping list and redraws the UI."""
+        self.single_value_mappings_list.remove(row_to_remove)
+        self._redraw_single_value_frame()
+
+    def _redraw_single_value_frame(self):
+        """Clears and redraws all widgets in the single value mapping frame."""
+        for widget in self.single_value_scroll_frame.scrollable_frame.winfo_children():
+            widget.destroy()
+
+        # If list is empty, add one blank row to start
+        if not self.single_value_mappings_list:
+            self.single_value_mappings_list.append({"source_var": tk.StringVar(), "dest_var": tk.StringVar()})
+
+        container = self.single_value_scroll_frame.scrollable_frame
+        container.columnconfigure(0, weight=1)
+        container.columnconfigure(1, weight=1)
+
+        source_keys = list(self.source_columns.keys())
+
+        for i, mapping_item in enumerate(self.single_value_mappings_list):
+            combo = ttk_boot.Combobox(container, textvariable=mapping_item["source_var"], values=source_keys)
+            combo.grid(row=i, column=0, sticky="ew", padx=(0, 2), pady=2)
+            
+            entry = ttk_boot.Entry(container, textvariable=mapping_item["dest_var"], width=15)
+            entry.grid(row=i, column=1, sticky="ew", padx=2, pady=2)
+
+            remove_btn = ttk_boot.Button(container, text="-", bootstyle="danger-outline", 
+                                         command=lambda item=mapping_item: self.remove_single_value_row(item))
+            remove_btn.grid(row=i, column=2, padx=(2,0), pady=2)
     
     def browse_source_file(self):
         filename = filedialog.askopenfilename(title="Select Source Excel file", filetypes=[("Excel files", "*.xlsx *.xls")])
@@ -442,9 +477,8 @@ class ExcelDataMapper:
             if saved_group_by_col and saved_group_by_col in source_keys:
                 self.group_by_column.set(saved_group_by_col)
 
-            for field_data in self.single_value_fields.values():
-                if field_data["combo"]:
-                    field_data["combo"]['values'] = source_keys
+            # Update comboboxes for single value mappings
+            self._redraw_single_value_frame()
             
             self.create_mapping_widgets(apply_suggestions=apply_suggestions)
             self.update_status(f"Loaded {len(self.source_columns)} source and {len(self.dest_columns)} destination columns")
@@ -492,12 +526,11 @@ class ExcelDataMapper:
 
             mappings = {source_col: combo.get() for source_col, combo in self.mapping_combos.items() if combo.get()}
             
-            single_value_mappings = {}
-            for field, data in self.single_value_fields.items():
-                source_col = data["source_var"].get()
-                dest_cell = data["dest_var"].get()
-                if source_col and dest_cell:
-                    single_value_mappings[field] = {"source_col": source_col, "dest_cell": dest_cell}
+            single_value_mappings = [
+                {"source_col": item["source_var"].get(), "dest_cell": item["dest_var"].get()}
+                for item in self.single_value_mappings_list
+                if item["source_var"].get() and item["dest_var"].get()
+            ]
 
             job_config = {
                 "source_header_start_row": self.source_header_start_row.get(), "source_header_end_row": self.source_header_end_row.get(),
@@ -563,6 +596,16 @@ class ExcelDataMapper:
                                     f"Saved master sheet '{saved_master_sheet}' not found in the current destination file.\n"
                                     f"Defaulting to the first available sheet: '{available_dest_sheets[0] if available_dest_sheets else ''}'.")
 
+            # Load single value mappings from config
+            self.single_value_mappings_list.clear()
+            loaded_sv_mappings = config.get("single_value_mapping", [])
+            for item in loaded_sv_mappings:
+                self.single_value_mappings_list.append({
+                    "source_var": tk.StringVar(value=item.get("source_col", "")),
+                    "dest_var": tk.StringVar(value=item.get("dest_cell", ""))
+                })
+            self._redraw_single_value_frame()
+
             if self.source_file.get() and self.dest_file.get():
                 saved_group_by_col = config.get("group_by_column", "")
                 self.safe_load_columns(saved_group_by_col=saved_group_by_col, apply_suggestions=False)
@@ -570,12 +613,6 @@ class ExcelDataMapper:
                 for source_col, dest_col in mappings.items():
                     if source_col in self.mapping_combos:
                         self.mapping_combos[source_col].set(dest_col)
-                
-                single_value_mappings = config.get("single_value_mapping", {})
-                for field, mapping_data in single_value_mappings.items():
-                    if field in self.single_value_fields:
-                        self.single_value_fields[field]["source_var"].set(mapping_data.get("source_col", ""))
-                        self.single_value_fields[field]["dest_var"].set(mapping_data.get("dest_cell", ""))
 
             self.save_app_settings()
             self.update_status(f"Job configuration loaded from {os.path.basename(config_file_path)}")
@@ -665,12 +702,11 @@ class ExcelDataMapper:
 
     def _execute_transfer_thread(self, mappings):
         try:
-            single_value_mappings = {}
-            for field, data in self.single_value_fields.items():
-                source_col = data["source_var"].get()
-                dest_cell = data["dest_var"].get()
-                if source_col and dest_cell:
-                    single_value_mappings[field] = {"source_col": source_col, "dest_cell": dest_cell}
+            single_value_mappings = [
+                {"source_col": item["source_var"].get(), "dest_cell": item["dest_var"].get()}
+                for item in self.single_value_mappings_list
+                if item["source_var"].get() and item["dest_var"].get()
+            ]
 
             settings = {
                 "source_file": self.source_file.get(),
