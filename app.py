@@ -147,10 +147,6 @@ class ExcelDataMapper:
         
         self.dest_write_start_row = tk.IntVar(value=11)
         self.dest_write_end_row = tk.IntVar(value=0)
-        self.dest_skip_rows = tk.StringVar(value="")
-        self.respect_cell_protection = tk.BooleanVar(value=True)
-        self.respect_formulas = tk.BooleanVar(value=True)
-        self.limit_columns = tk.BooleanVar(value=True)
         self.detection_keywords = tk.StringVar(value="total,sum,cộng,tổng,thành tiền")
         
         self.source_columns = {}
@@ -278,11 +274,6 @@ class ExcelDataMapper:
         ttk_boot.Spinbox(write_zone_frame, from_=0, to=99999, textvariable=self.dest_write_end_row, width=8).grid(row=1, column=1, sticky=W)
         self.detect_button = ttk_boot.Button(write_zone_frame, text="Detect Zone", command=self.detect_write_zone, bootstyle="outline-info")
         self.detect_button.grid(row=0, column=2, rowspan=2, padx=(5,0), pady=2, sticky="ns")
-        ttk_boot.Label(write_zone_frame, text="Skip Rows (e.g., 15, 20-25):").grid(row=2, column=0, columnspan=3, sticky=W, pady=(5,2))
-        ttk_boot.Entry(write_zone_frame, textvariable=self.dest_skip_rows).grid(row=3, column=0, columnspan=3, padx=0, sticky=EW)
-        ttk_boot.Checkbutton(write_zone_frame, text="Respect cell protection", variable=self.respect_cell_protection).grid(row=4, column=0, columnspan=3, sticky=W, pady=(5,0))
-        ttk_boot.Checkbutton(write_zone_frame, text="Respect formulas", variable=self.respect_formulas).grid(row=5, column=0, columnspan=3, sticky=W)
-        ttk_boot.Checkbutton(write_zone_frame, text="Optimize columns (copy up to last used column)", variable=self.limit_columns).grid(row=6, column=0, columnspan=3, sticky=W, pady=(0,5))
 
         group_by_frame = ttk_boot.LabelFrame(left_panel, text="Group by Configuration", padding=5)
         group_by_frame.pack(fill=X, pady=(0, 5), anchor=N)
@@ -559,9 +550,6 @@ class ExcelDataMapper:
                 "source_header_start_row": self.source_header_start_row.get(), "source_header_end_row": self.source_header_end_row.get(),
                 "dest_header_start_row": self.dest_header_start_row.get(), "dest_header_end_row": self.dest_header_end_row.get(),
                 "dest_write_start_row": self.dest_write_start_row.get(), "dest_write_end_row": self.dest_write_end_row.get(),
-                "dest_skip_rows": self.dest_skip_rows.get(), 
-                "respect_cell_protection": self.respect_cell_protection.get(),
-                "respect_formulas": self.respect_formulas.get(), 
                 "group_by_column": self.group_by_column.get(), 
                 "source_sheet": self.source_sheet.get(),
                 "master_sheet": self.master_sheet.get(),
@@ -595,9 +583,6 @@ class ExcelDataMapper:
             self.dest_header_end_row.set(config.get("dest_header_end_row", 9))
             self.dest_write_start_row.set(config.get("dest_write_start_row", self.dest_header_end_row.get() + 1))
             self.dest_write_end_row.set(config.get("dest_write_end_row", 0))
-            self.dest_skip_rows.set(config.get("dest_skip_rows", ""))
-            self.respect_cell_protection.set(config.get("respect_cell_protection", True))
-            self.respect_formulas.set(config.get("respect_formulas", True))
 
             # Load and validate source sheet
             saved_source_sheet = config.get("source_sheet", "")
@@ -752,10 +737,6 @@ class ExcelDataMapper:
                 "dest_header_end_row": self.dest_header_end_row.get(),
                 "dest_write_start_row": self.dest_write_start_row.get(),
                 "dest_write_end_row": self.dest_write_end_row.get(),
-                "dest_skip_rows": self.dest_skip_rows.get(),
-                "respect_cell_protection": self.respect_cell_protection.get(),
-                "respect_formulas": self.respect_formulas.get(),
-                "limit_columns": self.limit_columns.get(),
                 "group_by_column": self.group_by_column.get(),
                 "mappings": mappings,
                 "source_columns": self.source_columns,

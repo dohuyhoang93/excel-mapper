@@ -26,7 +26,7 @@ def _sanitize_sheet_name(name: str) -> str:
     if not name:
         return "Untitled"
     name = str(name)
-    name = re.sub(r'[\\/*?:[\]]', '', name)
+    name = re.sub(r'[\\/*?:[\\]]', '', name)
     return name[:31]
 
 def parse_skip_rows_string(skip_rows_str: str) -> Set[int]:
