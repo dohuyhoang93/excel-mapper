@@ -129,6 +129,8 @@ class ExcelTransferEngine:
                 
                 new_sheet = output_wb.create_sheet(title=new_sheet_name)
 
+                self._copy_column_dimensions(master_sheet_formulas, new_sheet)
+
                 last_header_row = self._copy_range(master_sheet_vals, master_sheet_formulas, new_sheet, 1, self.dest_header_end_row, 1)
                 last_data_row = self._write_data_rows(new_sheet, master_sheet_vals, master_sheet_formulas, data_rows, last_header_row + 1)
                 
@@ -162,15 +164,28 @@ class ExcelTransferEngine:
             wb_template_formulas.close()
             self._update_progress(100, "Transfer completed successfully")
 
+    def _copy_column_dimensions(self, source_sheet: Worksheet, dest_sheet: Worksheet):
+        """Copies all column dimension properties from a source to a destination sheet safely."""
+        transfer_logger.info(f"Copying column dimensions from '{source_sheet.title}' to '{dest_sheet.title}'")
+        for col_letter, dim in source_sheet.column_dimensions.items():
+            new_dim = dest_sheet.column_dimensions[col_letter]
+            # Manually copy all relevant properties from the source dimension.
+            # This is safer than using copy.copy() which can carry over internal worksheet references.
+            new_dim.min = dim.min
+            new_dim.max = dim.max
+            if dim.width is not None:
+                new_dim.width = dim.width
+            new_dim.hidden = dim.hidden
+            new_dim.outline_level = dim.outline_level
+            new_dim.collapsed = dim.collapsed
+            # Note: dim.style is intentionally not copied. It's a reference to a style
+            # in the old workbook's style table. Copying it directly causes file corruption.
+            # A more complex style transfer would be needed to replicate it safely.
+
     def _copy_range(self, source_sheet_vals: Worksheet, source_sheet_formulas: Worksheet, dest_sheet: Worksheet, min_row: int, max_row: int, dest_start_row: int) -> int:
         transfer_logger.info(f"Copying range from {source_sheet_vals.title}:{min_row}-{max_row} to {dest_sheet.title}:{dest_start_row}")
         
         max_col = source_sheet_vals.max_column
-
-        for col_idx in range(1, max_col + 1):
-            dim = source_sheet_vals.column_dimensions.get(get_column_letter(col_idx))
-            if dim:
-                dest_sheet.column_dimensions[get_column_letter(col_idx)] = copy(dim)
 
         for r_idx, row in enumerate(source_sheet_vals.iter_rows(min_row=min_row, max_row=max_row, max_col=max_col)):
             dest_row_idx = dest_start_row + r_idx
