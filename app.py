@@ -27,13 +27,36 @@ from gui.widgets import (ScrollableFrame, AboutDialog, PreviewDialog,
                          show_custom_error, show_custom_warning, 
                          show_custom_question)
 
-# Cấu hình logging
-logging.basicConfig(
-    filename='app.log',
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    encoding='utf-8'
-)
+import json
+from pathlib import Path
+
+# --- Logging Configuration ---
+def setup_logging():
+    """Reads logging configuration and sets up the root logger."""
+    try:
+        config_path = Path("configs/app_settings.json")
+        if config_path.exists():
+            with open(config_path, 'r') as f:
+                config = json.load(f)
+            log_level_str = config.get("log_level", "INFO").upper()
+        else:
+            log_level_str = "INFO"
+
+        log_level = getattr(logging, log_level_str, logging.INFO)
+
+        # Configure root logger
+        logging.basicConfig(
+            level=log_level,
+            format='%(asctime)s - %(name)s - %(levelname)s - [%(funcName)s]: %(message)s',
+            filename='app.log',
+            filemode='w', 
+            encoding='utf-8'
+        )
+        logging.info("Logging configured based on settings.")
+    except Exception as e:
+        # Fallback basic config if setup fails
+        logging.basicConfig(level=logging.INFO, filename='app.log', filemode='w', encoding='utf-8')
+        logging.error("Failed to setup logging from config file.", exc_info=True)
 
 class FileHandleManager:
     """Manages file handles to prevent Excel file locking issues"""
@@ -649,14 +672,24 @@ class ExcelDataMapper:
             self.log_error(f"Error loading application settings: {str(e)}")
             
     def save_app_settings(self):
-        """Saves global application settings."""
+        """Saves global application settings, preserving existing ones."""
         try:
-            settings = {
-                "theme": self.current_theme,
-                "detection_keywords": self.detection_keywords.get(),
-                "last_source_file": self.source_file.get(),
-                "last_dest_file": self.dest_file.get()
-            }
+            # First, load the existing settings to preserve keys like 'log_level'
+            try:
+                settings = self.config_manager.load_app_settings()
+            except FileNotFoundError:
+                settings = {} # If the file doesn't exist, start with an empty dict
+
+            # Now, update the settings with the current application state
+            settings["theme"] = self.current_theme
+            settings["detection_keywords"] = self.detection_keywords.get()
+            settings["last_source_file"] = self.source_file.get()
+            settings["last_dest_file"] = self.dest_file.get()
+            
+            # Ensure log_level is preserved or set a default if it's missing
+            if "log_level" not in settings:
+                settings["log_level"] = "INFO"
+
             self.config_manager.save_app_settings(settings)
             self.log_info("Application settings saved.")
         except Exception as e:
@@ -942,6 +975,7 @@ class ExcelDataMapper:
                 input("Press Enter to exit...")
 
 if __name__ == "__main__":
+    setup_logging()
     try:
         app = ExcelDataMapper()
         app.run()

@@ -18,16 +18,9 @@ from openpyxl.cell.cell import MergedCell
 import re
 from copy import copy
 
-# Dedicated logger for transfer debugging
-transfer_logger = logging.getLogger('transfer_debug')
-if not transfer_logger.handlers:
-    transfer_logger.setLevel(logging.DEBUG)
-    fh = logging.FileHandler('log.txt', mode='w', encoding='utf-8')
-    fh.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - [%(funcName)s]: %(message)s')
-    fh.setFormatter(formatter)
-    transfer_logger.addHandler(fh)
-    transfer_logger.propagate = False
+logger = logging.getLogger(__name__)
+
+
 
 def _sanitize_sheet_name(name: str) -> str:
     if not name:
@@ -88,7 +81,7 @@ class ExcelTransferEngine:
         return cell
 
     def run_transfer(self):
-        transfer_logger.info("--- Starting new transfer process (Constructive Method) ---")
+        logger.info("--- Starting new transfer process (Constructive Method) ---")
         if not self.group_by_column:
             raise ValueError("'Group by Column' must be selected for this operation.")
         if not self.master_sheet_name:
@@ -166,7 +159,7 @@ class ExcelTransferEngine:
             if output_wb.sheetnames:
                 output_wb.active = 0
             output_wb.save(output_filename)
-            transfer_logger.info(f"Successfully created new file: {output_filename}")
+            logger.info(f"Successfully created new file: {output_filename}")
 
         finally:
             wb_template_vals.close()
@@ -175,7 +168,7 @@ class ExcelTransferEngine:
 
     def _copy_column_dimensions(self, source_sheet: Worksheet, dest_sheet: Worksheet):
         """Copies all column dimension properties from a source to a destination sheet safely."""
-        transfer_logger.info(f"Copying column dimensions from '{source_sheet.title}' to '{dest_sheet.title}'")
+        logger.info(f"Copying column dimensions from '{source_sheet.title}' to '{dest_sheet.title}'")
         for col_letter, dim in source_sheet.column_dimensions.items():
             new_dim = dest_sheet.column_dimensions[col_letter]
             # Manually copy all relevant properties from the source dimension.
@@ -192,7 +185,7 @@ class ExcelTransferEngine:
             # A more complex style transfer would be needed to replicate it safely.
 
     def _copy_range(self, source_sheet_vals: Worksheet, source_sheet_formulas: Worksheet, dest_sheet: Worksheet, min_row: int, max_row: int, dest_start_row: int) -> int:
-        transfer_logger.info(f"Copying range from {source_sheet_vals.title}:{min_row}-{max_row} to {dest_sheet.title}:{dest_start_row}")
+        logger.info(f"Copying range from {source_sheet_vals.title}:{min_row}-{max_row} to {dest_sheet.title}:{dest_start_row}")
         
         max_col = source_sheet_vals.max_column
 
@@ -221,7 +214,7 @@ class ExcelTransferEngine:
                         translator = Translator(formula, origin=source_cell.coordinate)
                         dest_cell.value = translator.translate_formula(dest_cell.coordinate)
                     except Exception as e:
-                        transfer_logger.warning(f"Could not translate formula '{formula}' from {source_cell.coordinate}. Writing as is. Error: {e}")
+                        logger.warning(f"Could not translate formula '{formula}' from {source_cell.coordinate}. Writing as is. Error: {e}")
                         dest_cell.value = source_cell.value
                 else:
                     dest_cell.value = source_cell.value
@@ -235,7 +228,7 @@ class ExcelTransferEngine:
         return dest_start_row + (max_row - min_row)
 
     def _write_data_rows(self, dest_sheet: Worksheet, master_sheet_vals: Worksheet, master_sheet_formulas: Worksheet, data_rows: List[Dict[str, Any]], start_row: int) -> int:
-        transfer_logger.info(f"Writing {len(data_rows)} data rows, starting at row {start_row}")
+        logger.info(f"Writing {len(data_rows)} data rows, starting at row {start_row}")
         template_row_idx = self.dest_write_start_row
         
         # Determine how many rows to create in the data area
@@ -244,7 +237,7 @@ class ExcelTransferEngine:
         # Create at least as many rows as the template has, to preserve the full formatted area
         num_rows_to_create = max(num_data_rows, num_template_rows)
         
-        transfer_logger.info(f"Creating {num_rows_to_create} rows for the data area to ensure formatting is preserved.")
+        logger.info(f"Creating {num_rows_to_create} rows for the data area to ensure formatting is preserved.")
 
         # Loop to create all necessary rows and populate them
         for i in range(num_rows_to_create):
@@ -327,14 +320,14 @@ class ExcelTransferEngine:
                         target_cell_anchor.value = group_name
                         return
                     except Exception as e:
-                        transfer_logger.error(f"Error writing group identifier for '{group_name}': {e}")
+                        logger.error(f"Error writing group identifier for '{group_name}': {e}")
                         return
 
     def _write_single_values(self, worksheet, group_first_row: Dict[str, Any]):
         if not self.single_value_mappings:
             return
         
-        transfer_logger.info(f"Writing single values to sheet '{worksheet.title}'")
+        logger.info(f"Writing single values to sheet '{worksheet.title}'")
         for mapping in self.single_value_mappings:
             source_col = mapping.get("source_col")
             dest_cell_addr = mapping.get("dest_cell")
@@ -350,31 +343,31 @@ class ExcelTransferEngine:
 
                 target_cell = self._get_writable_cell(worksheet, row_idx, col_idx)
                 target_cell.value = value
-                transfer_logger.debug(f"Wrote single value from '{source_col}' to {dest_cell_addr} (Value: {value})")
+                logger.debug(f"Wrote single value from '{source_col}' to {dest_cell_addr} (Value: {value})")
             except Exception as e:
-                transfer_logger.error(f"Failed to write single value from '{source_col}' to {dest_cell_addr}. Error: {e}")
+                logger.error(f"Failed to write single value from '{source_col}' to {dest_cell_addr}. Error: {e}")
 
     def _classify_data_validations(self, master_sheet: Worksheet) -> Tuple[List, List, List, List]:
         """Scans and classifies all data validation rules into zones (header, data, footer, other)."""
-        transfer_logger.debug("--- Classifying Data Validations ---")
-        transfer_logger.debug(f"Settings: dest_write_start_row={self.dest_write_start_row}, dest_write_end_row={self.dest_write_end_row}")
+        logger.debug("--- Classifying Data Validations ---")
+        logger.debug(f"Settings: dest_write_start_row={self.dest_write_start_row}, dest_write_end_row={self.dest_write_end_row}")
         
         header_dvs, data_dvs, footer_dvs, other_dvs = [], [], [], []
         if not master_sheet.data_validations or not master_sheet.data_validations.dataValidation:
-            transfer_logger.debug("No data validations found in master sheet.")
+            logger.debug("No data validations found in master sheet.")
             return header_dvs, data_dvs, footer_dvs, other_dvs
 
         all_dvs = list(master_sheet.data_validations.dataValidation)
-        transfer_logger.debug(f"Found {len(all_dvs)} total DV rules to classify.")
+        logger.debug(f"Found {len(all_dvs)} total DV rules to classify.")
 
         for i, dv in enumerate(all_dvs):
             classification = "Unclassified"
             try:
                 sqref_str = str(dv.sqref)
-                transfer_logger.debug(f"Processing DV #{i+1}: sqref='{sqref_str}', type='{dv.type}', formula1='{dv.formula1}'")
+                logger.debug(f"Processing DV #{i+1}: sqref='{sqref_str}', type='{dv.type}', formula1='{dv.formula1}'")
                 
                 if not sqref_str:
-                    transfer_logger.warning(f"DV #{i+1} has an empty sqref. Classifying as 'other'.")
+                    logger.warning(f"DV #{i+1} has an empty sqref. Classifying as 'other'.")
                     other_dvs.append(dv)
                     continue
 
@@ -405,36 +398,36 @@ class ExcelTransferEngine:
                     other_dvs.append(dv)
                     classification = "other"
                 
-                transfer_logger.debug(f" -> Classified DV #{i+1} as: {classification}")
+                logger.debug(f" -> Classified DV #{i+1} as: {classification}")
 
             except Exception as e:
-                transfer_logger.error(f"Failed to classify DV #{i+1} (sqref='{dv.sqref}'). Error: {e}", exc_info=True)
+                logger.error(f"Failed to classify DV #{i+1} (sqref='{dv.sqref}'). Error: {e}", exc_info=True)
                 other_dvs.append(dv) # Add to 'other' on failure to be safe
 
-        transfer_logger.info(f"Classified {len(all_dvs)} DV rules: "
+        logger.info(f"Classified {len(all_dvs)} DV rules: "
                              f"{len(header_dvs)} header, {len(data_dvs)} data, {len(footer_dvs)} footer, {len(other_dvs)} other.")
         return header_dvs, data_dvs, footer_dvs, other_dvs
 
     def _apply_classified_validations(self, new_sheet: Worksheet, classified_dvs: Tuple, actual_data_rows: int, new_footer_start_row: int):
         """Applies pre-classified and adjusted Data Validation rules, including translating formulas inside them."""
-        transfer_logger.debug(f"--- Applying Data Validations to sheet '{new_sheet.title}' ---")
-        transfer_logger.debug(f"Params: actual_data_rows={actual_data_rows}, new_footer_start_row={new_footer_start_row}")
+        logger.debug(f"--- Applying Data Validations to sheet '{new_sheet.title}' ---")
+        logger.debug(f"Params: actual_data_rows={actual_data_rows}, new_footer_start_row={new_footer_start_row}")
         header_dvs, data_dvs, footer_dvs, other_dvs = classified_dvs
         
         try:
             # Case 1 & 4: Header and Other rules are copied as-is
             if header_dvs or other_dvs:
-                transfer_logger.debug(f"Applying {len(header_dvs)} header and {len(other_dvs)} other DVs.")
+                logger.debug(f"Applying {len(header_dvs)} header and {len(other_dvs)} other DVs.")
                 for i, dv in enumerate(header_dvs + other_dvs):
-                    transfer_logger.debug(f"  Applying other/header DV #{i+1}: sqref='{dv.sqref}'")
+                    logger.debug(f"  Applying other/header DV #{i+1}: sqref='{dv.sqref}'")
                     new_dv = copy(dv)
                     new_sheet.add_data_validation(new_dv)
 
             # Case 2: Stretch rules in the data zone
             if actual_data_rows > 0 and data_dvs:
-                transfer_logger.debug(f"Applying {len(data_dvs)} data DVs for {actual_data_rows} data rows.")
+                logger.debug(f"Applying {len(data_dvs)} data DVs for {actual_data_rows} data rows.")
                 for i, dv in enumerate(data_dvs):
-                    transfer_logger.debug(f"  Applying data DV #{i+1}: original sqref='{dv.sqref}'")
+                    logger.debug(f"  Applying data DV #{i+1}: original sqref='{dv.sqref}'")
                     new_dv = copy(dv)
                     new_sqref = ""
                     for range_str in str(dv.sqref).split():
@@ -443,21 +436,21 @@ class ExcelTransferEngine:
                         if new_max_row < min_row: new_max_row = min_row
                         new_range = f"{get_column_letter(min_col)}{min_row}:{get_column_letter(max_col)}{new_max_row}"
                         new_sqref += f" {new_range}"
-                        transfer_logger.debug(f"    - Stretched range '{range_str}' to '{new_range}'")
+                        logger.debug(f"    - Stretched range '{range_str}' to '{new_range}'")
                     
                     new_dv.sqref = new_sqref.strip()
                     if new_dv.sqref:
-                        transfer_logger.debug(f"  -> Adding data DV with new sqref: '{new_dv.sqref}'")
+                        logger.debug(f"  -> Adding data DV with new sqref: '{new_dv.sqref}'")
                         new_sheet.add_data_validation(new_dv)
                     else:
-                        transfer_logger.warning(f"  -> Skipping data DV #{i+1} due to empty new sqref.")
+                        logger.warning(f"  -> Skipping data DV #{i+1} due to empty new sqref.")
 
             # Case 3: Offset and translate rules in the footer
             if self.dest_write_end_row > 0 and footer_dvs:
                 footer_offset = new_footer_start_row - (self.dest_write_end_row + 1)
-                transfer_logger.debug(f"Applying {len(footer_dvs)} footer DVs with offset {footer_offset}.")
+                logger.debug(f"Applying {len(footer_dvs)} footer DVs with offset {footer_offset}.")
                 for i, dv in enumerate(footer_dvs):
-                    transfer_logger.debug(f"  Applying footer DV #{i+1}: original sqref='{dv.sqref}', formula1='{dv.formula1}'")
+                    logger.debug(f"  Applying footer DV #{i+1}: original sqref='{dv.sqref}', formula1='{dv.formula1}'")
                     new_dv = copy(dv)
                     new_sqref = ""
 
@@ -465,24 +458,24 @@ class ExcelTransferEngine:
                     min_col_ref, min_row_ref, _, _ = range_boundaries(first_range_str)
                     origin_coord = f"{get_column_letter(min_col_ref)}{min_row_ref}"
                     dest_coord = f"{get_column_letter(min_col_ref)}{min_row_ref + footer_offset}"
-                    transfer_logger.debug(f"    - Translation coords: origin='{origin_coord}', dest='{dest_coord}'")
+                    logger.debug(f"    - Translation coords: origin='{origin_coord}', dest='{dest_coord}'")
 
                     # Translate formulas if they are actual range references
                     if dv.formula1 and isinstance(dv.formula1, str) and dv.formula1.startswith('='):
                         try:
                             translator = Translator(dv.formula1, origin=origin_coord)
                             new_dv.formula1 = translator.translate_formula(dest_coord)
-                            transfer_logger.debug(f"    - Translated formula1 to: '{new_dv.formula1}'")
+                            logger.debug(f"    - Translated formula1 to: '{new_dv.formula1}'")
                         except Exception as e:
-                            transfer_logger.warning(f"    - Could not translate DV formula1 '{dv.formula1}'. Using original. Error: {e}")
+                            logger.warning(f"    - Could not translate DV formula1 '{dv.formula1}'. Using original. Error: {e}")
                     
                     if dv.formula2 and isinstance(dv.formula2, str) and dv.formula2.startswith('='):
                         try:
                             translator = Translator(dv.formula2, origin=origin_coord)
                             new_dv.formula2 = translator.translate_formula(dest_coord)
-                            transfer_logger.debug(f"    - Translated formula2 to: '{new_dv.formula2}'")
+                            logger.debug(f"    - Translated formula2 to: '{new_dv.formula2}'")
                         except Exception as e:
-                            transfer_logger.warning(f"    - Could not translate DV formula2 '{dv.formula2}'. Using original. Error: {e}")
+                            logger.warning(f"    - Could not translate DV formula2 '{dv.formula2}'. Using original. Error: {e}")
 
                     # Offset the sqref range itself
                     for range_str in str(dv.sqref).split():
@@ -491,14 +484,14 @@ class ExcelTransferEngine:
                         new_max_row = max_row + footer_offset
                         new_range = f"{get_column_letter(min_col)}{new_min_row}:{get_column_letter(max_col)}{new_max_row}"
                         new_sqref += f" {new_range}"
-                        transfer_logger.debug(f"    - Offset range '{range_str}' to '{new_range}'")
+                        logger.debug(f"    - Offset range '{range_str}' to '{new_range}'")
                     
                     new_dv.sqref = new_sqref.strip()
                     if new_dv.sqref:
-                        transfer_logger.debug(f"  -> Adding footer DV with new sqref: '{new_dv.sqref}' and formula1: '{new_dv.formula1}'")
+                        logger.debug(f"  -> Adding footer DV with new sqref: '{new_dv.sqref}' and formula1: '{new_dv.formula1}'")
                         new_sheet.add_data_validation(new_dv)
                     else:
-                        transfer_logger.warning(f"  -> Skipping footer DV #{i+1} due to empty new sqref.")
+                        logger.warning(f"  -> Skipping footer DV #{i+1} due to empty new sqref.")
 
         except Exception as e:
-            transfer_logger.error(f"CRITICAL FAILURE in applying DV rules for sheet '{new_sheet.title}'. Error: {e}", exc_info=True)
+            logger.error(f"CRITICAL FAILURE in applying DV rules for sheet '{new_sheet.title}'. Error: {e}", exc_info=True)

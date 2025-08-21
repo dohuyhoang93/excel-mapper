@@ -1,6 +1,7 @@
 {
   "theme": "superhero",
-  "detection_keywords": "total,sum,cộng,tổng,thành tiền,grand,all",
+  "detection_keywords": "total,sum,cộng,tổng,thành tiền",
   "last_source_file": "C:/Users/dohoang/Downloads/Documents/Source- from 2025.07.24.xlsx",
-  "last_dest_file": "C:/Users/dohoang/Downloads/Documents/Form Destination.xlsx"
+  "last_dest_file": "C:/Users/dohoang/Downloads/Documents/Form Destination.xlsx",
+  "log_level": "INFO"
 }
