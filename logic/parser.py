@@ -8,6 +8,8 @@ import logging
 from pathlib import Path
 import gc
 
+logger = logging.getLogger(__name__)
+
 class ExcelParser:
     """Handles parsing of Excel files with complex structures and proper resource management"""
     
@@ -45,7 +47,7 @@ class ExcelParser:
             if self.workbook:
                 self.workbook.close()
         except Exception as e:
-            logging.warning(f"Error closing workbook for {self.file_path}: {e}")
+            logger.warning(f"Error closing workbook for {self.file_path}: {e}")
         finally:
             self.workbook = None
             self.worksheet = None
@@ -121,7 +123,7 @@ class ExcelParser:
             
             return ""
         except Exception as e:
-            logging.warning(f"Error reading cell ({row}, {col}) from {self.file_path}: {e}")
+            logger.warning(f"Error reading cell ({row}, {col}) from {self.file_path}: {e}")
             return ""
     
     def get_data_rows(self, header_row: int, headers: List[str]) -> List[Dict[str, Any]]:
@@ -388,7 +390,7 @@ def get_excel_headers_safe(file_path: str, start_row: int, end_row: int) -> Dict
         with parser as p:
             return p.get_headers(start_row, end_row)
     except Exception as e:
-        logging.error(f"Error getting headers from {file_path}: {str(e)}")
+        logger.error(f"Error getting headers from {file_path}: {str(e)}")
         return {}
     finally:
         if parser:
@@ -406,7 +408,7 @@ def get_excel_data_safe(file_path: str, header_row: int) -> Tuple[Dict[str, int]
             data = p.get_data_rows(header_row, list(headers.keys()))
             return headers, data
     except Exception as e:
-        logging.error(f"Error getting data from {file_path}: {str(e)}")
+        logger.error(f"Error getting data from {file_path}: {str(e)}")
         return {}, []
     finally:
         if parser:
@@ -422,8 +424,26 @@ def validate_excel_file_safe(file_path: str) -> Tuple[bool, List[str]]:
         with parser as p:
             return p.validate_file()
     except Exception as e:
-        logging.error(f"Error validating {file_path}: {str(e)}")
+        logger.error(f"Error validating {file_path}: {str(e)}")
         return False, [f"Validation error: {str(e)}"]
+    finally:
+        if parser:
+            parser._cleanup()
+        # Force garbage collection
+        gc.collect()
+
+def get_sheet_names_safe(file_path: str) -> List[str]:
+    """Safe function to get sheet names from Excel file with guaranteed cleanup"""
+    parser = None
+    try:
+        parser = ExcelParser(file_path)
+        with parser as p:
+            if p.workbook:
+                return p.workbook.sheetnames
+            return []
+    except Exception as e:
+        logger.error(f"Error getting sheet names from {file_path}: {str(e)}")
+        return []
     finally:
         if parser:
             parser._cleanup()

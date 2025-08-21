@@ -3,6 +3,9 @@ Handles intelligent column mapping suggestions between source and destination co
 """
 import re
 from typing import List, Set
+import logging
+
+logger = logging.getLogger(__name__)
 
 class ColumnMapper:
     """Provides methods to suggest column mappings based on name similarity."""
@@ -15,7 +18,7 @@ class ColumnMapper:
         # Replace various whitespace characters and separators with a single space
         text = re.sub(r'[\s\u3000_\-]+', ' ', text)
         # Remove common bracketing characters
-        text = re.sub(r'[()\[\]{}]', '', text)
+        text = re.sub(r'[()[\]{}]', '', text)
         return set(text.lower().strip().split())
 
     def suggest_mapping(self, source_col: str, dest_cols: List[str]) -> str:
@@ -31,51 +34,55 @@ class ColumnMapper:
             The name of the best matching destination column, or an empty string if no
             suitable match is found.
         """
-        # Do not suggest mappings for unnamed or generic source columns
-        if str(source_col).startswith('Column_'):
-            return ""
+        try:
+            # Do not suggest mappings for unnamed or generic source columns
+            if str(source_col).startswith('Column_'):
+                return ""
 
-        source_tokens = self._normalize_and_tokenize(source_col)
-        if not source_tokens:
-            return ""
+            source_tokens = self._normalize_and_tokenize(source_col)
+            if not source_tokens:
+                return ""
 
-        best_match = ""
-        max_score = 0
+            best_match = ""
+            max_score = 0
 
-        # A map of common keywords to boost scores for semantic matches
-        keywords_map = {
-            'content': 'contents', 'purpose': 'purpose', 'amount': 'amount',
-            'vat': 'vat', 'currency': 'currency', 'date': 'trading date',
-            'no': 'no.', 'number': 'no.', 'code': 'code reference', 'total': 'sub total'
-        }
+            # A map of common keywords to boost scores for semantic matches
+            keywords_map = {
+                'content': 'contents', 'purpose': 'purpose', 'amount': 'amount',
+                'vat': 'vat', 'currency': 'currency', 'date': 'trading date',
+                'no': 'no.', 'number': 'no.', 'code': 'code reference', 'total': 'sub total'
+            }
 
-        for dest_col in dest_cols:
-            current_score = 0
-            dest_tokens = self._normalize_and_tokenize(dest_col)
-            if not dest_tokens:
-                continue
+            for dest_col in dest_cols:
+                current_score = 0
+                dest_tokens = self._normalize_and_tokenize(dest_col)
+                if not dest_tokens:
+                    continue
 
-            # Perfect match gives a very high score
-            if source_tokens == dest_tokens:
-                current_score = 100
+                # Perfect match gives a very high score
+                if source_tokens == dest_tokens:
+                    current_score = 100
 
-            # Score based on the number of common words
-            common_tokens = source_tokens.intersection(dest_tokens)
-            current_score += len(common_tokens) * 50
+                # Score based on the number of common words
+                common_tokens = source_tokens.intersection(dest_tokens)
+                current_score += len(common_tokens) * 50
 
-            # Boost score for known keyword synonyms
-            for key, value in keywords_map.items():
-                if key in source_tokens and value in dest_tokens:
-                    current_score += 40
+                # Boost score for known keyword synonyms
+                for key, value in keywords_map.items():
+                    if key in source_tokens and value in dest_tokens:
+                        current_score += 40
 
-            # Boost score if one name is a substring of the other (after normalization)
-            source_norm_str = "".join(sorted(list(source_tokens)))
-            dest_norm_str = "".join(sorted(list(dest_tokens)))
-            if source_norm_str in dest_norm_str or dest_norm_str in source_norm_str:
-                current_score += 20
+                # Boost score if one name is a substring of the other (after normalization)
+                source_norm_str = "".join(sorted(list(source_tokens)))
+                dest_norm_str = "".join(sorted(list(dest_tokens)))
+                if source_norm_str in dest_norm_str or dest_norm_str in source_norm_str:
+                    current_score += 20
 
-            if current_score > max_score:
-                max_score = current_score
-                best_match = dest_col
+                if current_score > max_score:
+                    max_score = current_score
+                    best_match = dest_col
 
-        return best_match
+            return best_match
+        except Exception as e:
+            logger.error(f"An unexpected error occurred in suggest_mapping for source column '{source_col}': {e}", exc_info=True)
+            return "" # Return empty string on error
