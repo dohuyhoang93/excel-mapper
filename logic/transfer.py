@@ -116,8 +116,7 @@ class ExcelTransferEngine:
             classified_dvs = self._classify_data_validations(master_sheet_formulas)
 
             output_wb = Workbook()
-            if output_wb.active:
-                output_wb.remove(output_wb.active)
+            first_sheet_created = False
 
             total_groups = len(grouped_data)
             for i, (group_name, data_rows) in enumerate(grouped_data.items()):
@@ -127,7 +126,14 @@ class ExcelTransferEngine:
                 if new_sheet_name in output_wb.sheetnames:
                     new_sheet_name = _sanitize_sheet_name(f"{group_name}_{i+1}")
                 
-                new_sheet = output_wb.create_sheet(title=new_sheet_name)
+                if not first_sheet_created:
+                    # Reuse the default first sheet for the first group
+                    new_sheet = output_wb.active
+                    new_sheet.title = new_sheet_name
+                    first_sheet_created = True
+                else:
+                    # Create new sheets for subsequent groups
+                    new_sheet = output_wb.create_sheet(title=new_sheet_name)
 
                 self._copy_column_dimensions(master_sheet_formulas, new_sheet)
 
@@ -156,6 +162,9 @@ class ExcelTransferEngine:
                 self._apply_classified_validations(new_sheet, classified_dvs, len(data_rows), new_footer_start_row)
 
             output_filename = self.dest_path.with_name(f"{self.dest_path.stem}-output{self.dest_path.suffix}")
+            # Set the active sheet to the first sheet before saving to ensure workbook integrity
+            if output_wb.sheetnames:
+                output_wb.active = 0
             output_wb.save(output_filename)
             transfer_logger.info(f"Successfully created new file: {output_filename}")
 
