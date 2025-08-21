@@ -236,9 +236,12 @@ class ExcelTransferEngine:
                 row_data = data_rows[i]
                 for source_col, dest_col in self.mappings.items():
                     if dest_col in self.dest_columns:
-                        dest_col_num = self.dest_columns[dest_col]
-                        cell_to_write = self._get_writable_cell(dest_sheet, current_write_row, dest_col_num)
-                        cell_to_write.value = row_data.get(source_col)
+                        source_value = row_data.get(source_col)
+                        # Only write to the destination cell if the source value is not empty
+                        if source_value is not None and source_value != '':
+                            dest_col_num = self.dest_columns[dest_col]
+                            cell_to_write = self._get_writable_cell(dest_sheet, current_write_row, dest_col_num)
+                            cell_to_write.value = source_value
         
         # The function must return the last row that contains *actual data*
         if num_data_rows == 0:
