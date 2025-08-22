@@ -365,6 +365,32 @@ class ExcelParser:
         
         return data
 
+    def get_data_validations(self) -> List[Dict[str, Any]]:
+        """
+        Extracts all data validation rules from the worksheet.
+
+        Returns:
+            A list of dictionaries, where each dictionary represents a data validation rule.
+        """
+        if not self.worksheet:
+            raise ValueError("Worksheet not loaded")
+
+        validations = []
+        for dv in self.worksheet.data_validations.dataValidation:
+            validations.append({
+                "type": dv.type,
+                "formula1": dv.formula1,
+                "formula2": dv.formula2,
+                "sqref": str(dv.sqref),
+                "showDropDown": dv.showDropDown,
+                "allowBlank": dv.allowBlank,
+                "errorTitle": dv.errorTitle,
+                "error": dv.error,
+                "promptTitle": dv.promptTitle,
+                "prompt": dv.prompt
+            })
+        return validations
+
 # Utility functions for external use with enhanced resource management
 def quick_validate_excel(file_path: str) -> bool:
     """Quick validation of Excel file with proper cleanup"""

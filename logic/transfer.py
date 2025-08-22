@@ -80,20 +80,21 @@ class ExcelTransferEngine:
                     return worksheet.cell(row=merged_range.min_row, column=merged_range.min_col)
         return cell
 
-    def run_transfer(self):
+    def run_transfer(self, grouped_data: Optional[Dict[str, List[Dict[str, Any]]]] = None):
         logger.info("--- Starting new transfer process (Constructive Method) ---")
         if not self.group_by_column:
             raise ValueError("'Group by Column' must be selected for this operation.")
         if not self.master_sheet_name:
             raise ValueError("'Master Sheet' must be selected for this operation.")
 
-        self._update_progress(5, "Reading source data...")
-        source_data = self._read_source_data()
-        if not source_data:
-            raise ValueError("No data found in source file.")
+        if grouped_data is None:
+            self._update_progress(5, "Reading source data...")
+            source_data = self._read_source_data()
+            if not source_data:
+                raise ValueError("No data found in source file.")
 
-        self._update_progress(15, "Grouping data...")
-        grouped_data = self._group_data(source_data)
+            self._update_progress(15, "Grouping data...")
+            grouped_data = self._group_data(source_data)
         
         self._update_progress(20, "Loading master template...")
         wb_template_vals = openpyxl.load_workbook(self.dest_path, data_only=True)
@@ -266,7 +267,7 @@ class ExcelTransferEngine:
         else:
             return start_row + num_data_rows - 1
 
-    def _read_source_data(self) -> List[Dict[str, Any]]:
+    def _read_source_data(self, row_limit: Optional[int] = None) -> List[Dict[str, Any]]:
         workbook = None
         try:
             workbook = openpyxl.load_workbook(self.source_path, data_only=True)
@@ -276,8 +277,13 @@ class ExcelTransferEngine:
                 worksheet = workbook.active
             
             start_data_row = self.source_header_end_row + 1
+            
+            max_row_to_read = worksheet.max_row
+            if row_limit and row_limit > 0:
+                max_row_to_read = min(worksheet.max_row, start_data_row + row_limit -1)
+
             data = []
-            for row_index in range(start_data_row, worksheet.max_row + 1):
+            for row_index in range(start_data_row, max_row_to_read + 1):
                 row_data, has_data = {}, False
                 for header_name, col_index in self.source_columns.items():
                     value = worksheet.cell(row=row_index, column=col_index).value

@@ -1,0 +1,87 @@
+PS C:\Users\dohoang\projects\ExcelMapper> python app.py
+Exception in Tkinter callback
+Traceback (most recent call last):
+  File "C:\Users\dohoang\projects\ExcelMapper\app.py", line 444, in force_release_excel_handles
+    show_custom_info(self.root, self, "Info", "Excel file handles have been released.")
+  File "C:\Users\dohoang\projects\ExcelMapper\gui\widgets.py", line 388, in show_custom_info
+    CustomMessageDialog(parent, app_instance, title, message, "info")
+  File "C:\Users\dohoang\projects\ExcelMapper\gui\widgets.py", line 369, in __init__
+    self.center_on_parent()
+  File "C:\Users\dohoang\projects\ExcelMapper\gui\widgets.py", line 81, in center_on_parent
+    self.geometry(f"{x}+{y}")
+  File "C:\Python312\Lib\tkinter\__init__.py", line 2120, in wm_geometry
+    return self.tk.call('wm', 'geometry', self._w, newGeometry)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: bad geometry specifier "812+483"
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\dohoang\projects\ExcelMapper\app.py", line 490, in safe_load_columns
+    self.force_release_excel_handles()
+  File "C:\Users\dohoang\projects\ExcelMapper\app.py", line 447, in force_release_excel_handles
+    show_custom_error(self.root, self, "Error", f"Error releasing handles: {str(e)}")
+  File "C:\Users\dohoang\projects\ExcelMapper\gui\widgets.py", line 392, in show_custom_error
+    CustomMessageDialog(parent, app_instance, title, message, "error")
+  File "C:\Users\dohoang\projects\ExcelMapper\gui\widgets.py", line 369, in __init__
+    self.center_on_parent()
+  File "C:\Users\dohoang\projects\ExcelMapper\gui\widgets.py", line 81, in center_on_parent
+    self.geometry(f"{x}+{y}")
+  File "C:\Python312\Lib\tkinter\__init__.py", line 2120, in wm_geometry
+    return self.tk.call('wm', 'geometry', self._w, newGeometry)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: bad geometry specifier "752+483"
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\dohoang\projects\ExcelMapper\app.py", line 630, in load_config
+    self.safe_load_columns(saved_group_by_col=saved_group_by_col, apply_suggestions=False)
+  File "C:\Users\dohoang\projects\ExcelMapper\app.py", line 513, in safe_load_columns
+    show_custom_error(self.root, self, "Error", f"Failed to load columns: {str(e)}")
+  File "C:\Users\dohoang\projects\ExcelMapper\gui\widgets.py", line 392, in show_custom_error
+    CustomMessageDialog(parent, app_instance, title, message, "error")
+  File "C:\Users\dohoang\projects\ExcelMapper\gui\widgets.py", line 369, in __init__
+    self.center_on_parent()
+  File "C:\Users\dohoang\projects\ExcelMapper\gui\widgets.py", line 81, in center_on_parent
+    self.geometry(f"{x}+{y}")
+  File "C:\Python312\Lib\tkinter\__init__.py", line 2120, in wm_geometry
+    return self.tk.call('wm', 'geometry', self._w, newGeometry)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: bad geometry specifier "751+483"
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python312\Lib\tkinter\__init__.py", line 1968, in __call__
+    return self.func(*args)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\dohoang\projects\ExcelMapper\app.py", line 641, in load_config
+    show_custom_error(self.root, self, "Error", f"Failed to load job configuration: {str(e)}")
+  File "C:\Users\dohoang\projects\ExcelMapper\gui\widgets.py", line 392, in show_custom_error
+    CustomMessageDialog(parent, app_instance, title, message, "error")
+  File "C:\Users\dohoang\projects\ExcelMapper\gui\widgets.py", line 369, in __init__
+    self.center_on_parent()
+  File "C:\Users\dohoang\projects\ExcelMapper\gui\widgets.py", line 81, in center_on_parent
+    self.geometry(f"{x}+{y}")
+  File "C:\Python312\Lib\tkinter\__init__.py", line 2120, in wm_geometry
+    return self.tk.call('wm', 'geometry', self._w, newGeometry)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: bad geometry specifier "728+483"
+Exception in Tkinter callback
+Traceback (most recent call last):
+  File "C:\Python312\Lib\tkinter\__init__.py", line 1968, in __call__
+    return self.func(*args)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\dohoang\projects\ExcelMapper\app.py", line 973, in preview_transfer
+    show_custom_warning(self.root, self, "Warning", "Please load columns first.")
+  File "C:\Users\dohoang\projects\ExcelMapper\gui\widgets.py", line 396, in show_custom_warning
+    CustomMessageDialog(parent, app_instance, title, message, "warning")
+  File "C:\Users\dohoang\projects\ExcelMapper\gui\widgets.py", line 369, in __init__
+    self.center_on_parent()
+  File "C:\Users\dohoang\projects\ExcelMapper\gui\widgets.py", line 81, in center_on_parent
+    self.geometry(f"{x}+{y}")
+  File "C:\Python312\Lib\tkinter\__init__.py", line 2120, in wm_geometry
+    return self.tk.call('wm', 'geometry', self._w, newGeometry)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: bad geometry specifier "836+483"

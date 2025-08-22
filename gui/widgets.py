@@ -1,8 +1,6 @@
-"""
-Reusable GUI widgets for the Excel Data Mapper application
-"""
+"Reusable GUI widgets for the Excel Data Mapper application"
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, simpledialog
 import ttkbootstrap as ttk_boot
 from ttkbootstrap.constants import *
 from typing import List, Dict, Callable, Optional, Any
@@ -54,24 +52,21 @@ class BaseDialog(tk.Toplevel):
         self.app = app_instance
         self.title(title)
         
-        # Hide the window until it's fully configured and centered
         self.withdraw()
 
         if hasattr(self.app, 'icon_path') and self.app.icon_path:
             try:
                 self.iconbitmap(self.app.icon_path)
             except tk.TclError:
-                pass # May fail on some systems/configurations
+                pass
                 
         self.transient(parent)
         self.grab_set()
         self.bind("<Escape>", lambda e: self.destroy())
 
     def center_on_parent(self):
-        # Force update of widget sizes
         self.update_idletasks()
         self.deiconify()
-        
         
         parent_x = self.parent.winfo_x()
         parent_y = self.parent.winfo_y()
@@ -84,12 +79,8 @@ class BaseDialog(tk.Toplevel):
         y = parent_y + (parent_h // 2) - (dialog_h // 2)
         
         self.geometry(f"+{x}+{y}")
-        
-        # Show the window now that it's ready
-        # self.deiconify()
         self.lift()
         self.focus_set()
-
 
 class AboutDialog(BaseDialog):
     """The 'About' dialog window."""
@@ -123,42 +114,38 @@ class PreviewDialog(BaseDialog):
     def __init__(self, parent, app_instance, report_data: dict, preview_data: list, mappings: dict):
         super().__init__(parent, app_instance, title="Transfer Simulation Report")
         self.geometry("950x650")
+        self.result = None
+        self.excluded_groups = []
+
         main_frame = ttk_boot.Frame(self, padding=10)
         main_frame.pack(fill=BOTH, expand=True)
 
         if "error" in report_data:
             self._create_error_view(main_frame, report_data["error"])
-            self.center_on_parent() # Center even on error
+            self.center_on_parent()
             return
             
         self.notebook = ttk.Notebook(main_frame)
         self.notebook.pack(fill=BOTH, expand=True, pady=5)
-        self._create_summary_tab(self.notebook, report_data)
-        self._create_mappings_tab(self.notebook, mappings)
+        
+        self._create_summary_tab(self.notebook, report_data, mappings)
+        self._create_groups_tab(self.notebook, report_data)
+        self._create_validation_tab(self.notebook, report_data)
         self._create_data_preview_tab(self.notebook, preview_data, mappings)
-        ttk_boot.Button(main_frame, text="Close", command=self.destroy, bootstyle="outline-secondary").pack(pady=(10, 0))
-        
-        # This is the deterministic finalization step.
-        self._finalize_layout_and_center()
 
-    def _finalize_layout_and_center(self):
-        """
-        A deterministic method to ensure final layout calculations are complete
-        before centering the dialog.
-        """
-        # Adjust the treeview columns, which might change the required window size.
-        self._adjust_column_widths(self.mappings_tree, ("Source Column", "Destination Column"), [W, W])
-        if hasattr(self, 'data_tree'):
-             self._adjust_column_widths(self.data_tree, list(self.data_tree["columns"]), ['center'] * len(self.data_tree["columns"]))
+        button_frame = ttk_boot.Frame(main_frame)
+        button_frame.pack(fill=X, pady=(10,0))
+        ttk_boot.Button(button_frame, text="Run Transfer", command=self.on_run_transfer, bootstyle=SUCCESS).pack(side=RIGHT)
+        ttk_boot.Button(button_frame, text="Cancel", command=self.destroy, bootstyle="secondary").pack(side=RIGHT, padx=5)
         
-        # Force the event loop to process all pending geometry calculations.
-        self.update_idletasks()
-        
-        # Now that the size is final and correct, center the dialog.
         self.center_on_parent()
+        self.wait_window()
+
+    def on_run_transfer(self):
+        self.result = self.excluded_groups
+        self.destroy()
 
     def _adjust_column_widths(self, tree, cols, anchors):
-        """Adjusts column widths based on content. Renamed 'cols' for clarity."""
         self.update_idletasks()
         for idx, col_name in enumerate(cols):
             header_width = tkFont.Font().measure(tree.heading(col_name)["text"])
@@ -176,59 +163,104 @@ class PreviewDialog(BaseDialog):
         ttk_boot.Label(parent, text=f"❌ CRITICAL ERROR\n\n{error_message}", bootstyle=DANGER, font="-size 12 -weight bold", justify=CENTER).pack(pady=20, padx=10, fill=BOTH, expand=True)
         ttk_boot.Button(parent, text="Close", command=self.destroy, bootstyle="outline-danger").pack(pady=10)
 
-    def _create_summary_tab(self, notebook, data):
+    def _create_summary_tab(self, notebook, data, mappings):
         summary_frame = ttk_boot.Frame(notebook, padding=10)
         notebook.add(summary_frame, text="📊 Summary")
 
-        # --- Top Frame for General Stats ---
-        stats_frame = ttk_boot.LabelFrame(summary_frame, text="Grouping Summary", padding=10)
+        stats_frame = ttk_boot.LabelFrame(summary_frame, text="Simulation Summary", padding=10)
         stats_frame.pack(padx=10, pady=5, fill=X)
         stats_frame.columnconfigure(1, weight=1)
 
+        row_limit = data.get('row_limit', 0)
+        limit_text = f"{row_limit} rows" if row_limit > 0 else "All rows"
+
         summary_data = [
-            ("Total source rows:", data.get('total_rows', 'N/A')),
+            ("Preview based on:", limit_text),
+            ("Total source rows found:", data.get('total_rows', 'N/A')),
             ("Number of unique groups found:", data.get('group_count', 'N/A')),
+            ("Active column mappings:", f"{len(mappings)}"),
             ("New sheets to be created:", data.get('group_count', 'N/A')),
+            ("Potential validation errors:", len(data.get('validation_errors', []))),
         ]
         for i, (label, value) in enumerate(summary_data):
             ttk_boot.Label(stats_frame, text=label, anchor=W).grid(row=i, column=0, sticky=EW, pady=2, padx=5)
             ttk_boot.Label(stats_frame, text=str(value), anchor=W, bootstyle="info").grid(row=i, column=1, sticky=EW, pady=2, padx=5)
 
-        # --- Bottom Frame for Top 5 Groups ---
-        top_groups_frame = ttk_boot.LabelFrame(summary_frame, text="Top 5 Largest Groups", padding=10)
-        top_groups_frame.pack(padx=10, pady=5, fill=BOTH, expand=True)
+        settings_frame = ttk_boot.LabelFrame(summary_frame, text="Current Settings", padding=10)
+        settings_frame.pack(padx=10, pady=5, fill=X, expand=True)
+        settings_frame.columnconfigure(1, weight=1)
+        
+        settings_data = data.get('settings', {})
+        for i, (key, value) in enumerate(settings_data.items()):
+            ttk_boot.Label(settings_frame, text=f"{key}:", anchor=W).grid(row=i, column=0, sticky=EW, pady=2, padx=5)
+            ttk_boot.Label(settings_frame, text=str(value), anchor=W, bootstyle="info").grid(row=i, column=1, sticky=EW, pady=2, padx=5)
+
+    def _create_groups_tab(self, notebook, data):
+        tab_frame = ttk_boot.Frame(notebook, padding=10)
+        notebook.add(tab_frame, text="📋 Group Details")
+        
+        button = ttk_boot.Button(tab_frame, text="Exclude Groups...", command=self._exclude_groups_dialog, bootstyle="outline-danger")
+        button.pack(anchor=E, pady=5)
+
+        container = ttk_boot.LabelFrame(tab_frame, text=f"All Groups ({data.get('group_count', 0)})")
+        container.pack(fill=BOTH, expand=True, padx=5, pady=5)
 
         cols = ("Group Name", "Row Count")
-        self.top_groups_tree = ttk.Treeview(top_groups_frame, columns=cols, show='headings', bootstyle="info", height=6)
-        self.top_groups_tree.column("Group Name", anchor=W, width=400)
-        self.top_groups_tree.column("Row Count", anchor=E, width=100)
-        self.top_groups_tree.heading("Group Name", text="Group Name", anchor=W)
-        self.top_groups_tree.heading("Row Count", text="Row Count", anchor=E)
+        self.groups_tree = ttk.Treeview(container, columns=cols, show='headings', bootstyle="info")
+        self.groups_tree.column("Group Name", anchor=W, width=400)
+        self.groups_tree.column("Row Count", anchor=E, width=100)
+        self.groups_tree.heading("Group Name", text="Group Name", anchor=W)
+        self.groups_tree.heading("Row Count", text="Row Count", anchor=E)
 
-        top_groups_data = data.get('top_groups', [])
-        for group_name, row_count in top_groups_data:
-            self.top_groups_tree.insert("", "end", values=(group_name, row_count))
+        groups_data = data.get('groups', [])
+        for group_name, row_count in groups_data:
+            self.groups_tree.insert("", "end", values=(group_name, row_count))
 
-        self.top_groups_tree.pack(side=LEFT, fill=BOTH, expand=True, padx=5, pady=5)
-        vsb = ttk.Scrollbar(top_groups_frame, orient="vertical", command=self.top_groups_tree.yview, bootstyle="info-round")
+        self.groups_tree.pack(side=LEFT, fill=BOTH, expand=True, padx=5, pady=5)
+        vsb = ttk.Scrollbar(container, orient="vertical", command=self.groups_tree.yview, bootstyle="info-round")
         vsb.pack(side=RIGHT, fill='y')
-        self.top_groups_tree.configure(yscrollcommand=vsb.set)
+        self.groups_tree.configure(yscrollcommand=vsb.set)
+        
+        self._adjust_column_widths(self.groups_tree, cols, [W, E])
 
-    def _create_mappings_tab(self, notebook, mappings):
+    def _exclude_groups_dialog(self):
+        current_exclusions = ", ".join(self.excluded_groups)
+        to_exclude = simpledialog.askstring("Exclude Groups", 
+                                            "Enter group names to exclude, separated by commas:",
+                                            initialvalue=current_exclusions,
+                                            parent=self)
+        if to_exclude is not None:
+            self.excluded_groups = [name.strip() for name in to_exclude.split(",") if name.strip()]
+            show_custom_info(self, self.app, "Info", f"{len(self.excluded_groups)} groups marked for exclusion.")
+
+    def _create_validation_tab(self, notebook, data):
         tab_frame = ttk_boot.Frame(notebook, padding=10)
-        notebook.add(tab_frame, text="🔗 Column Mappings")
-        container = ttk_boot.LabelFrame(tab_frame, text=f"Active Mappings ({len(mappings)})")
-        container.pack(fill=BOTH, expand=True)
-        cols, anchors = ("Source Column", "Destination Column"), [W, W]
-        self.mappings_tree = ttk.Treeview(container, columns=cols, show='headings', bootstyle="info", height=15)
-        for i, col in enumerate(cols):
-            self.mappings_tree.heading(col, text=col, anchor=anchors[i])
-        for source, dest in sorted(mappings.items()):
-            self.mappings_tree.insert("", "end", values=(source, dest))
-        self.mappings_tree.pack(side=LEFT, fill=BOTH, expand=True, padx=5, pady=5)
-        vsb = ttk.Scrollbar(container, orient="vertical", command=self.mappings_tree.yview, bootstyle="info-round")
+        validation_errors = data.get('validation_errors', [])
+        tab_text = f"⚠️ Validation ({len(validation_errors)})"
+        notebook.add(tab_frame, text=tab_text)
+
+        if not validation_errors:
+            ttk_boot.Label(tab_frame, text="✅ No data validation errors detected.", bootstyle="success", font="-size 12").pack(pady=20)
+            return
+
+        container = ttk_boot.LabelFrame(tab_frame, text="Potential Data Validation Errors")
+        container.pack(fill=BOTH, expand=True, padx=5, pady=5)
+
+        cols = ("Source Row", "Dest Column", "Invalid Value", "Rule")
+        self.validation_tree = ttk.Treeview(container, columns=cols, show='headings', bootstyle="danger")
+        
+        for col in cols:
+            self.validation_tree.heading(col, text=col)
+        
+        for error in validation_errors:
+            self.validation_tree.insert("", "end", values=(error['row'], error['column'], error['value'], error['rule']))
+
+        self.validation_tree.pack(side=LEFT, fill=BOTH, expand=True, padx=5, pady=5)
+        vsb = ttk.Scrollbar(container, orient="vertical", command=self.validation_tree.yview, bootstyle="danger-round")
         vsb.pack(side=RIGHT, fill='y')
-        self.mappings_tree.configure(yscrollcommand=vsb.set)
+        self.validation_tree.configure(yscrollcommand=vsb.set)
+        
+        self._adjust_column_widths(self.validation_tree, cols, [E, W, W, W])
 
     def _create_data_preview_tab(self, notebook, preview_data, mappings):
         tab_frame = ttk_boot.Frame(notebook, padding=10)
@@ -238,17 +270,21 @@ class PreviewDialog(BaseDialog):
         if not preview_data:
             ttk_boot.Label(container, text="No source data found to preview.", bootstyle=INFO).pack(padx=10, pady=10)
             return
-        dest_cols = list(mappings.values())
+        
+        dest_cols = [v for v in mappings.values() if v]
+        if not dest_cols:
+            ttk_boot.Label(container, text="No columns are mapped for preview.", bootstyle=INFO).pack(padx=10, pady=10)
+            return
+
         self.data_tree = ttk.Treeview(container, columns=dest_cols, show='headings', bootstyle="info", height=10)
         
-        # Set alignment for both header and column content to center
         for col in dest_cols:
             self.data_tree.column(col, anchor='center')
             self.data_tree.heading(col, text=col, anchor='center')
 
         dest_to_source = {v: k for k, v in mappings.items()}
         for row_data in preview_data:
-            values = [str(row_data.get(dest_to_source.get(dc), ""))[:100] for dc in dest_cols]
+            values = [str(row_data.get(dest_to_source.get(dc, ""), ""))[:100] for dc in dest_cols]
             self.data_tree.insert("", "end", values=values)
             
         vsb = ttk.Scrollbar(container, orient="vertical", command=self.data_tree.yview, bootstyle="info-round")
@@ -257,7 +293,8 @@ class PreviewDialog(BaseDialog):
         vsb.pack(side='right', fill='y')
         hsb.pack(side='bottom', fill='x')
         self.data_tree.pack(side=LEFT, fill='both', expand=True, padx=5, pady=5)
-
+        
+        self._adjust_column_widths(self.data_tree, dest_cols, ['center'] * len(dest_cols))
 
 class DetectionConfigDialog(BaseDialog):
     """Dialog to configure end-row detection keywords."""
@@ -276,7 +313,6 @@ class DetectionConfigDialog(BaseDialog):
         ttk_boot.Button(button_frame, text="Save", command=self.save, bootstyle=SUCCESS).pack(side=RIGHT, padx=5)
         ttk_boot.Button(button_frame, text="Cancel", command=self.destroy, bootstyle="secondary").pack(side=RIGHT)
         self.center_on_parent()
-
 
     def save(self):
         self.parent_app.detection_keywords.set(self.temp_keywords.get())
@@ -331,8 +367,6 @@ class CustomMessageDialog(BaseDialog):
             self.bind("<Return>", lambda e: self.on_yes())
 
         self.center_on_parent()
-        
-        # Make the dialog blocking
         self.wait_window()
 
     def on_ok(self):

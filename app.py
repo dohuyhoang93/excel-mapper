@@ -8,6 +8,7 @@ import logging
 from pathlib import Path
 from typing import Optional, List, Dict, Any
 import openpyxl
+from openpyxl.utils import get_column_letter
 from openpyxl.cell.cell import MergedCell
 import subprocess
 import sys
@@ -144,6 +145,7 @@ class ExcelDataMapper:
         
         self.group_by_column = tk.StringVar()
         self.current_theme = "flatly"
+        self.preview_limit_var = tk.IntVar(value=1000)
         
         self.dest_write_start_row = tk.IntVar(value=11)
         self.dest_write_end_row = tk.IntVar(value=0)
@@ -211,10 +213,19 @@ class ExcelDataMapper:
         self.save_button.pack(side=LEFT, padx=(0, 5))
         self.load_button = ttk_boot.Button(action_frame, text="Load Configuration", command=self.load_config, bootstyle=INFO)
         self.load_button.pack(side=LEFT, padx=5)
+        
         self.execute_button = ttk_boot.Button(action_frame, text="Execute Transfer", command=self.execute_transfer, bootstyle=PRIMARY)
         self.execute_button.pack(side=RIGHT, padx=0)
-        self.preview_button = ttk_boot.Button(action_frame, text="Preview Transfer", command=self.preview_transfer, bootstyle="outline-secondary")
-        self.preview_button.pack(side=RIGHT, padx=5)
+
+        preview_frame = ttk_boot.Frame(action_frame)
+        preview_frame.pack(side=RIGHT, padx=5)
+
+        self.preview_button = ttk_boot.Button(preview_frame, text="Preview Transfer", command=self.preview_transfer, bootstyle="outline-secondary")
+        self.preview_button.pack(side=LEFT, padx=(0,5))
+
+        ttk_boot.Label(preview_frame, text="Limit (rows):").pack(side=LEFT)
+        self.preview_limit_spinbox = ttk_boot.Spinbox(preview_frame, from_=0, to=999999, textvariable=self.preview_limit_var, width=8)
+        self.preview_limit_spinbox.pack(side=LEFT)
 
         content_frame = ttk_boot.Frame(main_frame)
         content_frame.pack(fill=BOTH, expand=True)
@@ -285,22 +296,11 @@ class ExcelDataMapper:
         # --- Dynamic Single Value Mapping Frame ---
         single_value_lf = ttk_boot.LabelFrame(left_panel, text="Single Value Mapping", padding=5)
         single_value_lf.pack(fill=X, pady=(0, 5), anchor=N)
+        single_value_lf.rowconfigure(0, weight=1)
         single_value_lf.columnconfigure(0, weight=1)
-        single_value_lf.columnconfigure(1, weight=1)
-
-        header_frame = ttk_boot.Frame(single_value_lf)
-        header_frame.pack(fill=X, expand=True)
-        header_frame.columnconfigure(0, weight=1)
-        header_frame.columnconfigure(1, weight=1)
-        ttk_boot.Label(header_frame, text="Source Column", font='-weight bold').grid(row=0, column=0, sticky="w", padx=2)
-        ttk_boot.Label(header_frame, text="Destination Cell", font='-weight bold').grid(row=0, column=1, sticky="w", padx=2)
 
         self.single_value_scroll_frame = ScrollableFrame(single_value_lf, height=150)
-        self.single_value_scroll_frame.pack(fill=X, expand=True, pady=(5,0))
-        
-        button_frame = ttk_boot.Frame(single_value_lf)
-        button_frame.pack(fill=X, pady=(5,0))
-        ttk_boot.Button(button_frame, text="Add Mapping", command=self.add_single_value_row, bootstyle="outline-success").pack(side=LEFT)
+        self.single_value_scroll_frame.grid(row=0, column=0, sticky="nsew")
 
         # --- Right Panel ---
         mapping_container = ttk_boot.LabelFrame(right_panel, text="Column Mapping", padding=5)
@@ -329,26 +329,39 @@ class ExcelDataMapper:
         for widget in self.single_value_scroll_frame.scrollable_frame.winfo_children():
             widget.destroy()
 
+        container = self.single_value_scroll_frame.scrollable_frame
+        container.columnconfigure(0, weight=1)
+        container.columnconfigure(1, weight=1)
+        container.columnconfigure(2, weight=0)
+        container.columnconfigure(3, weight=0)
+
+        # --- Draw Headers ---
+        ttk_boot.Label(container, text="Source Column", font='-weight bold').grid(row=0, column=0, sticky="w", padx=2)
+        ttk_boot.Label(container, text="Destination Cell", font='-weight bold').grid(row=0, column=1, sticky="w", padx=2)
+
         # If list is empty, add one blank row to start
         if not self.single_value_mappings_list:
             self.single_value_mappings_list.append({"source_var": tk.StringVar(), "dest_var": tk.StringVar()})
 
-        container = self.single_value_scroll_frame.scrollable_frame
-        container.columnconfigure(0, weight=1)
-        container.columnconfigure(1, weight=1)
-
         source_keys = list(self.source_columns.keys())
 
-        for i, mapping_item in enumerate(self.single_value_mappings_list):
+        # --- Draw Mapping Rows ---
+        for i, mapping_item in enumerate(self.single_value_mappings_list, start=1):
             combo = ttk_boot.Combobox(container, textvariable=mapping_item["source_var"], values=source_keys)
             combo.grid(row=i, column=0, sticky="ew", padx=(0, 2), pady=2)
             
             entry = ttk_boot.Entry(container, textvariable=mapping_item["dest_var"], width=15)
             entry.grid(row=i, column=1, sticky="ew", padx=2, pady=2)
 
-            remove_btn = ttk_boot.Button(container, text="-", bootstyle="danger-outline", 
+            remove_btn = ttk_boot.Button(container, text="-", bootstyle="danger-outline", width=3,
                                          command=lambda item=mapping_item: self.remove_single_value_row(item))
             remove_btn.grid(row=i, column=2, padx=(2,0), pady=2)
+            
+            # Add the "+" button only to the first row
+            if i == 1:
+                add_btn = ttk_boot.Button(container, text="+", bootstyle="success-outline", width=3,
+                                          command=self.add_single_value_row)
+                add_btn.grid(row=i, column=3, padx=(2,0), pady=2)
     
     def browse_source_file(self):
         filename = filedialog.askopenfilename(title="Select Source Excel file", filetypes=[("Excel files", "*.xlsx *.xls")])
@@ -685,7 +698,7 @@ class ExcelDataMapper:
         self.save_app_settings()
         self.root.destroy()
     
-    def execute_transfer(self):
+    def execute_transfer(self, excluded_groups: Optional[List[str]] = None):
         if not self.source_file.get() or not self.dest_file.get():
             show_custom_warning(self.root, self, "Warning", "Please select both source and destination files.")
             return
@@ -714,11 +727,11 @@ class ExcelDataMapper:
         self.disable_controls()
         self.update_status("Starting data transfer...")
         self.progress['value'] = 0
-        transfer_thread = Thread(target=self._execute_transfer_thread, args=(mappings,))
+        transfer_thread = Thread(target=self._execute_transfer_thread, args=(mappings, excluded_groups))
         transfer_thread.daemon = True
         transfer_thread.start()
 
-    def _execute_transfer_thread(self, mappings):
+    def _execute_transfer_thread(self, mappings, excluded_groups: Optional[List[str]] = None):
         try:
             single_value_mappings = [
                 {"source_col": item["source_var"].get(), "dest_cell": item["dest_var"].get()}
@@ -745,7 +758,23 @@ class ExcelDataMapper:
             }
 
             engine = ExcelTransferEngine(settings, self.update_progress_callback)
-            engine.run_transfer()
+
+            # --- Data Reading and Filtering ---
+            source_data = engine._read_source_data()
+            if not source_data:
+                raise ValueError("No data found in source file.")
+            
+            grouped_data = engine._group_data(source_data)
+
+            if excluded_groups:
+                self.log_info(f"Excluding {len(excluded_groups)} groups from transfer.")
+                grouped_data = {k: v for k, v in grouped_data.items() if k not in excluded_groups}
+
+            if not grouped_data:
+                self.root.after(0, self.on_transfer_error, ValueError("All groups were excluded or no groups were found."))
+                return
+
+            engine.run_transfer(grouped_data=grouped_data)
             
             self.root.after(0, self.on_transfer_success)
         except Exception as e:
@@ -774,11 +803,11 @@ class ExcelDataMapper:
         show_custom_error(self.root, self, "Error", f"Transfer failed: {str(error)}")
 
     def disable_controls(self):
-        for widget in [self.execute_button, self.load_button, self.save_button, self.load_cols_button, self.preview_button]:
+        for widget in [self.execute_button, self.load_button, self.save_button, self.load_cols_button, self.preview_button, self.preview_limit_spinbox]:
             widget.config(state=DISABLED)
 
     def enable_controls(self):
-        for widget in [self.execute_button, self.load_button, self.save_button, self.load_cols_button, self.preview_button]:
+        for widget in [self.execute_button, self.load_button, self.save_button, self.load_cols_button, self.preview_button, self.preview_limit_spinbox]:
             widget.config(state=NORMAL)
     
     def toggle_theme(self):
@@ -863,8 +892,7 @@ class ExcelDataMapper:
                 report["error"] = "Please select a 'Group by Column' for the preview."
                 return report
 
-            # Create a temporary engine to reuse its data reading and grouping logic
-            # This ensures the preview is consistent with the actual transfer
+            # --- 1. Get Data and Settings ---
             temp_settings = {
                 "source_file": self.source_file.get(),
                 "dest_file": self.dest_file.get(),
@@ -877,19 +905,55 @@ class ExcelDataMapper:
                 "group_by_column": group_by_col
             }
             engine = ExcelTransferEngine(temp_settings)
-            
-            source_data = engine._read_source_data()
+            row_limit = self.preview_limit_var.get()
+            source_data = engine._read_source_data(row_limit=row_limit if row_limit > 0 else None)
+
             if not source_data:
                 report["error"] = "No data found in source file to generate a preview."
                 return report
 
-            grouped_data = engine._group_data(source_data)
+            # --- 2. Get Validation Rules from Destination ---
+            validation_errors = []
+            dest_validations = []
+            try:
+                with ExcelParser(self.dest_file.get(), sheet_name=self.master_sheet.get()) as p:
+                    dest_validations = p.get_data_validations()
+            except Exception as e:
+                self.log_warning(f"Could not read data validations from destination: {e}")
 
+            # --- 3. Perform Validation Simulation ---
+            if dest_validations:
+                mappings = {s: c.get() for s, c in self.mapping_combos.items() if c.get()}
+                for i, row in enumerate(source_data):
+                    for source_col, dest_col in mappings.items():
+                        if not dest_col: continue
+                        
+                        dest_col_idx = self.dest_columns.get(dest_col)
+                        if not dest_col_idx: continue
+
+                        for dv in dest_validations:
+                            if f"{openpyxl.utils.get_column_letter(dest_col_idx)}" in str(dv['sqref']):
+                                if dv['type'] == 'list':
+                                    source_value = row.get(source_col)
+                                    if source_value is not None:
+                                        allowed_values = [str(v).strip() for v in dv['formula1'].replace('"', '').split(',')]
+                                        if str(source_value).strip() not in allowed_values:
+                                            validation_errors.append({
+                                                "row": i + self.source_header_end_row.get() + 1,
+                                                "column": dest_col,
+                                                "value": source_value,
+                                                "rule": f"Value must be one of: {dv['formula1']}"
+                                            })
+                                break
+
+            # --- 4. Finalize Report ---
+            grouped_data = engine._group_data(source_data)
             report['group_count'] = len(grouped_data)
             report['total_rows'] = len(source_data)
-            
-            top_groups = sorted(grouped_data.items(), key=lambda item: len(item[1]), reverse=True)[:5]
-            report['top_groups'] = [(name, len(rows)) for name, rows in top_groups]
+            report['row_limit'] = row_limit
+            all_groups = sorted(grouped_data.items())
+            report['groups'] = [(name, len(rows)) for name, rows in all_groups]
+            report['validation_errors'] = validation_errors
 
             return report
         except Exception as e:
@@ -923,8 +987,11 @@ class ExcelDataMapper:
                 if not p.worksheet: raise ValueError(f"Sheet '{self.source_sheet.get()}' not found.")
                 preview_data = p.read_data_preview(self.source_columns, self.source_header_end_row.get(), 10)
             report_data['settings'] = self.get_current_settings()
-            PreviewDialog(self.root, self, report_data, preview_data, mappings)
-            self.update_status("Preview report generated.")
+            dialog = PreviewDialog(self.root, self, report_data, preview_data, mappings)
+            if dialog.result is not None:
+                self.execute_transfer(excluded_groups=dialog.result)
+            else:
+                self.update_status("Preview closed.")
         except Exception as e:
             self.log_error(f"Error generating preview: {str(e)}\n{traceback.format_exc()}")
             show_custom_error(self.root, self, "Error", f"Failed to generate preview: {str(e)}")
