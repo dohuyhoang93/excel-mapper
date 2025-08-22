@@ -863,31 +863,27 @@ class ExcelDataMapper:
                 report["error"] = "Please select a 'Group by Column' for the preview."
                 return report
 
-            with ExcelParser(self.source_file.get(), sheet_name=self.source_sheet.get()) as p:
-                if not p.worksheet: raise ValueError(f"Sheet '{self.source_sheet.get()}' not found in source file.")
-                worksheet = p.worksheet
-                start_data_row = self.source_header_end_row.get() + 1
-                source_data = []
-                for row_index in range(start_data_row, worksheet.max_row + 1):
-                    row_data, has_data = {}, False
-                    for header_name, col_index in self.source_columns.items():
-                        value = worksheet.cell(row=row_index, column=col_index).value
-                        if value is not None:
-                            has_data = True
-                        row_data[header_name] = value
-                    if has_data:
-                        source_data.append(row_data)
-
+            # Create a temporary engine to reuse its data reading and grouping logic
+            # This ensures the preview is consistent with the actual transfer
+            temp_settings = {
+                "source_file": self.source_file.get(),
+                "dest_file": self.dest_file.get(),
+                "source_sheet": self.source_sheet.get(),
+                "source_header_end_row": self.source_header_end_row.get(),
+                "dest_header_end_row": self.dest_header_end_row.get(),
+                "dest_write_start_row": self.dest_write_start_row.get(),
+                "dest_write_end_row": self.dest_write_end_row.get(),
+                "source_columns": self.source_columns,
+                "group_by_column": group_by_col
+            }
+            engine = ExcelTransferEngine(temp_settings)
+            
+            source_data = engine._read_source_data()
             if not source_data:
                 report["error"] = "No data found in source file to generate a preview."
                 return report
 
-            grouped_data = {}
-            for row in source_data:
-                key = str(row.get(group_by_col, "Uncategorized"))
-                if key not in grouped_data:
-                    grouped_data[key] = []
-                grouped_data[key].append(row)
+            grouped_data = engine._group_data(source_data)
 
             report['group_count'] = len(grouped_data)
             report['total_rows'] = len(source_data)
@@ -897,7 +893,8 @@ class ExcelDataMapper:
 
             return report
         except Exception as e:
-            self.log_error(f"Error during preview simulation: {str(e)}\n{traceback.format_exc()}")
+            self.log_error(f"Error during preview simulation: {str(e)}")
+            self.log_error(traceback.format_exc())
             report["error"] = f"An error occurred: {str(e)}"
             return report
         finally:
@@ -938,8 +935,6 @@ class ExcelDataMapper:
             "Source File": os.path.basename(self.source_file.get()), "Destination File": os.path.basename(self.dest_file.get()),
             "Group by Column": self.group_by_column.get() or "None", "---": "---",
             "Start Write Row": self.dest_write_start_row.get(), "End Write Row": self.dest_write_end_row.get() or "Unlimited",
-            "Skip Rows": self.dest_skip_rows.get() or "None", "Respect Protection": "Yes" if self.respect_cell_protection.get() else "No",
-            "Respect Formulas": "Yes" if self.respect_formulas.get() else "No",
         }
     
     def run(self):

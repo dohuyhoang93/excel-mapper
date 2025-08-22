@@ -5,9 +5,6 @@
   "dest_header_end_row": 10,
   "dest_write_start_row": 11,
   "dest_write_end_row": 23,
-  "dest_skip_rows": "",
-  "respect_cell_protection": true,
-  "respect_formulas": true,
   "group_by_column": "Supplier name",
   "source_sheet": "Payment List",
   "master_sheet": "Form",
@@ -44,5 +41,5 @@
       "dest_cell": "BP7"
     }
   ],
-  "created_date": "2025-08-20T14:10:42.045811"
+  "created_date": "2025-08-21T18:00:55.145975"
 }
